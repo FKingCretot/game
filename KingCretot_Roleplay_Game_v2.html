@@ -1,0 +1,1675 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KingCretot Roleplay Game</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #0a1628;
+  --navy2: #0f2044;
+  --gold: #f5c842;
+  --gold2: #e8a800;
+  --red: #e63946;
+  --green: #2ec4b6;
+  --white: #f0f4ff;
+  --muted: #8899bb;
+  --card-bg: #131f3a;
+  --card-border: #1e3060;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background: var(--navy);
+  color: var(--white);
+  min-height: 100vh;
+  overflow: hidden;
+  position: relative;
+}
+
+/* ── Animated starfield background ── */
+.stars {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+.star {
+  position: absolute;
+  background: #fff;
+  border-radius: 50%;
+  animation: twinkle var(--d) ease-in-out infinite alternate;
+}
+@keyframes twinkle {
+  from { opacity: 0.1; transform: scale(1); }
+  to   { opacity: 0.8; transform: scale(1.4); }
+}
+
+/* ── Top bar ── */
+.topbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 28px;
+  background: rgba(10,22,40,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 2px solid var(--gold);
+}
+.topbar-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.5rem;
+  letter-spacing: 2px;
+  color: var(--gold);
+}
+.topbar-logo span { color: var(--white); }
+.progress-bar {
+  flex: 1;
+  max-width: 420px;
+  margin: 0 24px;
+  height: 7px;
+  background: var(--card-border);
+  border-radius: 99px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold), var(--red));
+  border-radius: 99px;
+  transition: width 0.6s cubic-bezier(.4,0,.2,1);
+}
+.slide-counter {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.slide-counter span { color: var(--gold); font-weight: 700; }
+
+/* ── Timer ── */
+.timer-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.timer-display {
+  font-family: 'Space Mono', monospace;
+  font-size: 1rem;
+  color: var(--green);
+  font-weight: 700;
+  min-width: 48px;
+}
+.timer-btn {
+  background: none;
+  border: 1.5px solid var(--green);
+  color: var(--green);
+  border-radius: 6px;
+  padding: 2px 10px;
+  font-size: 0.78rem;
+  cursor: pointer;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  transition: all 0.2s;
+}
+.timer-btn:hover { background: var(--green); color: var(--navy); }
+.timer-warn { color: var(--red) !important; animation: pulse 0.7s ease-in-out infinite alternate; }
+@keyframes pulse { from { opacity: 1; } to { opacity: 0.4; } }
+
+/* ── Slides container ── */
+.slides-wrap {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 60px;
+}
+
+.slide {
+  display: none;
+  width: 100%;
+  max-width: 1100px;
+  padding: 0 24px 20px;
+  animation: slideIn 0.45s cubic-bezier(.4,0,.2,1);
+}
+.slide.active { display: block; }
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── INTRO slide ── */
+.intro-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: calc(100vh - 90px);
+  gap: 24px;
+}
+.neon-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(3.2rem, 7vw, 6rem);
+  letter-spacing: 4px;
+  line-height: 1;
+  color: var(--gold);
+  text-shadow: 0 0 40px rgba(245,200,66,0.5), 0 0 80px rgba(245,200,66,0.2);
+}
+.neon-title .sub { font-size: 55%; color: var(--white); display: block; letter-spacing: 8px; text-shadow: none; margin-top: 4px; }
+.intro-desc {
+  max-width: 600px;
+  font-size: 1.1rem;
+  color: var(--muted);
+  line-height: 1.7;
+}
+.intro-badges {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.badge {
+  background: var(--card-bg);
+  border: 1.5px solid var(--card-border);
+  border-radius: 99px;
+  padding: 6px 18px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--gold);
+}
+.intro-situations {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 700px;
+}
+.sit-pill {
+  background: var(--card-bg);
+  border: 1.5px solid var(--card-border);
+  border-radius: 10px;
+  padding: 8px 14px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.sit-pill:hover { border-color: var(--gold); color: var(--gold); transform: translateY(-2px); }
+
+/* ── Situation slide layout ── */
+.sit-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+.sit-emoji {
+  font-size: 2.8rem;
+  filter: drop-shadow(0 0 12px rgba(245,200,66,0.4));
+}
+.sit-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.4rem;
+  letter-spacing: 2px;
+  color: var(--gold);
+  line-height: 1;
+}
+.sit-title-en {
+  font-size: 0.9rem;
+  color: var(--muted);
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+.sit-num {
+  margin-left: auto;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 3.5rem;
+  color: var(--card-border);
+  line-height: 1;
+}
+
+/* ── Main grid ── */
+.sit-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.sit-grid-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 14px;
+}
+
+/* ── Section boxes ── */
+.section-box {
+  background: var(--card-bg);
+  border: 1.5px solid var(--card-border);
+  border-radius: 16px;
+  padding: 16px 18px;
+}
+.section-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 2px;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+/* ── Vocab cards flip ── */
+.vocab-section { grid-column: 1 / -1; }
+.vocab-grid {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.flip-card {
+  flex: 1;
+  min-width: 150px;
+  height: 100px;
+  perspective: 900px;
+  cursor: pointer;
+}
+.flip-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.55s cubic-bezier(.4,0,.2,1);
+  border-radius: 12px;
+}
+.flip-card.flipped .flip-inner { transform: rotateY(180deg); }
+.flip-front, .flip-back {
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  backface-visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  text-align: center;
+}
+.flip-front {
+  background: linear-gradient(135deg, #1a2f5a, #0f2044);
+  border: 1.5px solid var(--gold);
+}
+.flip-back {
+  background: linear-gradient(135deg, #0d3d2e, #0a2820);
+  border: 1.5px solid var(--green);
+  transform: rotateY(180deg);
+}
+.flip-word {
+  font-weight: 900;
+  font-size: 0.95rem;
+  color: var(--gold);
+  line-height: 1.2;
+}
+.flip-en {
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-top: 4px;
+}
+.flip-fr {
+  font-size: 0.8rem;
+  color: var(--green);
+  font-weight: 700;
+  line-height: 1.2;
+}
+.flip-ex {
+  font-size: 0.68rem;
+  color: rgba(255,255,255,0.5);
+  margin-top: 4px;
+  font-style: italic;
+}
+.flip-hint {
+  position: absolute;
+  bottom: 5px;
+  right: 8px;
+  font-size: 0.6rem;
+  color: rgba(255,255,255,0.25);
+}
+
+/* ── Situation description ── */
+.scene-box {
+  background: linear-gradient(135deg, #1a1a3a, #0f0f2e);
+  border: 1.5px solid #2d2d6e;
+  border-radius: 16px;
+  padding: 16px 18px;
+  grid-column: 1 / -1;
+}
+.scene-text {
+  font-size: 0.95rem;
+  line-height: 1.65;
+  color: rgba(240,244,255,0.85);
+}
+.scene-text strong { color: var(--white); }
+
+/* ── Challenge cards — true flip (clic 1 = révéler, clic 2 = cacher) ── */
+.challenge-wrap {
+  perspective: 1000px;
+  height: 180px;
+  cursor: pointer;
+}
+.challenge-flip {
+  position: relative;
+  width: 100%;
+  height: 180px;
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(.4,0,.2,1);
+  border-radius: 16px;
+}
+.challenge-wrap.flipped .challenge-flip { transform: rotateY(180deg); }
+
+.challenge-face {
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  padding: 16px 18px;
+  backface-visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.challenge-front-a {
+  background: linear-gradient(135deg, #2a0a0a, #1a0606);
+  border: 2px solid var(--red);
+  animation: wobble 3s ease-in-out infinite;
+}
+.challenge-front-b {
+  background: linear-gradient(135deg, #0a1a2a, #060f1a);
+  border: 2px solid #4a9eff;
+  animation: wobble 3s ease-in-out infinite 0.5s;
+}
+.challenge-wrap.flipped .challenge-front-a,
+.challenge-wrap.flipped .challenge-front-b { animation: none; }
+
+@keyframes wobble {
+  0%,100% { transform: rotate(0deg); }
+  25%      { transform: rotate(-0.4deg); }
+  75%      { transform: rotate(0.4deg); }
+}
+
+.challenge-back {
+  transform: rotateY(180deg);
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+.challenge-back-a {
+  background: linear-gradient(135deg, #1a0a2a, #120720);
+  border: 2px solid var(--red);
+}
+.challenge-back-b {
+  background: linear-gradient(135deg, #0a1525, #060d1a);
+  border: 2px solid #4a9eff;
+}
+
+.lock-icon {
+  font-size: 2.4rem;
+  display: block;
+  text-align: center;
+  margin-bottom: 6px;
+  animation: lock-float 2s ease-in-out infinite alternate;
+}
+@keyframes lock-float {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-5px); }
+}
+.challenge-wrap.flipped .lock-icon { animation: none; }
+
+.lock-label {
+  text-align: center;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.3rem;
+  letter-spacing: 2px;
+}
+.challenge-front-a .lock-label { color: var(--red); }
+.challenge-front-b .lock-label { color: #4a9eff; }
+.lock-sublabel {
+  text-align: center;
+  font-size: 0.72rem;
+  color: var(--muted);
+  margin-top: 4px;
+}
+.lock-retip {
+  text-align: center;
+  font-size: 0.62rem;
+  color: rgba(255,255,255,0.18);
+  margin-top: 10px;
+  font-style: italic;
+}
+
+.challenge-who {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.1rem;
+  letter-spacing: 2px;
+  margin-bottom: 6px;
+  width: 100%;
+}
+.challenge-back-a .challenge-who { color: var(--red); }
+.challenge-back-b .challenge-who { color: #4a9eff; }
+.challenge-text {
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: var(--white);
+  font-weight: 600;
+  width: 100%;
+}
+.challenge-en {
+  margin-top: 8px;
+  font-size: 0.78rem;
+  color: var(--muted);
+  font-style: italic;
+  line-height: 1.5;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  padding-top: 6px;
+  width: 100%;
+}
+
+/* ── Menu table (situation 5) ── */
+.menu-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+.menu-table th {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1rem;
+  letter-spacing: 1px;
+  padding: 6px 10px;
+  text-align: left;
+  border-bottom: 1.5px solid var(--gold);
+  color: var(--gold);
+}
+.menu-table td {
+  padding: 5px 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  line-height: 1.4;
+}
+.menu-table tr:first-child td { font-weight: 800; }
+.menu-table tr td:first-child { font-size: 0.7rem; color: var(--muted); }
+
+/* ── Navigation ── */
+.nav-wrap {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 12px 28px;
+  background: rgba(10,22,40,0.92);
+  backdrop-filter: blur(12px);
+  border-top: 1.5px solid var(--card-border);
+}
+.nav-btn {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1rem;
+  letter-spacing: 2px;
+  padding: 10px 28px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.nav-prev {
+  background: var(--card-bg);
+  color: var(--muted);
+  border: 1.5px solid var(--card-border);
+}
+.nav-prev:hover { border-color: var(--muted); color: var(--white); }
+.nav-next {
+  background: var(--gold);
+  color: var(--navy);
+  font-weight: 900;
+  box-shadow: 0 4px 24px rgba(245,200,66,0.3);
+}
+.nav-next:hover { background: var(--gold2); box-shadow: 0 4px 32px rgba(245,200,66,0.5); transform: translateY(-1px); }
+.nav-dots {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.nav-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--card-border);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.nav-dot.active { background: var(--gold); transform: scale(1.4); }
+.nav-dot:hover { background: var(--muted); }
+
+/* ── Confetti ── */
+.confetti-piece {
+  position: fixed;
+  width: 10px;
+  height: 10px;
+  pointer-events: none;
+  z-index: 9999;
+  border-radius: 2px;
+  animation: confetti-fall 1.2s ease-in forwards;
+}
+@keyframes confetti-fall {
+  0%   { opacity: 1; transform: translateY(-20px) rotate(0deg) scale(1); }
+  100% { opacity: 0; transform: translateY(400px) rotate(720deg) scale(0.3); }
+}
+
+/* ── Scrollable content ── */
+.slide-inner {
+  max-height: calc(100vh - 130px);
+  overflow-y: auto;
+  padding-bottom: 8px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--card-border) transparent;
+}
+
+/* ── Accents per situation ── */
+.accent-orange { --accent: #ff8c42; }
+.accent-sky    { --accent: #38b2e8; }
+.accent-lime   { --accent: #a8e063; }
+.accent-pink   { --accent: #f06292; }
+.accent-teal   { --accent: #2ec4b6; }
+.accent-purple { --accent: #b39ddb; }
+.accent-cyan   { --accent: #4dd0e1; }
+.accent-rose   { --accent: #ef9a9a; }
+.accent-amber  { --accent: #ffca28; }
+
+.sit-title.accent { color: var(--accent, var(--gold)); }
+.section-box.accent-border { border-color: var(--accent, var(--card-border)); }
+.flip-front.accent-card { border-color: var(--accent, var(--gold)); }
+.flip-word.accent-word { color: var(--accent, var(--gold)); }
+
+</style>
+</head>
+<body>
+
+<!-- Stars background -->
+<div class="stars" id="stars"></div>
+
+<!-- Top bar -->
+<div class="topbar">
+  <div class="topbar-logo">👑 King<span>Cretot</span> <span style="color:var(--muted);font-size:0.85rem;letter-spacing:1px;">ROLEPLAY GAME</span></div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  <div class="slide-counter">Situation <span id="slideNum">—</span> / 9</div>
+  <div class="timer-wrap" style="margin-left:18px;">
+    <div class="timer-display" id="timerDisplay">3:00</div>
+    <button class="timer-btn" id="timerBtn" onclick="toggleTimer()">▶ GO</button>
+  </div>
+</div>
+
+<!-- Navigation -->
+<div class="nav-wrap">
+  <button class="nav-btn nav-prev" onclick="prevSlide()">◀ PRÉCÉDENT</button>
+  <div class="nav-dots" id="navDots"></div>
+  <button class="nav-btn nav-next" onclick="nextSlide()">SUIVANT ▶</button>
+</div>
+
+<!-- SLIDES WRAPPER -->
+<div class="slides-wrap">
+
+<!-- ════════════════════════════════════════════
+     SLIDE 0 — INTRO
+════════════════════════════════════════════ -->
+<div class="slide active" id="slide-0">
+  <div class="intro-wrap">
+    <div class="neon-title">
+      🎬 ROLEPLAY GAME
+      <span class="sub">KINGCRETOT EXPERIENCE</span>
+    </div>
+    <p class="intro-desc">9 situations authentiques à jouer en duo. Chaque joueur a une <strong style="color:var(--gold)">mission secrète</strong>. Prêt à improviser en français ?</p>
+    <div class="intro-badges">
+      <div class="badge">🎯 Niveau B1–B2</div>
+      <div class="badge">⏱️ 3 min / situation</div>
+      <div class="badge">👥 2 étudiants</div>
+      <div class="badge">🇫🇷 En français !</div>
+    </div>
+    <p style="font-size:0.85rem;color:var(--muted);margin-top:8px;">Cliquez sur une situation pour y aller directement, ou utilisez les boutons de navigation</p>
+    <div class="intro-situations">
+      <div class="sit-pill" onclick="goToSlide(1)">🚌 Transport</div>
+      <div class="sit-pill" onclick="goToSlide(2)">✈️ Aéroport</div>
+      <div class="sit-pill" onclick="goToSlide(3)">🏙️ Dans la rue</div>
+      <div class="sit-pill" onclick="goToSlide(4)">🏨 À l'hôtel</div>
+      <div class="sit-pill" onclick="goToSlide(5)">🍴 Au restaurant</div>
+      <div class="sit-pill" onclick="goToSlide(6)">🛍️ Dans un magasin</div>
+      <div class="sit-pill" onclick="goToSlide(7)">🛒 Au supermarché</div>
+      <div class="sit-pill" onclick="goToSlide(8)">💊 À la pharmacie</div>
+      <div class="sit-pill" onclick="goToSlide(9)">🖼️ Au musée</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     SITUATION 1 — TRANSPORT 🚌
+════════════════════════════════════════════ -->
+<div class="slide accent-orange" id="slide-1">
+  <div class="slide-inner">
+    <div class="sit-header">
+      <div class="sit-emoji">🚌</div>
+      <div>
+        <div class="sit-title accent">TRANSPORT</div>
+        <div class="sit-title-en">Getting around by bus</div>
+      </div>
+      <div class="sit-num">01</div>
+    </div>
+
+    <div class="section-box" style="margin-bottom:12px;">
+      <div class="section-label">📚 Vocabulaire clé — cliquez sur chaque carte</div>
+      <div class="vocab-grid">
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">L'arrêt de bus</div><div class="flip-en">The bus stop</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">L'arrêt de bus</div><div class="flip-ex">« Où est l'arrêt de bus, s'il vous plaît ? »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">Le trajet</div><div class="flip-en">The journey / trip</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">Le trajet</div><div class="flip-ex">« Le trajet dure combien de temps ? »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">La correspondance</div><div class="flip-en">The connection / transfer</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">La correspondance</div><div class="flip-ex">« Est-ce que je dois prendre une correspondance ? »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">Changer de ligne</div><div class="flip-en">To change lines</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">Changer de ligne</div><div class="flip-ex">« Je dois changer de ligne pour aller au centre-ville ? »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">Le terminus</div><div class="flip-en">The last stop / end of the line</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">Le terminus</div><div class="flip-ex">« Est-ce que vous allez jusqu'au terminus ? »</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="scene-box" style="margin-bottom:12px;">
+      <div class="section-label">🎬 La situation</div>
+      <div class="scene-text">Un passager monte dans un bus en pleine ville. Le conducteur est connu dans tout Paris pour sa façon très personnelle de travailler. Le passager, lui, a quelque chose d'important à lui demander.<br><span style="font-size:0.82rem;color:var(--muted);font-style:italic;display:block;margin-top:6px;">A passenger gets on a bus in the city. The driver is known all over Paris for his very personal way of working. The passenger has something important to ask him.</span></div>
+    </div>
+
+    <div class="sit-grid">
+      <div class="challenge-wrap" onclick="revealChallenge(this)">
+        <div class="challenge-flip">
+          <div class="challenge-face challenge-front-a">
+            <span class="lock-icon">🔒</span>
+            <div class="lock-label">MISSION SECRÈTE A</div>
+            <div class="lock-sublabel">Le conducteur — cliquez pour révéler</div>
+            <div class="lock-retip">cliquez à nouveau pour cacher</div>
+          </div>
+          <div class="challenge-face challenge-back challenge-back-a">
+            <div class="challenge-who">🎤 JOUEUR A — Le conducteur</div>
+            <div class="challenge-text">Tu dois chanter TOUTES tes réponses. Tu ne peux pas parler normalement. Si tu oublies de chanter, tu dois recommencer la phrase en chantant !</div>
+            <div class="challenge-en">You must SING all your answers. You cannot speak normally. If you forget to sing, restart the sentence.</div>
+          </div>
+        </div>
+      </div>
+      <div class="challenge-wrap" onclick="revealChallenge(this)">
+        <div class="challenge-flip">
+          <div class="challenge-face challenge-front-b">
+            <span class="lock-icon">🔒</span>
+            <div class="lock-label">MISSION SECRÈTE B</div>
+            <div class="lock-sublabel">Le passager — cliquez pour révéler</div>
+            <div class="lock-retip">cliquez à nouveau pour cacher</div>
+          </div>
+          <div class="challenge-face challenge-back challenge-back-b">
+            <div class="challenge-who">🧍 JOUEUR B — Le passager</div>
+            <div class="challenge-text">Tu veux changer l'itinéraire du bus à cause d'une urgence. Commence très très gentiment et poliment. À chaque refus du conducteur, ton ton devient de plus en plus agressif et dramatique.</div>
+            <div class="challenge-en">You want to change the bus route because of an emergency. Start very gently and politely. With each refusal, your tone becomes increasingly aggressive and dramatic.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     SITUATION 2 — AÉROPORT ✈️
+════════════════════════════════════════════ -->
+<div class="slide accent-sky" id="slide-2">
+  <div class="slide-inner">
+    <div class="sit-header">
+      <div class="sit-emoji">✈️</div>
+      <div>
+        <div class="sit-title accent">À L'AÉROPORT</div>
+        <div class="sit-title-en">At the airport</div>
+      </div>
+      <div class="sit-num">02</div>
+    </div>
+
+    <div class="section-box" style="margin-bottom:12px;">
+      <div class="section-label">📚 Vocabulaire clé — cliquez sur chaque carte</div>
+      <div class="vocab-grid">
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">L'enregistrement</div><div class="flip-en">Check-in</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">L'enregistrement</div><div class="flip-ex">« Je voudrais faire mon enregistrement au comptoir. »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">La porte d'embarquement</div><div class="flip-en">The boarding gate</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">La porte d'embarquement</div><div class="flip-ex">« Où se trouve la porte d'embarquement numéro 5 ? »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">Le vol est retardé</div><div class="flip-en">The flight is delayed</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">Le vol est retardé / annulé</div><div class="flip-ex">« Mon vol est retardé de deux heures. »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">L'excédent de bagages</div><div class="flip-en">Excess baggage</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">L'excédent de bagages</div><div class="flip-ex">« Combien je dois payer pour l'excédent de bagages ? »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">La carte d'embarquement</div><div class="flip-en">The boarding pass</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">La carte d'embarquement</div><div class="flip-ex">« Vous pouvez m'imprimer ma carte d'embarquement ? »</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="scene-box" style="margin-bottom:12px;">
+      <div class="section-label">🎬 La situation</div>
+      <div class="scene-text">Un passager arrive au comptoir d'enregistrement. L'agent a plusieurs mauvaises nouvelles à annoncer. Le passager, lui, profite de la situation pour poser des questions très surprenantes.<br><span style="font-size:0.82rem;color:var(--muted);font-style:italic;display:block;margin-top:6px;">A passenger arrives at the check-in desk. The agent has some bad news to share. The passenger, meanwhile, takes the opportunity to ask some very surprising questions.</span></div>
+    </div>
+
+    <div class="sit-grid">
+      <div class="challenge-wrap" onclick="revealChallenge(this)">
+        <div class="challenge-flip">
+          <div class="challenge-face challenge-front-a">
+            <span class="lock-icon">🔒</span>
+            <div class="lock-label">MISSION SECRÈTE A</div>
+            <div class="lock-sublabel">L'agent — cliquez pour révéler</div>
+            <div class="lock-retip">cliquez à nouveau pour cacher</div>
+          </div>
+          <div class="challenge-face challenge-back challenge-back-a">
+            <div class="challenge-who">👮 JOUEUR A — L'agent d'embarquement</div>
+            <div class="challenge-text">Tu dois annoncer 3 mauvaises nouvelles au passager, dans cet ordre : 1) La météo est catastrophique à destination, 2) Le vol a 2 heures de retard, 3) Les hôtesses sont en grève, donc pas de service à bord. Sois professionnel mais sans aucune empathie.</div>
+            <div class="challenge-en">Announce 3 bad news items: 1) Terrible weather at destination, 2) 2-hour flight delay, 3) Flight attendants are on strike, no in-flight service. Be professional but show zero empathy.</div>
+          </div>
+        </div>
+      </div>
+      <div class="challenge-wrap" onclick="revealChallenge(this)">
+        <div class="challenge-flip">
+          <div class="challenge-face challenge-front-b">
+            <span class="lock-icon">🔒</span>
+            <div class="lock-label">MISSION SECRÈTE B</div>
+            <div class="lock-sublabel">Le passager — cliquez pour révéler</div>
+            <div class="lock-retip">cliquez à nouveau pour cacher</div>
+          </div>
+          <div class="challenge-face challenge-back challenge-back-b">
+            <div class="challenge-who">🧳 JOUEUR B — Le passager</div>
+            <div class="challenge-text">En réaction aux mauvaises nouvelles, tu dois poser 2 questions totalement surprenantes à l'agent. Par exemple : « Est-ce que l'avion a un DJ ? » ou « Est-ce que je peux apporter mon propre repas ? ». Sois très sérieux quand tu poses ces questions.</div>
+            <div class="challenge-en">React to the bad news by asking 2 completely surprising questions to the agent. Be very serious when you ask them — no laughing!</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     SITUATION 3 — DANS LA RUE 🏙️
+════════════════════════════════════════════ -->
+<div class="slide accent-lime" id="slide-3">
+  <div class="slide-inner">
+    <div class="sit-header">
+      <div class="sit-emoji">🏙️</div>
+      <div>
+        <div class="sit-title accent">DANS LA RUE</div>
+        <div class="sit-title-en">In the street</div>
+      </div>
+      <div class="sit-num">03</div>
+    </div>
+
+    <div class="section-box" style="margin-bottom:12px;">
+      <div class="section-label">📚 Vocabulaire clé — cliquez sur chaque carte</div>
+      <div class="vocab-grid">
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">Un renseignement</div><div class="flip-en">A piece of information</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">Un renseignement</div><div class="flip-ex">« Je pourrais vous demander un renseignement ? »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">Dans le coin</div><div class="flip-en">Around here / nearby</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">Dans le coin</div><div class="flip-ex">« La cathédrale est dans le coin ? »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">À pied</div><div class="flip-en">On foot / walking</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">À pied</div><div class="flip-ex">« C'est possible d'y aller à pied ? »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">Je ne suis pas d'ici</div><div class="flip-en">I'm not from here</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">Je ne suis pas d'ici</div><div class="flip-ex">« Je suis désolé, je ne suis pas d'ici. »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">Je n'ai pas fait exprès</div><div class="flip-en">I didn't do it on purpose</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">Je n'ai pas fait exprès</div><div class="flip-ex">« Excusez-moi, je n'ai pas fait exprès ! »</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="scene-box" style="margin-bottom:12px;">
+      <div class="section-label">🎬 La situation</div>
+      <div class="scene-text">Un touriste perdu dans les rues de Paris arrête un passant pour lui demander son chemin. Le passant est adorable, très bavard et très sociable. Les deux ont des caractères bien trempés !<br><span style="font-size:0.82rem;color:var(--muted);font-style:italic;display:block;margin-top:6px;">A tourist lost in the streets of Paris stops a passer-by to ask for directions. The passer-by is lovely, very chatty and very sociable. Both have very strong personalities!</span></div>
+    </div>
+
+    <div class="sit-grid">
+      <div class="challenge-wrap" onclick="revealChallenge(this)">
+        <div class="challenge-flip">
+          <div class="challenge-face challenge-front-a">
+            <span class="lock-icon">🔒</span>
+            <div class="lock-label">MISSION SECRÈTE A</div>
+            <div class="lock-sublabel">Le touriste — cliquez pour révéler</div>
+            <div class="lock-retip">cliquez à nouveau pour cacher</div>
+          </div>
+          <div class="challenge-face challenge-back challenge-back-a">
+            <div class="challenge-who">🗺️ JOUEUR A — Le touriste</div>
+            <div class="challenge-text">Tu cherches ton chemin. Tu dois poser ta question 2 fois de suite, mais avec des mots différents à chaque fois. Par exemple : « Où est la cathédrale ? » puis « Pouvez-vous m'indiquer comment trouver la cathédrale ? »</div>
+            <div class="challenge-en">You're lost. Ask your question twice in a row, but using different words each time. You must rephrase completely — no repeating the same sentence.</div>
+          </div>
+        </div>
+      </div>
+      <div class="challenge-wrap" onclick="revealChallenge(this)">
+        <div class="challenge-flip">
+          <div class="challenge-face challenge-front-b">
+            <span class="lock-icon">🔒</span>
+            <div class="lock-label">MISSION SECRÈTE B</div>
+            <div class="lock-sublabel">Le passant — cliquez pour révéler</div>
+            <div class="lock-retip">cliquez à nouveau pour cacher</div>
+          </div>
+          <div class="challenge-face challenge-back challenge-back-b">
+            <div class="challenge-who">😄 JOUEUR B — Le passant très sociable</div>
+            <div class="challenge-text">Tu es très sympa, très bavard et tu ADORES les touristes. Mais tu réponds toujours à côté ! Si on te demande où est la cathédrale, tu parles du meilleur restaurant du quartier. Si on te demande comment aller à pied, tu parles de ton chien. Reste naturel et enthousiaste !</div>
+            <div class="challenge-en">You're very friendly and love tourists. But you ALWAYS answer the wrong thing! If someone asks for directions, you talk about the best restaurant nearby. Stay natural and enthusiastic.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     SITUATION 4 — À L'HÔTEL 🏨
+════════════════════════════════════════════ -->
+<div class="slide accent-pink" id="slide-4">
+  <div class="slide-inner">
+    <div class="sit-header">
+      <div class="sit-emoji">🏨</div>
+      <div>
+        <div class="sit-title accent">À L'HÔTEL</div>
+        <div class="sit-title-en">At the hotel</div>
+      </div>
+      <div class="sit-num">04</div>
+    </div>
+
+    <div class="section-box" style="margin-bottom:12px;">
+      <div class="section-label">📚 Vocabulaire clé — cliquez sur chaque carte</div>
+      <div class="vocab-grid">
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">J'ai réservé</div><div class="flip-en">I have a reservation</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">J'ai réservé</div><div class="flip-ex">« Bonjour, j'ai réservé une chambre pour 3 nuits. »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">Libérer la chambre</div><div class="flip-en">To check out</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">Libérer la chambre</div><div class="flip-ex">« À quelle heure je dois libérer la chambre ? »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">Une couverture supplémentaire</div><div class="flip-en">An extra blanket</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">Une couverture supplémentaire</div><div class="flip-ex">« Je pourrais avoir une couverture supplémentaire ? »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">La climatisation</div><div class="flip-en">The air conditioning</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">La climatisation</div><div class="flip-ex">« La climatisation ne marche pas dans ma chambre. »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">Un double de la clé</div><div class="flip-en">A spare key / copy of the key</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">Un double de la clé</div><div class="flip-ex">« C'est possible d'avoir un double de la clé ? »</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="scene-box" style="margin-bottom:12px;">
+      <div class="section-label">🎬 La situation</div>
+      <div class="scene-text">Un client arrive à la réception d'un hôtel parisien. La réceptionniste a un don très particulier : elle peut <strong>lire l'avenir dans les chaussettes</strong>. Elle attribue les chambres selon leur couleur et prédit l'avenir de chaque client. Le client, lui, a des demandes très particulières.<br><span style="font-size:0.82rem;color:var(--muted);font-style:italic;display:block;margin-top:6px;">A guest arrives at a Parisian hotel. The receptionist has a very special gift: she can <em>read the future in socks</em>. She assigns rooms based on their colour and predicts each guest's stay. The guest, meanwhile, has some very unusual requests.</span></div>
+    </div>
+
+    <div class="sit-grid">
+      <div class="challenge-wrap" onclick="revealChallenge(this)">
+        <div class="challenge-flip">
+          <div class="challenge-face challenge-front-a">
+            <span class="lock-icon">🔒</span>
+            <div class="lock-label">MISSION SECRÈTE A</div>
+            <div class="lock-sublabel">La réceptionniste — cliquez pour révéler</div>
+            <div class="lock-retip">cliquez à nouveau pour cacher</div>
+          </div>
+          <div class="challenge-face challenge-back challenge-back-a">
+            <div class="challenge-who">🧦 JOUEUR A — La réceptionniste voyante</div>
+            <div class="challenge-text">Tu attribues les chambres selon la couleur des chaussettes du client. Et tu as un don : tu peux prédire son séjour ! Par exemple : « Vos chaussettes bleues me disent que vous allez perdre votre clé mardi » ou « Avec des chaussettes comme ça, vous allez commander le room service à 3h du matin. »</div>
+            <div class="challenge-en">You assign rooms based on the guest's sock colour and predict their stay! e.g. "Your blue socks tell me you'll lose your key on Tuesday." Be very serious and confident about your predictions.</div>
+          </div>
+        </div>
+      </div>
+      <div class="challenge-wrap" onclick="revealChallenge(this)">
+        <div class="challenge-flip">
+          <div class="challenge-face challenge-front-b">
+            <span class="lock-icon">🔒</span>
+            <div class="lock-label">MISSION SECRÈTE B</div>
+            <div class="lock-sublabel">Le client — cliquez pour révéler</div>
+            <div class="lock-retip">cliquez à nouveau pour cacher</div>
+          </div>
+          <div class="challenge-face challenge-back challenge-back-b">
+            <div class="challenge-who">🐒 JOUEUR B — Le client surprenant</div>
+            <div class="challenge-text">Tu fais 2 demandes absurdes à la réceptionniste avec le plus grand sérieux : 1) « Est-ce que l'hôtel accepte les singes ? J'ai mon singe avec moi. » 2) « À quelle heure est la visite guidée de l'hôtel ? »</div>
+            <div class="challenge-en">Make 2 absurd requests with complete seriousness: 1) "Does the hotel accept monkeys? I have my monkey with me." 2) "What time is the hotel guided tour?"</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     SITUATION 5 — AU RESTAURANT 🍴
+════════════════════════════════════════════ -->
+<div class="slide accent-teal" id="slide-5">
+  <div class="slide-inner">
+    <div class="sit-header">
+      <div class="sit-emoji">🍴</div>
+      <div>
+        <div class="sit-title accent">AU RESTAURANT</div>
+        <div class="sit-title-en">At the restaurant</div>
+      </div>
+      <div class="sit-num">05</div>
+    </div>
+
+    <div class="section-box" style="margin-bottom:10px;">
+      <div class="section-label">📚 Vocabulaire clé — cliquez sur chaque carte</div>
+      <div class="vocab-grid">
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">Le plat du jour</div><div class="flip-en">Today's special</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">Le plat du jour</div><div class="flip-ex">« Quel est le plat du jour, s'il vous plaît ? »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">La formule complète</div><div class="flip-en">The full set menu</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">La formule complète</div><div class="flip-ex">« Je vais prendre la formule complète : entrée, plat et dessert. »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">Je suis allergique à...</div><div class="flip-en">I'm allergic to...</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">Je suis allergique à...</div><div class="flip-ex">« Je suis allergique au gluten et aux noix. »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">L'addition</div><div class="flip-en">The bill / check</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">L'addition, s'il vous plaît</div><div class="flip-ex">« L'addition, s'il vous plaît ? Je vais régler par carte. »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">Une carafe d'eau</div><div class="flip-en">A jug of water (free!)</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">Une carafe d'eau</div><div class="flip-ex">« Une carafe d'eau et un peu plus de pain, s'il vous plaît. »</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-box" style="margin-bottom:10px;padding:12px 14px;">
+      <div class="section-label">🍽️ Menu du Restaurant "Le Mystère"</div>
+      <table class="menu-table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>🥂 Apéros</th>
+            <th>🥗 Entrées</th>
+            <th>🍖 Plats</th>
+            <th>🍮 Desserts</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>★</td>
+            <td>Kir royal</td>
+            <td>Soupe à l'oignon gratinée</td>
+            <td>Quiche lorraine tiède au saumon fumé</td>
+            <td>Crème brûlée à la vanille</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td>Velouté de carottes au gingembre</td>
+            <td>Escargots façon provençale</td>
+            <td>Entrecôte grillée sauce béarnaise</td>
+            <td>Tarte tatin à l'endroit</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td>Limonade maison à la menthe</td>
+            <td>Salade landaise aux noix</td>
+            <td>Dos de cabillaud beurre blanc</td>
+            <td>Mousse au chocolat blanc-noir</td>
+          </tr>
+        </tbody>
+      </table>
+      
+    </div>
+
+    <div class="sit-grid">
+      <div class="challenge-wrap" onclick="revealChallenge(this)">
+        <div class="challenge-flip">
+          <div class="challenge-face challenge-front-a">
+            <span class="lock-icon">🔒</span>
+            <div class="lock-label">MISSION SECRÈTE A</div>
+            <div class="lock-sublabel">Le serveur — cliquez pour révéler</div>
+            <div class="lock-retip">cliquez à nouveau pour cacher</div>
+          </div>
+          <div class="challenge-face challenge-back challenge-back-a">
+            <div class="challenge-who">🧑‍🍳 JOUEUR A — Le serveur passionné</div>
+            <div class="challenge-text">Tu dois convaincre le client de prendre les 4 premiers plats de chaque catégorie : le kir royal, la soupe à l'oignon gratinée, la quiche lorraine tiède au saumon fumé et la crème brûlée à la vanille. Pour chacun, invente une qualité absurde mais enthousiaste ! Ex : « La quiche froide au poisson, c'est notre spécialité, le froid préserve toutes les vitamines ! »</div>
+            <div class="challenge-en">Convince the customer to order the 4 first items of each category: kir royal, onion soup, warm quiche, and crème brûlée. For each one, invent an absurd but enthusiastic selling point! Be passionate and over-the-top.</div>
+          </div>
+        </div>
+      </div>
+      <div class="challenge-wrap" onclick="revealChallenge(this)">
+        <div class="challenge-flip">
+          <div class="challenge-face challenge-front-b">
+            <span class="lock-icon">🔒</span>
+            <div class="lock-label">MISSION SECRÈTE B</div>
+            <div class="lock-sublabel">Le client — cliquez pour révéler</div>
+            <div class="lock-retip">cliquez à nouveau pour cacher</div>
+          </div>
+          <div class="challenge-face challenge-back challenge-back-b">
+            <div class="challenge-who">😋 JOUEUR B — Le client indécis</div>
+            <div class="challenge-text">Tu dois changer d'avis au moins 1 fois pour chaque catégorie (apéro, entrée, plat, dessert). Tu peux commencer par refuser, puis accepter, ou accepter et puis changer. Joue avec tes émotions : curieux, enthousiaste, déçu, convaincu...</div>
+            <div class="challenge-en">You must change your mind at least once for each category (drink, starter, main, dessert). Play with your emotions: curious, enthusiastic, disappointed, convinced...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     SITUATION 6 — DANS UN MAGASIN 🛍️
+════════════════════════════════════════════ -->
+<div class="slide accent-purple" id="slide-6">
+  <div class="slide-inner">
+    <div class="sit-header">
+      <div class="sit-emoji">🛍️</div>
+      <div>
+        <div class="sit-title accent">DANS UN MAGASIN</div>
+        <div class="sit-title-en">In a clothing store</div>
+      </div>
+      <div class="sit-num">06</div>
+    </div>
+
+    <div class="section-box" style="margin-bottom:12px;">
+      <div class="section-label">📚 Vocabulaire clé — cliquez sur chaque carte</div>
+      <div class="vocab-grid">
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">La matière</div><div class="flip-en">The material / fabric</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">La matière</div><div class="flip-ex">« Ce pantalon est en quelle matière ? C'est du coton ? »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">La taille</div><div class="flip-en">The size</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">La taille</div><div class="flip-ex">« Est-ce que vous avez d'autres tailles ? Je fais du M. »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">Imperméable</div><div class="flip-en">Waterproof</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">Imperméable</div><div class="flip-ex">« J'ai besoin d'un vêtement chaud, imperméable et léger. »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">Ça se repasse ?</div><div class="flip-en">Does it need ironing?</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">Ça se repasse facilement ?</div><div class="flip-ex">« Ce tissu, ça se repasse facilement ? On peut le mettre à la machine ? »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">Une tenue pour...</div><div class="flip-en">An outfit for...</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">Une tenue pour une soirée</div><div class="flip-ex">« Je cherche une tenue pour une soirée très particulière. »</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="scene-box" style="margin-bottom:12px;">
+      <div class="section-label">🎬 La situation</div>
+      <div class="scene-text">Un client entre dans une boutique de vêtements parisienne. Il cherche quelque chose pour une occasion très spéciale. Le vendeur est particulièrement enthousiaste et attentionné.<br><span style="font-size:0.82rem;color:var(--muted);font-style:italic;display:block;margin-top:6px;">A customer walks into a Parisian clothing store. He's looking for something for a very special occasion. The salesperson is particularly enthusiastic and attentive.</span></div>
+    </div>
+
+    <div class="sit-grid">
+      <div class="challenge-wrap" onclick="revealChallenge(this)">
+        <div class="challenge-flip">
+          <div class="challenge-face challenge-front-a">
+            <span class="lock-icon">🔒</span>
+            <div class="lock-label">MISSION SECRÈTE A</div>
+            <div class="lock-sublabel">Le vendeur — cliquez pour révéler</div>
+            <div class="lock-retip">cliquez à nouveau pour cacher</div>
+          </div>
+          <div class="challenge-face challenge-back challenge-back-a">
+            <div class="challenge-who">🏋️ JOUEUR A — Le vendeur coach bien-être</div>
+            <div class="challenge-text">Tu aides le client, mais tu glisses UN conseil de régime ou bien-être à chaque fois que tu parles. Exemples : « Ce jean vous irait très bien, et sachez que marcher 30 minutes par jour fait des miracles ! » / « La laine, c'est parfait, comme manger des légumes verts le matin ! » / « Je vous conseille ce modèle, et pensez à boire 2 litres d'eau par jour ! »</div>
+            <div class="challenge-en">Help the customer, but slip ONE health/wellness tip into every single thing you say. e.g. "This jacket is perfect for you... and remember, 30 mins of walking a day works wonders!"</div>
+          </div>
+        </div>
+      </div>
+      <div class="challenge-wrap" onclick="revealChallenge(this)">
+        <div class="challenge-flip">
+          <div class="challenge-face challenge-front-b">
+            <span class="lock-icon">🔒</span>
+            <div class="lock-label">MISSION SECRÈTE B</div>
+            <div class="lock-sublabel">Le client — cliquez pour révéler</div>
+            <div class="lock-retip">cliquez à nouveau pour cacher</div>
+          </div>
+          <div class="challenge-face challenge-back challenge-back-b">
+            <div class="challenge-who">🌙 JOUEUR B — Le client lunaire</div>
+            <div class="challenge-text">Tu cherches une tenue pour un mariage sur la Lune. Tu dois décrire tes contraintes sans jamais dire les mots « bizarre » ou « spécial ». Les contraintes : résistant au vide spatial, élégant, et facile à mettre avec un casque d'astronaute.</div>
+            <div class="challenge-en">You need an outfit for a wedding on the Moon. Describe your constraints without ever saying "weird" or "special". Constraints: resistant to space vacuum, elegant, easy to wear with an astronaut helmet.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     SITUATION 7 — AU SUPERMARCHÉ 🛒
+════════════════════════════════════════════ -->
+<div class="slide accent-cyan" id="slide-7">
+  <div class="slide-inner">
+    <div class="sit-header">
+      <div class="sit-emoji">🛒</div>
+      <div>
+        <div class="sit-title accent">AU SUPERMARCHÉ</div>
+        <div class="sit-title-en">At the supermarket</div>
+      </div>
+      <div class="sit-num">07</div>
+    </div>
+
+    <div class="section-box" style="margin-bottom:12px;">
+      <div class="section-label">📚 Vocabulaire clé — cliquez sur chaque carte</div>
+      <div class="vocab-grid">
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">Le rayon</div><div class="flip-en">The aisle / section</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">Le rayon</div><div class="flip-ex">« Excusez-moi, où se trouve le rayon fromage ? »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">Un chariot / un Caddie</div><div class="flip-en">A shopping cart / trolley</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">Un chariot (= un Caddie)</div><div class="flip-ex">« Où sont les paniers et les chariots, s'il vous plaît ? »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">Ce sera tout</div><div class="flip-en">That'll be all / that's everything</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">Ce sera tout</div><div class="flip-ex">« Ce sera tout, merci ! Je n'ai besoin de rien d'autre. »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">La balance</div><div class="flip-en">The scale / weighing machine</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">La balance</div><div class="flip-ex">« Où se trouve la balance pour peser les fruits ? »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">Le ticket de caisse</div><div class="flip-en">The receipt</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">Le ticket de caisse</div><div class="flip-ex">« Non merci, je n'ai pas besoin du ticket de caisse. »</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="scene-box" style="margin-bottom:12px;">
+      <div class="section-label">🎬 La situation</div>
+      <div class="scene-text">Un client fait ses courses au supermarché. Le caissier est très bavard et s'intéresse beaucoup à la vie de ses clients. Un échange qui va vite devenir inattendu !<br><span style="font-size:0.82rem;color:var(--muted);font-style:italic;display:block;margin-top:6px;">A customer is doing their shopping at the supermarket. The cashier is very chatty and loves getting to know his customers. An exchange that will quickly take an unexpected turn!</span></div>
+    </div>
+
+    <div class="sit-grid">
+      <div class="challenge-wrap" onclick="revealChallenge(this)">
+        <div class="challenge-flip">
+          <div class="challenge-face challenge-front-a">
+            <span class="lock-icon">🔒</span>
+            <div class="lock-label">MISSION SECRÈTE A</div>
+            <div class="lock-sublabel">Le caissier — cliquez pour révéler</div>
+            <div class="lock-retip">cliquez à nouveau pour cacher</div>
+          </div>
+          <div class="challenge-face challenge-back challenge-back-a">
+            <div class="challenge-who">🕵️ JOUEUR A — Le caissier espion</div>
+            <div class="challenge-text">Tu as une mission secrète ! Tu dois découvrir, de manière naturelle pendant la conversation, si B aime : 1) voyager, 2) danser, 3) faire du vélo. Tu ne peux pas poser ces questions directement.</div>
+            <div class="challenge-en">Secret mission: find out naturally if B likes: 1) travelling, 2) dancing, 3) cycling. You cannot ask directly!</div>
+          </div>
+        </div>
+      </div>
+      <div class="challenge-wrap" onclick="revealChallenge(this)">
+        <div class="challenge-flip">
+          <div class="challenge-face challenge-front-b">
+            <span class="lock-icon">🔒</span>
+            <div class="lock-label">MISSION SECRÈTE B</div>
+            <div class="lock-sublabel">Le client — cliquez pour révéler</div>
+            <div class="lock-retip">cliquez à nouveau pour cacher</div>
+          </div>
+          <div class="challenge-face challenge-back challenge-back-b">
+            <div class="challenge-who">🚫 JOUEUR B — Le client sans oui ni non</div>
+            <div class="challenge-text">Tu ne peux JAMAIS dire « oui », « non » ou « peut-être » ! Tu dois trouver d'autres façons de répondre. Ex : « Absolument ! » / « Pas du tout ! » / « C'est possible... » / « Exactement ! » / « Je ne pense pas... »</div>
+            <div class="challenge-en">You can NEVER say "yes", "no" or "maybe"! Find other ways to answer. e.g. "Absolutely!" / "Not at all!" / "That's possible..."</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     SITUATION 8 — À LA PHARMACIE 💊
+════════════════════════════════════════════ -->
+<div class="slide accent-rose" id="slide-8">
+  <div class="slide-inner">
+    <div class="sit-header">
+      <div class="sit-emoji">💊</div>
+      <div>
+        <div class="sit-title accent">À LA PHARMACIE</div>
+        <div class="sit-title-en">At the pharmacy</div>
+      </div>
+      <div class="sit-num">08</div>
+    </div>
+
+    <div class="section-box" style="margin-bottom:12px;">
+      <div class="section-label">📚 Vocabulaire clé — cliquez sur chaque carte</div>
+      <div class="vocab-grid">
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">J'ai mal à...</div><div class="flip-en">I have a pain in... / My ... hurts</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">J'ai mal à la tête / gorge / dos</div><div class="flip-ex">« J'ai mal à la gorge depuis 3 jours. »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">Une ordonnance</div><div class="flip-en">A prescription</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">Une ordonnance</div><div class="flip-ex">« Je n'ai pas d'ordonnance, mais j'ai vraiment besoin de ce médicament. »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">À jeun</div><div class="flip-en">On an empty stomach</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">À jeun</div><div class="flip-ex">« Je dois prendre ce médicament à jeun ou après les repas ? »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">Des pansements</div><div class="flip-en">Bandages / plasters</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">Des pansements</div><div class="flip-ex">« Est-ce que vous avez des pansements et un antiseptique ? »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">Comment je dois prendre...?</div><div class="flip-en">How should I take...?</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">Comment je dois prendre ce médicament ?</div><div class="flip-ex">« Je dois prendre combien de comprimés par jour ? »</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="scene-box" style="margin-bottom:12px;">
+      <div class="section-label">🎬 La situation</div>
+      <div class="scene-text">Un patient entre dans une pharmacie française avec des symptômes très inhabituels. Le pharmacien est convaincu que le fromage expiré est le remède universel. Un dialogue scientifiquement douteux mais culturellement enrichissant !<br><span style="font-size:0.82rem;color:var(--muted);font-style:italic;display:block;margin-top:6px;">A patient walks into a French pharmacy with some very unusual symptoms. The pharmacist is convinced that expired cheese is the universal remedy. A scientifically questionable but culturally enriching exchange!</span></div>
+    </div>
+
+    <div class="sit-grid">
+      <div class="challenge-wrap" onclick="revealChallenge(this)">
+        <div class="challenge-flip">
+          <div class="challenge-face challenge-front-a">
+            <span class="lock-icon">🔒</span>
+            <div class="lock-label">MISSION SECRÈTE A</div>
+            <div class="lock-sublabel">Le pharmacien — cliquez pour révéler</div>
+            <div class="lock-retip">cliquez à nouveau pour cacher</div>
+          </div>
+          <div class="challenge-face challenge-back challenge-back-a">
+            <div class="challenge-who">🧀 JOUEUR A — Le pharmacien fromager</div>
+            <div class="challenge-text">Quel que soit le symptôme, tu proposes un remède à base de fromage français expiré. Exemples : « Notre roquefort de 2019 est excellent, les bactéries sont au maximum de leur puissance ! » / « Un camembert bien fermenté détruit tous les virus en 3 heures, garanti ! » / « Le comté de 4 ans d'âge, c'est notre meilleur anti-inflammatoire naturel ! » Sois très professionnel.</div>
+            <div class="challenge-en">Whatever the symptom, prescribe expired French cheese. Examples: "Our 2019 roquefort — the bacteria are at peak power!" / "A well-fermented camembert destroys all viruses in 3 hours, guaranteed!" Be very professional.</div>
+          </div>
+        </div>
+      </div>
+      <div class="challenge-wrap" onclick="revealChallenge(this)">
+        <div class="challenge-flip">
+          <div class="challenge-face challenge-front-b">
+            <span class="lock-icon">🔒</span>
+            <div class="lock-label">MISSION SECRÈTE B</div>
+            <div class="lock-sublabel">Le patient — cliquez pour révéler</div>
+            <div class="lock-retip">cliquez à nouveau pour cacher</div>
+          </div>
+          <div class="challenge-face challenge-back challenge-back-b">
+            <div class="challenge-who">⭐ JOUEUR B — Le patient aux symptômes impossibles</div>
+            <div class="challenge-text">Tu arrives avec 2 symptômes totalement impossibles : 1) Tu éternues des étoiles, chaque fois que tu éternues, des petites étoiles brillantes sortent de ton nez. 2) Tes genoux font de la musique, ils jouent une chanson différente à chaque pas. Décris ces symptômes avec le plus grand sérieux.</div>
+            <div class="challenge-en">You have 2 impossible symptoms: 1) You sneeze stars — little shiny stars come out of your nose each time. 2) Your knees play music, a different song with each step. Describe all this with complete seriousness.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     SITUATION 9 — AU MUSÉE 🖼️
+════════════════════════════════════════════ -->
+<div class="slide accent-amber" id="slide-9">
+  <div class="slide-inner">
+    <div class="sit-header">
+      <div class="sit-emoji">🖼️</div>
+      <div>
+        <div class="sit-title accent">AU MUSÉE</div>
+        <div class="sit-title-en">At the museum (devant la Joconde !)</div>
+      </div>
+      <div class="sit-num">09</div>
+    </div>
+
+    <div class="section-box" style="margin-bottom:12px;">
+      <div class="section-label">📚 Vocabulaire clé — cliquez sur chaque carte</div>
+      <div class="vocab-grid">
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">Un audioguide</div><div class="flip-en">An audio guide</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">Un audioguide</div><div class="flip-ex">« Je souhaiterais avoir un audioguide, s'il vous plaît. »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">Le tarif réduit</div><div class="flip-en">Reduced price / discount rate</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">Le tarif réduit / le tarif plein</div><div class="flip-ex">« Deux entrées au tarif plein et une au tarif réduit. »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">L'exposition</div><div class="flip-en">The exhibition</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">L'exposition</div><div class="flip-ex">« Est-ce que vous proposez des visites guidées de l'exposition ? »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">Un dépliant</div><div class="flip-en">A leaflet / brochure</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">Un dépliant</div><div class="flip-ex">« Vous auriez un dépliant sur l'exposition en anglais ? »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">On a le droit de... ?</div><div class="flip-en">Are we allowed to... ?</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">On a le droit de prendre des photos ?</div><div class="flip-ex">« Est-ce qu'on a le droit de prendre des photos dans cette salle ? »</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="scene-box" style="margin-bottom:12px;">
+      <div class="section-label">🎬 La situation</div>
+      <div class="scene-text">Un visiteur admire la Joconde au Louvre. Un guide du musée s'approche et lui révèle des secrets très confidentiels sur ce tableau légendaire. Le visiteur, lui, a des questions... qui n'ont absolument rien à voir avec la peinture.<br><span style="font-size:0.82rem;color:var(--muted);font-style:italic;display:block;margin-top:6px;">A visitor is admiring the Mona Lisa at the Louvre. A museum guide approaches and reveals some very confidential secrets about this legendary painting. The visitor, however, has questions... that have absolutely nothing to do with art.</span></div>
+    </div>
+
+    <div class="sit-grid">
+      <div class="challenge-wrap" onclick="revealChallenge(this)">
+        <div class="challenge-flip">
+          <div class="challenge-face challenge-front-a">
+            <span class="lock-icon">🔒</span>
+            <div class="lock-label">MISSION SECRÈTE A</div>
+            <div class="lock-sublabel">Le guide — cliquez pour révéler</div>
+            <div class="lock-retip">cliquez à nouveau pour cacher</div>
+          </div>
+          <div class="challenge-face challenge-back challenge-back-a">
+            <div class="challenge-who">🎨 JOUEUR A — Le guide aux secrets</div>
+            <div class="challenge-text">Tu révèles 3 faits secrets sur la Joconde, avec conviction et sérieux : 1) « La Joconde est très petite car Mona Lisa était une femme minuscule, elle mesurait 47 cm ! » 2) « Léonard de Vinci a peint ce tableau avec ses pieds. » 3) « Léonard de Vinci se peignait les ongles de pieds aux couleurs LGBT, c'est pourquoi la Joconde sourit, elle trouvait ça très chic ! »</div>
+            <div class="challenge-en">Reveal 3 secret facts about the Mona Lisa with total conviction: 1) "It's tiny because Mona Lisa was only 47cm tall!" 2) "Leonardo da Vinci painted it with his feet." 3) "Da Vinci painted his toenails in LGBT colours, that's why she smiles — she found it very chic!"</div>
+          </div>
+        </div>
+      </div>
+      <div class="challenge-wrap" onclick="revealChallenge(this)">
+        <div class="challenge-flip">
+          <div class="challenge-face challenge-front-b">
+            <span class="lock-icon">🔒</span>
+            <div class="lock-label">MISSION SECRÈTE B</div>
+            <div class="lock-sublabel">Le visiteur — cliquez pour révéler</div>
+            <div class="lock-retip">cliquez à nouveau pour cacher</div>
+          </div>
+          <div class="challenge-face challenge-back challenge-back-b">
+            <div class="challenge-who">🚽 JOUEUR B — Le visiteur hors-sujet</div>
+            <div class="challenge-text">Tu poses 3 questions totalement hors-sujet au guide, avec le plus grand sérieux : 1) « Excusez-moi, où sont les toilettes ? » 2) « Il y a un restaurant dans le coin ? J'ai très faim. » 3) « Vous proposez des cours de peinture ici ? Je voudrais apprendre. » Réagis poliment aux révélations du guide, puis pose ta question.</div>
+            <div class="challenge-en">Ask 3 completely off-topic questions with great seriousness: 1) "Excuse me, where are the toilets?" 2) "Is there a restaurant nearby? I'm very hungry." 3) "Do you offer painting classes here? I'd like to learn." React politely to the guide's revelations, then pose your question.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     SLIDE FIN
+════════════════════════════════════════════ -->
+<div class="slide" id="slide-10">
+  <div class="intro-wrap">
+    <div class="neon-title" style="font-size:clamp(2.5rem,6vw,5rem);">
+      🏆 BRAVO !
+      <span class="sub" style="font-size:45%;">VOUS AVEZ JOUÉ LES 9 SITUATIONS</span>
+    </div>
+    <p class="intro-desc">Vous avez utilisé du vocabulaire authentique, improvisé en français et surtout... <strong style="color:var(--gold)">vous avez osé parler !</strong></p>
+    <div class="intro-badges">
+      <div class="badge">✅ 9 situations</div>
+      <div class="badge">🎯 Vocabulaire en contexte</div>
+      <div class="badge">🗣️ Expression orale</div>
+      <div class="badge">😄 Bonne humeur garantie</div>
+    </div>
+    <div style="margin-top:16px;font-size:0.95rem;color:var(--muted);text-align:center;line-height:1.8;">
+      <div style="color:var(--white);font-weight:700;margin-bottom:8px;">C'est carrément bien ! 🇫🇷</div>
+      <div>KingCretot Experience — Groupe B1/B2</div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end slides-wrap -->
+
+<script>
+// ── State ──
+let currentSlide = 0;
+const totalSlides = 11; // 0 intro + 9 situations + 1 fin
+
+// ── Stars ──
+(function generateStars() {
+  const container = document.getElementById('stars');
+  for (let i = 0; i < 80; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const size = Math.random() * 2.5 + 0.5;
+    s.style.cssText = `
+      left:${Math.random()*100}%;
+      top:${Math.random()*100}%;
+      width:${size}px;
+      height:${size}px;
+      --d:${(Math.random()*3+2).toFixed(1)}s;
+      animation-delay:${(Math.random()*4).toFixed(1)}s;
+    `;
+    container.appendChild(s);
+  }
+})();
+
+// ── Nav dots ──
+function buildDots() {
+  const wrap = document.getElementById('navDots');
+  wrap.innerHTML = '';
+  for (let i = 0; i < totalSlides; i++) {
+    const d = document.createElement('div');
+    d.className = 'nav-dot' + (i === currentSlide ? ' active' : '');
+    d.onclick = () => goToSlide(i);
+    wrap.appendChild(d);
+  }
+}
+
+// ── Go to slide ──
+function goToSlide(n) {
+  if (n < 0 || n >= totalSlides) return;
+  document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+  currentSlide = n;
+  const target = document.getElementById('slide-' + n);
+  if (target) target.classList.add('active');
+
+  // Progress
+  const pct = n === 0 ? 0 : n >= totalSlides - 1 ? 100 : Math.round((n / (totalSlides - 2)) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+
+  // Counter
+  const numEl = document.getElementById('slideNum');
+  if (n === 0 || n === totalSlides - 1) {
+    numEl.textContent = '—';
+  } else {
+    numEl.textContent = n;
+  }
+
+  buildDots();
+  resetTimer();
+}
+
+function nextSlide() { goToSlide(currentSlide + 1); }
+function prevSlide() { goToSlide(currentSlide - 1); }
+
+// ── Keyboard nav ──
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') nextSlide();
+  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   prevSlide();
+});
+
+// ── Flip cards ──
+function flipCard(card) {
+  card.classList.toggle('flipped');
+}
+
+// ── Reveal challenges — flip toggle ──
+function revealChallenge(wrap) {
+  const wasFlipped = wrap.classList.contains('flipped');
+  wrap.classList.toggle('flipped');
+  if (!wasFlipped) spawnConfetti(wrap);
+}
+
+// ── Confetti ──
+function spawnConfetti(el) {
+  const colors = ['#f5c842','#e63946','#2ec4b6','#4a9eff','#b39ddb','#ff8c42'];
+  const rect = el.getBoundingClientRect();
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top + rect.height / 2;
+  for (let i = 0; i < 28; i++) {
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    const angle = Math.random() * 360;
+    const dist  = Math.random() * 120 + 40;
+    const dx = Math.cos(angle * Math.PI / 180) * dist;
+    piece.style.cssText = `
+      left:${cx + dx - 5}px;
+      top:${cy - 20}px;
+      background:${colors[Math.floor(Math.random()*colors.length)]};
+      transform:rotate(${Math.random()*360}deg);
+      animation-duration:${(Math.random()*0.6+0.8).toFixed(2)}s;
+      animation-delay:${(Math.random()*0.2).toFixed(2)}s;
+      border-radius:${Math.random()>0.5?'50%':'2px'};
+    `;
+    document.body.appendChild(piece);
+    setTimeout(() => piece.remove(), 1800);
+  }
+}
+
+// ── Timer ──
+let timerInterval = null;
+let timerSeconds  = 180;
+let timerRunning  = false;
+
+function resetTimer() {
+  clearInterval(timerInterval);
+  timerRunning = false;
+  timerSeconds = 180;
+  const d = document.getElementById('timerDisplay');
+  const b = document.getElementById('timerBtn');
+  d.textContent = '3:00';
+  d.classList.remove('timer-warn');
+  b.textContent = '▶ GO';
+}
+
+function toggleTimer() {
+  if (timerRunning) {
+    clearInterval(timerInterval);
+    timerRunning = false;
+    document.getElementById('timerBtn').textContent = '▶ GO';
+  } else {
+    timerRunning = true;
+    document.getElementById('timerBtn').textContent = '⏸ PAUSE';
+    timerInterval = setInterval(() => {
+      timerSeconds--;
+      const m = Math.floor(timerSeconds / 60);
+      const s = timerSeconds % 60;
+      const d = document.getElementById('timerDisplay');
+      d.textContent = m + ':' + String(s).padStart(2,'0');
+      if (timerSeconds <= 30) d.classList.add('timer-warn');
+      if (timerSeconds <= 0) {
+        clearInterval(timerInterval);
+        timerRunning = false;
+        document.getElementById('timerBtn').textContent = '▶ GO';
+        d.textContent = 'FIN !';
+      }
+    }, 1000);
+  }
+}
+
+// ── Init ──
+buildDots();
+</script>
+</body>
+</html>
