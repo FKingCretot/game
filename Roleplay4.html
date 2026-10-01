@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KingCretot Jeux de Rôle</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #0a1628;
+  --navy2: #0f2044;
+  --gold: #f5c842;
+  --gold2: #e8a800;
+  --red: #e63946;
+  --green: #2ec4b6;
+  --white: #f0f4ff;
+  --muted: #8899bb;
+  --card-bg: #131f3a;
+  --card-border: #1e3060;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Nunito', sans-serif;
+  background: var(--navy);
+  color: var(--white);
+  min-height: 100vh;
+  overflow: hidden;
+  position: relative;
+}
+.stars { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+.star {
+  position: absolute; background: #fff; border-radius: 50%;
+  animation: twinkle var(--d) ease-in-out infinite alternate;
+}
+@keyframes twinkle {
+  from { opacity: 0.1; transform: scale(1); }
+  to   { opacity: 0.8; transform: scale(1.4); }
+}
+.topbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 28px;
+  background: rgba(10,22,40,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 2px solid var(--gold);
+}
+.topbar-logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; letter-spacing: 2px; color: var(--gold); }
+.topbar-logo span { color: var(--white); }
+.progress-bar { flex: 1; max-width: 420px; margin: 0 24px; height: 7px; background: var(--card-border); border-radius: 99px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--gold), var(--red)); border-radius: 99px; transition: width 0.6s cubic-bezier(.4,0,.2,1); }
+.slide-counter { font-family: 'Space Mono', monospace; font-size: 0.85rem; color: var(--muted); }
+.slide-counter span { color: var(--gold); font-weight: 700; }
+.slides-wrap {
+  position: relative; z-index: 10; width: 100%; height: 100vh;
+  display: flex; align-items: center; justify-content: center; padding-top: 60px;
+}
+.slide { display: none; width: 100%; max-width: 1100px; padding: 0 24px 20px; animation: slideIn 0.45s cubic-bezier(.4,0,.2,1); }
+.slide.active { display: block; }
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.intro-wrap {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; min-height: calc(100vh - 90px); gap: 24px;
+}
+.neon-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(3.2rem, 7vw, 6rem);
+  letter-spacing: 4px; line-height: 1; color: var(--gold);
+  text-shadow: 0 0 40px rgba(245,200,66,0.5), 0 0 80px rgba(245,200,66,0.2);
+}
+.neon-title .sub { font-size: 40%; color: var(--white); display: block; letter-spacing: 6px; text-shadow: none; margin-top: 6px; font-family: 'Nunito', sans-serif; font-weight: 700; }
+.intro-desc { max-width: 600px; font-size: 1.1rem; color: var(--muted); line-height: 1.7; }
+.intro-badges { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+.badge { background: var(--card-bg); border: 1.5px solid var(--card-border); border-radius: 99px; padding: 6px 18px; font-size: 0.85rem; font-weight: 700; color: var(--gold); }
+.intro-situations { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; max-width: 750px; }
+.sit-pill { background: var(--card-bg); border: 1.5px solid var(--card-border); border-radius: 10px; padding: 8px 14px; font-size: 0.88rem; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+.sit-pill:hover { border-color: var(--gold); color: var(--gold); transform: translateY(-2px); }
+.sit-header { display: flex; align-items: center; gap: 16px; margin-bottom: 18px; }
+.sit-emoji { font-size: 2.8rem; filter: drop-shadow(0 0 12px rgba(245,200,66,0.4)); }
+.sit-title { font-family: 'Bebas Neue', sans-serif; font-size: 2.4rem; letter-spacing: 2px; color: var(--gold); line-height: 1; }
+.sit-title-en { font-size: 0.9rem; color: var(--muted); font-weight: 600; letter-spacing: 1px; }
+.sit-num { margin-left: auto; font-family: 'Bebas Neue', sans-serif; font-size: 3.5rem; color: var(--card-border); line-height: 1; }
+.sit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.section-box { background: var(--card-bg); border: 1.5px solid var(--card-border); border-radius: 16px; padding: 16px 18px; }
+.section-label { font-family: 'Space Mono', monospace; font-size: 0.7rem; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; margin-bottom: 10px; }
+.vocab-section { grid-column: 1 / -1; }
+.vocab-grid { display: flex; gap: 10px; flex-wrap: wrap; }
+.flip-card { flex: 1; min-width: 150px; height: 100px; perspective: 900px; cursor: pointer; }
+.flip-inner { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform 0.55s cubic-bezier(.4,0,.2,1); border-radius: 12px; }
+.flip-card.flipped .flip-inner { transform: rotateY(180deg); }
+.flip-front, .flip-back { position: absolute; inset: 0; border-radius: 12px; backface-visibility: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; text-align: center; }
+.flip-front { background: linear-gradient(135deg, #1a2f5a, #0f2044); border: 1.5px solid var(--gold); }
+.flip-back { background: linear-gradient(135deg, #0d3d2e, #0a2820); border: 1.5px solid var(--green); transform: rotateY(180deg); }
+.flip-word { font-weight: 900; font-size: 0.95rem; color: var(--gold); line-height: 1.2; }
+.flip-en { font-size: 0.75rem; color: var(--muted); margin-top: 4px; }
+.flip-fr { font-size: 0.8rem; color: var(--green); font-weight: 700; line-height: 1.2; }
+.flip-ex { font-size: 0.68rem; color: rgba(255,255,255,0.5); margin-top: 4px; font-style: italic; }
+.flip-hint { position: absolute; bottom: 5px; right: 8px; font-size: 0.6rem; color: rgba(255,255,255,0.25); }
+.scene-box { background: linear-gradient(135deg, #1a1a3a, #0f0f2e); border: 1.5px solid #2d2d6e; border-radius: 16px; padding: 16px 18px; grid-column: 1 / -1; }
+.scene-text { font-size: 0.95rem; line-height: 1.65; color: rgba(240,244,255,0.85); }
+.scene-text strong { color: var(--white); }
+.challenge-wrap { perspective: 1000px; height: 200px; cursor: pointer; }
+.challenge-flip { position: relative; width: 100%; height: 200px; transform-style: preserve-3d; transition: transform 0.6s cubic-bezier(.4,0,.2,1); border-radius: 16px; }
+.challenge-wrap.flipped .challenge-flip { transform: rotateY(180deg); }
+.challenge-face { position: absolute; inset: 0; border-radius: 16px; padding: 16px 18px; backface-visibility: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.challenge-front-a { background: linear-gradient(135deg, #2a0a0a, #1a0606); border: 2px solid var(--red); animation: wobble 3s ease-in-out infinite; }
+.challenge-front-b { background: linear-gradient(135deg, #0a1a2a, #060f1a); border: 2px solid #4a9eff; animation: wobble 3s ease-in-out infinite 0.5s; }
+.challenge-wrap.flipped .challenge-front-a, .challenge-wrap.flipped .challenge-front-b { animation: none; }
+@keyframes wobble { 0%,100% { transform: rotate(0deg); } 25% { transform: rotate(-0.4deg); } 75% { transform: rotate(0.4deg); } }
+.challenge-back { transform: rotateY(180deg); align-items: flex-start; justify-content: flex-start; overflow-y: auto; }
+.challenge-back-a { background: linear-gradient(135deg, #1a0a2a, #120720); border: 2px solid var(--red); }
+.challenge-back-b { background: linear-gradient(135deg, #0a1525, #060d1a); border: 2px solid #4a9eff; }
+.lock-icon { font-size: 2.4rem; display: block; text-align: center; margin-bottom: 6px; animation: lock-float 2s ease-in-out infinite alternate; }
+@keyframes lock-float { from { transform: translateY(0); } to { transform: translateY(-5px); } }
+.challenge-wrap.flipped .lock-icon { animation: none; }
+.lock-label { text-align: center; font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; letter-spacing: 2px; }
+.challenge-front-a .lock-label { color: var(--red); }
+.challenge-front-b .lock-label { color: #4a9eff; }
+.lock-sublabel { text-align: center; font-size: 0.72rem; color: var(--muted); margin-top: 4px; }
+.lock-retip { text-align: center; font-size: 0.62rem; color: rgba(255,255,255,0.18); margin-top: 10px; font-style: italic; }
+.challenge-who { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; letter-spacing: 2px; margin-bottom: 6px; width: 100%; }
+.challenge-back-a .challenge-who { color: var(--red); }
+.challenge-back-b .challenge-who { color: #4a9eff; }
+.challenge-text { font-size: 0.85rem; line-height: 1.6; color: var(--white); font-weight: 600; width: 100%; }
+.challenge-en { margin-top: 8px; font-size: 0.75rem; color: var(--muted); font-style: italic; line-height: 1.5; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 6px; width: 100%; }
+.nav-wrap { position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: center; gap: 16px; padding: 12px 28px; background: rgba(10,22,40,0.92); backdrop-filter: blur(12px); border-top: 1.5px solid var(--card-border); }
+.nav-btn { font-family: 'Bebas Neue', sans-serif; font-size: 1rem; letter-spacing: 2px; padding: 10px 28px; border-radius: 10px; border: none; cursor: pointer; transition: all 0.2s; }
+.nav-prev { background: var(--card-bg); color: var(--muted); border: 1.5px solid var(--card-border); }
+.nav-prev:hover { border-color: var(--muted); color: var(--white); }
+.nav-next { background: var(--gold); color: var(--navy); font-weight: 900; box-shadow: 0 4px 24px rgba(245,200,66,0.3); }
+.nav-next:hover { background: var(--gold2); box-shadow: 0 4px 32px rgba(245,200,66,0.5); transform: translateY(-1px); }
+.nav-dots { display: flex; gap: 6px; align-items: center; }
+.nav-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--card-border); cursor: pointer; transition: all 0.2s; }
+.nav-dot.active { background: var(--gold); transform: scale(1.4); }
+.nav-dot:hover { background: var(--muted); }
+.confetti-piece { position: fixed; width: 10px; height: 10px; pointer-events: none; z-index: 9999; border-radius: 2px; animation: confetti-fall 1.2s ease-in forwards; }
+@keyframes confetti-fall { 0% { opacity: 1; transform: translateY(-20px) rotate(0deg) scale(1); } 100% { opacity: 0; transform: translateY(400px) rotate(720deg) scale(0.3); } }
+.slide-inner { max-height: calc(100vh - 130px); overflow-y: auto; padding-bottom: 8px; scrollbar-width: thin; scrollbar-color: var(--card-border) transparent; }
+.accent-orange { --accent: #ff8c42; }
+.accent-sky    { --accent: #38b2e8; }
+.accent-lime   { --accent: #a8e063; }
+.accent-pink   { --accent: #f06292; }
+.accent-teal   { --accent: #2ec4b6; }
+.accent-purple { --accent: #b39ddb; }
+.accent-cyan   { --accent: #4dd0e1; }
+.accent-rose   { --accent: #ef9a9a; }
+.accent-amber  { --accent: #ffca28; }
+.accent-green  { --accent: #56d364; }
+.sit-title.accent { color: var(--accent, var(--gold)); }
+.section-box.accent-border { border-color: var(--accent, var(--card-border)); }
+.flip-front.accent-card { border-color: var(--accent, var(--gold)); }
+.flip-word.accent-word { color: var(--accent, var(--gold)); }
+
+/* Painting style for situation 7 */
+.painting-frame {
+  background: #1a0f05;
+  border: 6px solid #8B6914;
+  border-radius: 4px;
+  padding: 8px;
+  box-shadow: 0 0 0 2px #c9a227, 0 0 20px rgba(0,0,0,0.6), inset 0 0 10px rgba(0,0,0,0.4);
+  margin-bottom: 12px;
+  grid-column: 1 / -1;
+}
+.painting-title {
+  text-align: center;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.7rem;
+  color: #c9a227;
+  letter-spacing: 1px;
+  margin-top: 6px;
+}
+</style>
+</head>
+<body>
+<div class="stars" id="stars"></div>
+
+<div class="topbar">
+  <div class="topbar-logo">👑 King<span>Cretot</span> <span style="color:var(--muted);font-size:0.85rem;letter-spacing:1px;">JEUX DE RÔLE</span></div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  <div class="slide-counter">Situation <span id="slideNum">—</span> / 9</div>
+</div>
+
+<div class="nav-wrap">
+  <button class="nav-btn nav-prev" onclick="prevSlide()">◀ PRÉCÉDENT</button>
+  <div class="nav-dots" id="navDots"></div>
+  <button class="nav-btn nav-next" onclick="nextSlide()">SUIVANT ▶</button>
+</div>
+
+<div class="slides-wrap">
+
+<!-- SLIDE 0 — INTRO -->
+<div class="slide active" id="slide-0">
+  <div class="intro-wrap">
+    <div class="neon-title">
+      🎬 JEUX DE RÔLE
+      <span class="sub">Roleplay Game — KingCretot Experience</span>
+    </div>
+    <p class="intro-desc">9 situations authentiques à jouer en duo. Chaque joueur a une <strong style="color:var(--gold)">mission secrète</strong>. Prêt à improviser en français ?</p>
+    <div class="intro-badges">
+      <div class="badge">🎯 Niveau A2–B1</div>
+      <div class="badge">👥 2 étudiants</div>
+      <div class="badge">🇫🇷 En français !</div>
+    </div>
+    <p style="font-size:0.85rem;color:var(--muted);margin-top:8px;">Cliquez sur une situation pour y aller directement, ou utilisez les boutons de navigation</p>
+    <div class="intro-situations">
+      <div class="sit-pill" onclick="goToSlide(1)">🏘️ Deux voisines</div>
+      <div class="sit-pill" onclick="goToSlide(2)">🥖 Dans une boulangerie</div>
+      <div class="sit-pill" onclick="goToSlide(3)">🚂 Dans le train</div>
+      <div class="sit-pill" onclick="goToSlide(4)">🗼 Devant la Tour Eiffel</div>
+      <div class="sit-pill" onclick="goToSlide(5)">🏊 Au bord d'une piscine</div>
+      <div class="sit-pill" onclick="goToSlide(6)">🎉 À une fête</div>
+      <div class="sit-pill" onclick="goToSlide(7)">🎨 Dans un musée</div>
+      <div class="sit-pill" onclick="goToSlide(8)">🛒 Au supermarché</div>
+      <div class="sit-pill" onclick="goToSlide(9)">✈️ Dans l'avion</div>
+    </div>
+  </div>
+</div>
+
+<!-- SITUATION 1 — DEUX VOISINES -->
+<div class="slide accent-orange" id="slide-1">
+  <div class="slide-inner">
+    <div class="sit-header">
+      <div class="sit-emoji">🏘️</div>
+      <div><div class="sit-title accent">DEUX VOISINES</div><div class="sit-title-en">Two neighbours</div></div>
+      <div class="sit-num">01</div>
+    </div>
+    <div class="section-box accent-border vocab-section" style="margin-bottom:12px;">
+      <div class="section-label">📚 Vocabulaire clé — cliquez sur chaque carte</div>
+      <div class="vocab-grid">
+        <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front accent-card"><div class="flip-word accent-word">L'immeuble</div><div class="flip-en">The apartment building</div><div class="flip-hint">clic →</div></div><div class="flip-back"><div class="flip-fr">L'immeuble</div><div class="flip-ex">« Tu habites dans cet immeuble depuis longtemps ? »</div></div></div></div>
+        <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front accent-card"><div class="flip-word accent-word">Le voisinage</div><div class="flip-en">The neighbourhood</div><div class="flip-hint">clic →</div></div><div class="flip-back"><div class="flip-fr">Le voisinage</div><div class="flip-ex">« Le voisinage est sympa ici ! »</div></div></div></div>
+        <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front accent-card"><div class="flip-word accent-word">Emménager</div><div class="flip-en">To move in</div><div class="flip-hint">clic →</div></div><div class="flip-back"><div class="flip-fr">Emménager</div><div class="flip-ex">« Je viens d'emménager, je découvre le quartier ! »</div></div></div></div>
+        <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front accent-card"><div class="flip-word accent-word">Faire du bruit</div><div class="flip-en">To make noise</div><div class="flip-hint">clic →</div></div><div class="flip-back"><div class="flip-fr">Faire du bruit</div><div class="flip-ex">« Désolée si on fait du bruit le soir ! »</div></div></div></div>
+        <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front accent-card"><div class="flip-word accent-word">Bienvenue !</div><div class="flip-en">Welcome!</div><div class="flip-hint">clic →</div></div><div class="flip-back"><div class="flip-fr">Bienvenue !</div><div class="flip-ex">« Bienvenue dans l'immeuble ! »</div></div></div></div>
+      </div>
+    </div>
+    <div class="scene-box" style="margin-bottom:12px;">
+      <div class="section-label">🎬 La situation</div>
+      <div class="scene-text">Une nouvelle voisine française vient de s'installer aux USA. La voisine américaine frappe à sa porte pour se présenter. Les deux ont une petite surprise l'une pour l'autre !<br><span style="font-size:0.82rem;color:var(--muted);font-style:italic;display:block;margin-top:6px;">A new French neighbour has just moved to the USA. The American neighbour knocks on her door to introduce herself.</span></div>
+    </div>
+    <div class="sit-grid">
+      <div class="challenge-wrap" onclick="revealChallenge(this)"><div class="challenge-flip">
+        <div class="challenge-face challenge-front-a"><span class="lock-icon">🔒</span><div class="lock-label">MISSION SECRÈTE A</div><div class="lock-sublabel">La voisine américaine — cliquez pour révéler</div><div class="lock-retip">cliquez à nouveau pour cacher</div></div>
+        <div class="challenge-face challenge-back challenge-back-a"><div class="challenge-who">🇺🇸 JOUEUR A — La voisine américaine</div><div class="challenge-text">Tu es super sympa mais très curieuse ! Tu veux savoir 3 choses : est-ce qu'elle a un chien, est-ce qu'elle fait la fête le week-end, et est-ce qu'elle cuisine souvent. Exemples : « Tu as des animaux ? » / « Tu aimes cuisiner ? » / « Tu sors souvent le week-end ? »</div><div class="challenge-en">You're very friendly but very curious! Find out 3 things: does she have a dog, does she party on weekends, does she cook often.</div></div>
+      </div></div>
+      <div class="challenge-wrap" onclick="revealChallenge(this)"><div class="challenge-flip">
+        <div class="challenge-face challenge-front-b"><span class="lock-icon">🔒</span><div class="lock-label">MISSION SECRÈTE B</div><div class="lock-sublabel">La voisine française — cliquez pour révéler</div><div class="lock-retip">cliquez à nouveau pour cacher</div></div>
+        <div class="challenge-face challenge-back challenge-back-b"><div class="challenge-who">🇫🇷 JOUEUR B — La nouvelle voisine française</div><div class="challenge-text">Tu es ravie mais tu trouves TOUT différent aux USA ! Tu compares avec la France à chaque occasion. Exemples : « En France, les voisins apportent du vin ! » / « C'est grand ici... en France mon appartement était plus petit ! » / « Vous mangez à quelle heure le soir ? En France c'est 8h minimum ! »</div><div class="challenge-en">You're delighted but find EVERYTHING different in the USA! Compare with France at every opportunity.</div></div>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<!-- SITUATION 2 — DANS UNE BOULANGERIE -->
+<div class="slide accent-amber" id="slide-2">
+  <div class="slide-inner">
+    <div class="sit-header">
+      <div class="sit-emoji">🥖</div>
+      <div><div class="sit-title accent">DANS UNE BOULANGERIE</div><div class="sit-title-en">In a bakery</div></div>
+      <div class="sit-num">02</div>
+    </div>
+    <div class="section-box accent-border vocab-section" style="margin-bottom:12px;">
+      <div class="section-label">📚 Vocabulaire clé — cliquez sur chaque carte</div>
+      <div class="vocab-grid">
+        <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front accent-card"><div class="flip-word accent-word">Une baguette</div><div class="flip-en">A baguette</div><div class="flip-hint">clic →</div></div><div class="flip-back"><div class="flip-fr">Une baguette</div><div class="flip-ex">« Une baguette bien cuite s'il vous plaît ! »</div></div></div></div>
+        <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front accent-card"><div class="flip-word accent-word">Un croissant</div><div class="flip-en">A croissant</div><div class="flip-hint">clic →</div></div><div class="flip-back"><div class="flip-fr">Un croissant</div><div class="flip-ex">« Je prends deux croissants pour le petit déjeuner ! »</div></div></div></div>
+        <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front accent-card"><div class="flip-word accent-word">Frais / fraîche</div><div class="flip-en">Fresh</div><div class="flip-hint">clic →</div></div><div class="flip-back"><div class="flip-fr">Frais / fraîche</div><div class="flip-ex">« C'est frais du matin ? »</div></div></div></div>
+        <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front accent-card"><div class="flip-word accent-word">La ligne d'attente</div><div class="flip-en">The queue / line</div><div class="flip-hint">clic →</div></div><div class="flip-back"><div class="flip-fr">La ligne d'attente</div><div class="flip-ex">« Il y a toujours une longue ligne d'attente ici le matin ! »</div></div></div></div>
+        <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front accent-card"><div class="flip-word accent-word">Ça sent bon !</div><div class="flip-en">It smells good!</div><div class="flip-hint">clic →</div></div><div class="flip-back"><div class="flip-fr">Ça sent bon !</div><div class="flip-ex">« Ça sent vraiment bon dans cette boulangerie ! »</div></div></div></div>
+      </div>
+    </div>
+    <div class="scene-box" style="margin-bottom:12px;">
+      <div class="section-label">🎬 La situation</div>
+      <div class="scene-text">Deux clients sont dans la ligne d'attente dans une boulangerie française. L'un est français, l'autre est américain. La conversation commence naturellement... et part dans une direction inattendue !<br><span style="font-size:0.82rem;color:var(--muted);font-style:italic;display:block;margin-top:6px;">Two customers are in line at a French bakery. One is French, the other is American. The conversation takes an unexpected turn!</span></div>
+    </div>
+    <div class="sit-grid">
+      <div class="challenge-wrap" onclick="revealChallenge(this)"><div class="challenge-flip">
+        <div class="challenge-face challenge-front-a"><span class="lock-icon">🔒</span><div class="lock-label">MISSION SECRÈTE A</div><div class="lock-sublabel">Le client français — cliquez pour révéler</div><div class="lock-retip">cliquez à nouveau pour cacher</div></div>
+        <div class="challenge-face challenge-back challenge-back-a"><div class="challenge-who">🥖 JOUEUR A — Le client français</div><div class="challenge-text">Tu es un expert absolu de la boulangerie ! Tu as une opinion très forte sur TOUT. Exemples : « Prends la baguette bien cuite, c'est bien meilleur ! » / « Moi je viens ici tous les matins depuis 10 ans ! » / « Le croissant du mardi est toujours meilleur le lundi ! »</div><div class="challenge-en">You're an absolute bakery expert with a strong opinion on everything!</div></div>
+      </div></div>
+      <div class="challenge-wrap" onclick="revealChallenge(this)"><div class="challenge-flip">
+        <div class="challenge-face challenge-front-b"><span class="lock-icon">🔒</span><div class="lock-label">MISSION SECRÈTE B</div><div class="lock-sublabel">Le client américain — cliquez pour révéler</div><div class="lock-retip">cliquez à nouveau pour cacher</div></div>
+        <div class="challenge-face challenge-back challenge-back-b"><div class="challenge-who">🇺🇸 JOUEUR B — Le client américain</div><div class="challenge-text">C'est ta première fois dans une vraie boulangerie française ! Tu es émerveillé par tout et tu poses des questions très naïves. Exemples : « C'est quoi la différence entre une baguette et un sandwich ? » / « Je peux manger le croissant maintenant, ici ? » / « Il y a du beurre de cacahuète ? »</div><div class="challenge-en">It's your first time in a real French bakery! You're amazed by everything and ask very naive questions.</div></div>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<!-- SITUATION 3 — DANS LE TRAIN -->
+<div class="slide accent-sky" id="slide-3">
+  <div class="slide-inner">
+    <div class="sit-header">
+      <div class="sit-emoji">🚂</div>
+      <div><div class="sit-title accent">DANS LE TRAIN</div><div class="sit-title-en">On the train</div></div>
+      <div class="sit-num">03</div>
+    </div>
+    <div class="section-box accent-border vocab-section" style="margin-bottom:12px;">
+      <div class="section-label">📚 Vocabulaire clé — cliquez sur chaque carte</div>
+      <div class="vocab-grid">
+        <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front accent-card"><div class="flip-word accent-word">Le siège</div><div class="flip-en">The seat</div><div class="flip-hint">clic →</div></div><div class="flip-back"><div class="flip-fr">Le siège</div><div class="flip-ex">« Excusez-moi, c'est votre siège ou il est libre ? »</div></div></div></div>
+        <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front accent-card"><div class="flip-word accent-word">Le paysage</div><div class="flip-en">The landscape</div><div class="flip-hint">clic →</div></div><div class="flip-back"><div class="flip-fr">Le paysage</div><div class="flip-ex">« Le paysage est magnifique par ici ! »</div></div></div></div>
+        <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front accent-card"><div class="flip-word accent-word">En retard</div><div class="flip-en">Late</div><div class="flip-hint">clic →</div></div><div class="flip-back"><div class="flip-fr">En retard</div><div class="flip-ex">« Le train est souvent en retard sur cette ligne ? »</div></div></div></div>
+        <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front accent-card"><div class="flip-word accent-word">Le trajet</div><div class="flip-en">The journey</div><div class="flip-hint">clic →</div></div><div class="flip-back"><div class="flip-fr">Le trajet</div><div class="flip-ex">« Le trajet dure combien de temps ? »</div></div></div></div>
+        <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front accent-card"><div class="flip-word accent-word">Échanger</div><div class="flip-en">To swap</div><div class="flip-hint">clic →</div></div><div class="flip-back"><div class="flip-fr">Échanger</div><div class="flip-ex">« Vous voulez échanger nos places ? »</div></div></div></div>
+      </div>
+    </div>
+    <div class="scene-box" style="margin-bottom:12px;">
+      <div class="section-label">🎬 La situation</div>
+      <div class="scene-text">Deux inconnus sont assis côte à côte dans le train. L'un veut dormir, l'autre veut absolument discuter !<br><span style="font-size:0.82rem;color:var(--muted);font-style:italic;display:block;margin-top:6px;">Two strangers are sitting next to each other on the train. One wants to sleep, the other absolutely wants to chat!</span></div>
+    </div>
+    <div class="sit-grid">
+      <div class="challenge-wrap" onclick="revealChallenge(this)"><div class="challenge-flip">
+        <div class="challenge-face challenge-front-a"><span class="lock-icon">🔒</span><div class="lock-label">MISSION SECRÈTE A</div><div class="lock-sublabel">Le voyageur bavard — cliquez pour révéler</div><div class="lock-retip">cliquez à nouveau pour cacher</div></div>
+        <div class="challenge-face challenge-back challenge-back-a"><div class="challenge-who">💬 JOUEUR A — Le voyageur bavard</div><div class="challenge-text">Tu adores parler aux inconnus dans le train ! Tu poses des questions sur tout. Exemples : « Vous allez où ? » / « Vous faites quoi dans la vie ? » / « Vous connaissez cette région ? » / « C'est la première fois que vous prenez ce train ? » / « Vous habitez ici ou vous êtes en vacances ? »</div><div class="challenge-en">You love talking to strangers on the train! Ask questions about everything.</div></div>
+      </div></div>
+      <div class="challenge-wrap" onclick="revealChallenge(this)"><div class="challenge-flip">
+        <div class="challenge-face challenge-front-b"><span class="lock-icon">🔒</span><div class="lock-label">MISSION SECRÈTE B</div><div class="lock-sublabel">Le voyageur fatigué — cliquez pour révéler</div><div class="lock-retip">cliquez à nouveau pour cacher</div></div>
+        <div class="challenge-face challenge-back challenge-back-b"><div class="challenge-who">😴 JOUEUR B — Le voyageur fatigué</div><div class="challenge-text">Tu veux juste dormir ! Tu réponds poliment, tu montres que tu t'intéresses... mais tu finis TOUJOURS ta phrase par « Excusez-moi, je suis très fatigué ! » Exemples : « Oui j'adore cette région, excusez-moi, je suis très fatigué ! » / « Je travaille dans la musique, excusez-moi, je suis très fatigué ! »</div><div class="challenge-en">You just want to sleep! Answer politely but always end every sentence with "Excuse me, I'm very tired!"</div></div>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<!-- SITUATION 4 — DEVANT LA TOUR EIFFEL -->
+<div class="slide accent-lime" id="slide-4">
+  <div class="slide-inner">
+    <div class="sit-header">
+      <div class="sit-emoji">🗼</div>
+      <div><div class="sit-title accent">DEVANT LA TOUR EIFFEL</div><div class="sit-title-en">In front of the Eiffel Tower</div></div>
+      <div class="sit-num">04</div>
+    </div>
+    <div class="section-box accent-border vocab-section" style="margin-bottom:12px;">
+      <div class="section-label">📚 Vocabulaire clé — cliquez sur chaque carte</div>
+      <div class="vocab-grid">
+        <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front accent-card"><div class="flip-word accent-word">Une photo</div><div class="flip-en">A photo</div><div class="flip-hint">clic →</div></div><div class="flip-back"><div class="flip-fr">Une photo</div><div class="flip-ex">« Vous pouvez prendre une photo de moi ? »</div></div></div></div>
+        <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front accent-card"><div class="flip-word accent-word">Impressionnant !</div><div class="flip-en">Impressive!</div><div class="flip-hint">clic →</div></div><div class="flip-back"><div class="flip-fr">Impressionnant !</div><div class="flip-ex">« C'est vraiment impressionnant en vrai ! »</div></div></div></div>
+        <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front accent-card"><div class="flip-word accent-word">La ligne d'attente</div><div class="flip-en">The queue / line</div><div class="flip-hint">clic →</div></div><div class="flip-back"><div class="flip-fr">La ligne d'attente</div><div class="flip-ex">« Il y a beaucoup de monde dans la ligne d'attente ! »</div></div></div></div>
+        <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front accent-card"><div class="flip-word accent-word">Monter</div><div class="flip-en">To go up</div><div class="flip-hint">clic →</div></div><div class="flip-back"><div class="flip-fr">Monter</div><div class="flip-ex">« Vous montez jusqu'en haut ? »</div></div></div></div>
+        <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front accent-card"><div class="flip-word accent-word">Un souvenir</div><div class="flip-en">A souvenir</div><div class="flip-hint">clic →</div></div><div class="flip-back"><div class="flip-fr">Un souvenir</div><div class="flip-ex">« Vous avez acheté des souvenirs ? »</div></div></div></div>
+      </div>
+    </div>
+    <div class="scene-box" style="margin-bottom:12px;">
+      <div class="section-label">🎬 La situation</div>
+      <div class="scene-text">Deux touristes se retrouvent côte à côte devant la Tour Eiffel. Ils commencent à discuter... chacun avec sa petite particularité !<br><span style="font-size:0.82rem;color:var(--muted);font-style:italic;display:block;margin-top:6px;">Two tourists end up side by side in front of the Eiffel Tower and start chatting — each with their own little quirk!</span></div>
+    </div>
+    <div class="sit-grid">
+      <div class="challenge-wrap" onclick="revealChallenge(this)"><div class="challenge-flip">
+        <div class="challenge-face challenge-front-a"><span class="lock-icon">🔒</span><div class="lock-label">MISSION SECRÈTE A</div><div class="lock-sublabel">Le touriste enthousiaste — cliquez pour révéler</div><div class="lock-retip">cliquez à nouveau pour cacher</div></div>
+        <div class="challenge-face challenge-back challenge-back-a"><div class="challenge-who">🤩 JOUEUR A — Le touriste enthousiaste</div><div class="challenge-text">C'est ta première fois devant la Tour Eiffel et tu es IMPRESSIONNÉ ! Tout est plus beau qu'en photo. Exemples : « Elle est beaucoup plus grande qu'en photo ! » / « Je veux monter jusqu'en haut absolument ! » / « C'est la plus belle chose que j'ai vue de ma vie ! »</div><div class="challenge-en">It's your first time seeing the Eiffel Tower and you're BLOWN AWAY! Everything is more beautiful than in photos.</div></div>
+      </div></div>
+      <div class="challenge-wrap" onclick="revealChallenge(this)"><div class="challenge-flip">
+        <div class="challenge-face challenge-front-b"><span class="lock-icon">🔒</span><div class="lock-label">MISSION SECRÈTE B</div><div class="lock-sublabel">Le touriste blasé — cliquez pour révéler</div><div class="lock-retip">cliquez à nouveau pour cacher</div></div>
+        <div class="challenge-face challenge-back challenge-back-b"><div class="challenge-who">😒 JOUEUR B — Le touriste blasé</div><div class="challenge-text">Tu voyages tout le temps et tu as tout vu. La Tour Eiffel... bof ! Tu compares avec d'autres monuments. Exemples : « C'est bien mais l'Empire State Building c'est plus impressionnant ! » / « À Dubai les bâtiments sont deux fois plus hauts ! » / « Moi je préfère Rome honnêtement... »</div><div class="challenge-en">You travel all the time and have seen it all. The Eiffel Tower... meh! Compare it to other monuments.</div></div>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<!-- SITUATION 5 — AU BORD D'UNE PISCINE -->
+<div class="slide accent-cyan" id="slide-5">
+  <div class="slide-inner">
+    <div class="sit-header">
+      <div class="sit-emoji">🏊</div>
+      <div><div class="sit-title accent">AU BORD D'UNE PISCINE</div><div class="sit-title-en">By the pool</div></div>
+      <div class="sit-num">05</div>
+    </div>
+    <div class="section-box accent-border vocab-section" style="margin-bottom:12px;">
+      <div class="section-label">📚 Vocabulaire clé — cliquez sur chaque carte</div>
+      <div class="vocab-grid">
+        <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front accent-card"><div class="flip-word accent-word">Se baigner</div><div class="flip-en">To swim / go in the water</div><div class="flip-hint">clic →</div></div><div class="flip-back"><div class="flip-fr">Se baigner</div><div class="flip-ex">« L'eau est bonne pour se baigner ? »</div></div></div></div>
+        <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front accent-card"><div class="flip-word accent-word">Un transat</div><div class="flip-en">A sun lounger</div><div class="flip-hint">clic →</div></div><div class="flip-back"><div class="flip-fr">Un transat</div><div class="flip-ex">« Cette place est libre ? Je peux poser mon transat ? »</div></div></div></div>
+        <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front accent-card"><div class="flip-word accent-word">La chaleur</div><div class="flip-en">The heat</div><div class="flip-hint">clic →</div></div><div class="flip-back"><div class="flip-fr">La chaleur</div><div class="flip-ex">« Il fait vraiment chaud aujourd'hui ! »</div></div></div></div>
+        <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front accent-card"><div class="flip-word accent-word">La crème solaire</div><div class="flip-en">Sunscreen</div><div class="flip-hint">clic →</div></div><div class="flip-back"><div class="flip-fr">La crème solaire</div><div class="flip-ex">« Tu as de la crème solaire ? J'ai oublié la mienne ! »</div></div></div></div>
+        <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front accent-card"><div class="flip-word accent-word">Se détendre</div><div class="flip-en">To relax</div><div class="flip-hint">clic →</div></div><div class="flip-back"><div class="flip-fr">Se détendre</div><div class="flip-ex">« Je viens ici pour me détendre, j'adore ça ! »</div></div></div></div>
+      </div>
+    </div>
+    <div class="scene-box" style="margin-bottom:12px;">
+      <div class="section-label">🎬 La situation</div>
+      <div class="scene-text">Deux inconnus sont allongés côte à côte au bord de la piscine de leur communauté. Le soleil brille, l'ambiance est détendue... chacun a sa petite particularité !<br><span style="font-size:0.82rem;color:var(--muted);font-style:italic;display:block;margin-top:6px;">Two strangers are lying next to each other by their community pool. The sun is shining and the mood is relaxed!</span></div>
+    </div>
+    <div class="sit-grid">
+      <div class="challenge-wrap" onclick="revealChallenge(this)"><div class="challenge-flip">
+        <div class="challenge-face challenge-front-a"><span class="lock-icon">🔒</span><div class="lock-label">MISSION SECRÈTE A</div><div class="lock-sublabel">Le nouveau résident — cliquez pour révéler</div><div class="lock-retip">cliquez à nouveau pour cacher</div></div>
+        <div class="challenge-face challenge-back challenge-back-a"><div class="challenge-who">🆕 JOUEUR A — Le nouveau résident</div><div class="challenge-text">Tu viens d'emménager dans la communauté et tu découvres la piscine pour la première fois ! Tu poses des questions sur tout. Exemples : « L'eau est toujours aussi froide ? » / « Il y a des activités organisées ici ? » / « Les voisins sont sympa en général ? »</div><div class="challenge-en">You just moved into the community and you're discovering the pool for the first time! Ask questions about everything.</div></div>
+      </div></div>
+      <div class="challenge-wrap" onclick="revealChallenge(this)"><div class="challenge-flip">
+        <div class="challenge-face challenge-front-b"><span class="lock-icon">🔒</span><div class="lock-label">MISSION SECRÈTE B</div><div class="lock-sublabel">L'expert de la communauté — cliquez pour révéler</div><div class="lock-retip">cliquez à nouveau pour cacher</div></div>
+        <div class="challenge-face challenge-back challenge-back-b"><div class="challenge-who">⭐ JOUEUR B — L'expert de la communauté</div><div class="challenge-text">Tu habites ici depuis 5 ans et tu connais TOUT ! Tu as une opinion sur tout ce que dit ton voisin. Exemples : « L'eau ? En juillet c'est parfait, mais en juin bof ! » / « Les activités ? Oui le mardi soir c'est yoga aquatique pour les chats et les chiens ! » / « Les voisins ? Ça dépend des bâtiments ! »</div><div class="challenge-en">You've lived here 5 years and know EVERYTHING! You have an opinion on everything your neighbour says.</div></div>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<!-- SITUATION 6 — À UNE FÊTE -->
+<div class="slide accent-pink" id="slide-6">
+  <div class="slide-inner">
+    <div class="sit-header">
+      <div class="sit-emoji">🎉</div>
+      <div><div class="sit-title accent">À UNE FÊTE</div><div class="sit-title-en">At a party</div></div>
+      <div class="sit-num">06</div>
+    </div>
+    <div class="section-box accent-border vocab-section" style="margin-bottom:12px;">
+      <div class="section-label">📚 Vocabulaire clé — cliquez sur chaque carte</div>
+      <div class="vocab-grid">
+        <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front accent-card"><div class="flip-word accent-word">Se présenter</div><div class="flip-en">To introduce yourself</div><div class="flip-hint">clic →</div></div><div class="flip-back"><div class="flip-fr">Se présenter</div><div class="flip-ex">« Je me présente, je m'appelle Marie ! »</div></div></div></div>
+        <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front accent-card"><div class="flip-word accent-word">On se connaît ?</div><div class="flip-en">Do we know each other?</div><div class="flip-hint">clic →</div></div><div class="flip-back"><div class="flip-fr">On se connaît ?</div><div class="flip-ex">« On se connaît ? Vous êtes un ami de Paul ? »</div></div></div></div>
+        <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front accent-card"><div class="flip-word accent-word">Sympa comme fête !</div><div class="flip-en">Nice party!</div><div class="flip-hint">clic →</div></div><div class="flip-back"><div class="flip-fr">Sympa comme fête !</div><div class="flip-ex">« C'est vraiment sympa comme fête ! »</div></div></div></div>
+        <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front accent-card"><div class="flip-word accent-word">La musique</div><div class="flip-en">The music</div><div class="flip-hint">clic →</div></div><div class="flip-back"><div class="flip-fr">La musique</div><div class="flip-ex">« La musique est super ce soir ! »</div></div></div></div>
+        <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front accent-card"><div class="flip-word accent-word">Porter un toast</div><div class="flip-en">To make a toast</div><div class="flip-hint">clic →</div></div><div class="flip-back"><div class="flip-fr">Porter un toast</div><div class="flip-ex">« On va porter un toast à l'anniversaire de Julie ! »</div></div></div></div>
+      </div>
+    </div>
+    <div class="scene-box" style="margin-bottom:12px;">
+      <div class="section-label">🎬 La situation</div>
+      <div class="scene-text">Paul organise une fête chez lui. Deux invités se retrouvent dans un coin et commencent à discuter... mais chacun cache quelque chose !<br><span style="font-size:0.82rem;color:var(--muted);font-style:italic;display:block;margin-top:6px;">Paul is hosting a party. Two guests end up in a corner and start chatting — but each one is hiding something!</span></div>
+    </div>
+    <div class="sit-grid">
+      <div class="challenge-wrap" onclick="revealChallenge(this)"><div class="challenge-flip">
+        <div class="challenge-face challenge-front-a"><span class="lock-icon">🔒</span><div class="lock-label">MISSION SECRÈTE A</div><div class="lock-sublabel">cliquez pour révéler</div><div class="lock-retip">cliquez à nouveau pour cacher</div></div>
+        <div class="challenge-face challenge-back challenge-back-a"><div class="challenge-who">🕵️ JOUEUR A</div><div class="challenge-text">Tu ne connais PERSONNE à cette fête ! Tu as juste vu la lumière et tu es entré. Tu fais croire que tu connais bien Paul. Exemples : « Paul et moi on se connaît depuis longtemps ! » / « Paul m'a personnellement invité... je crois ! » / « Ah oui Paul ! C'est mon ami... enfin on se parle ! »</div><div class="challenge-en">You don't know ANYONE at this party — you just saw the light and walked in! Pretend you know Paul well.</div></div>
+      </div></div>
+      <div class="challenge-wrap" onclick="revealChallenge(this)"><div class="challenge-flip">
+        <div class="challenge-face challenge-front-b"><span class="lock-icon">🔒</span><div class="lock-label">MISSION SECRÈTE B</div><div class="lock-sublabel">cliquez pour révéler</div><div class="lock-retip">cliquez à nouveau pour cacher</div></div>
+        <div class="challenge-face challenge-back challenge-back-b"><div class="challenge-who">👯 JOUEUR B</div><div class="challenge-text">Paul organise la fête chez lui. Tu es le meilleur ami de Paul. Tu aimes parler de Paul. Exemples : « Il est super sympa Paul mais il est toujours très sérieux ! » / « On s'est vu chez Paul il y a 1 mois, non ? » / « Paul est toujours célibataire ? »</div><div class="challenge-en">Paul is hosting the party. You're Paul's best friend and you love talking about him!</div></div>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<!-- SITUATION 7 — DANS UN MUSÉE -->
+<div class="slide accent-purple" id="slide-7">
+  <div class="slide-inner">
+    <div class="sit-header">
+      <div class="sit-emoji">🎨</div>
+      <div><div class="sit-title accent">DANS UN MUSÉE</div><div class="sit-title-en">In a museum</div></div>
+      <div class="sit-num">07</div>
+    </div>
+    <div class="section-box accent-border vocab-section" style="margin-bottom:12px;">
+      <div class="section-label">📚 Vocabulaire clé — cliquez sur chaque carte</div>
+      <div class="vocab-grid">
+        <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front accent-card"><div class="flip-word accent-word">Un tableau</div><div class="flip-en">A painting</div><div class="flip-hint">clic →</div></div><div class="flip-back"><div class="flip-fr">Un tableau</div><div class="flip-ex">« Ce tableau est vraiment magnifique ! »</div></div></div></div>
+        <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front accent-card"><div class="flip-word accent-word">Le peintre</div><div class="flip-en">The painter</div><div class="flip-hint">clic →</div></div><div class="flip-back"><div class="flip-fr">Le peintre</div><div class="flip-ex">« Tu sais qui est le peintre ? »</div></div></div></div>
+        <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front accent-card"><div class="flip-word accent-word">Ça représente quoi ?</div><div class="flip-en">What does it represent?</div><div class="flip-hint">clic →</div></div><div class="flip-back"><div class="flip-fr">Ça représente quoi ?</div><div class="flip-ex">« À ton avis ça représente quoi ? »</div></div></div></div>
+        <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front accent-card"><div class="flip-word accent-word">Les couleurs</div><div class="flip-en">The colours</div><div class="flip-hint">clic →</div></div><div class="flip-back"><div class="flip-fr">Les couleurs</div><div class="flip-ex">« J'adore les couleurs de ce tableau ! »</div></div></div></div>
+        <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front accent-card"><div class="flip-word accent-word">C'est bizarre !</div><div class="flip-en">It's weird!</div><div class="flip-hint">clic →</div></div><div class="flip-back"><div class="flip-fr">C'est bizarre !</div><div class="flip-ex">« C'est bizarre comme tableau non ? »</div></div></div></div>
+      </div>
+    </div>
+
+    <div class="sit-grid">
+      <div class="challenge-wrap" onclick="revealChallenge(this)"><div class="challenge-flip">
+        <div class="challenge-face challenge-front-a"><span class="lock-icon">🔒</span><div class="lock-label">MISSION SECRÈTE A</div><div class="lock-sublabel">Le faux expert — cliquez pour révéler</div><div class="lock-retip">cliquez à nouveau pour cacher</div></div>
+        <div class="challenge-face challenge-back challenge-back-a"><div class="challenge-who">🧐 JOUEUR A — Le faux expert</div><div class="challenge-text">Tu ne connais rien à l'art mais tu fais semblant d'être un grand expert ! Tu inventes tout avec beaucoup de sérieux. Exemples : « Ce tableau a été volé 3 fois... c'est pour ça qu'il est ici ! » / « Le peintre dénonce la société de consommation ! » / « Cette couleur bleue représente la solitude de l'artiste ! »</div><div class="challenge-en">You know nothing about art but pretend to be a great expert! Invent everything with great seriousness.</div></div>
+      </div></div>
+      <div class="challenge-wrap" onclick="revealChallenge(this)"><div class="challenge-flip">
+        <div class="challenge-face challenge-front-b"><span class="lock-icon">🔒</span><div class="lock-label">MISSION SECRÈTE B</div><div class="lock-sublabel">Le visiteur honnête — cliquez pour révéler</div><div class="lock-retip">cliquez à nouveau pour cacher</div></div>
+        <div class="challenge-face challenge-back challenge-back-b"><div class="challenge-who">🤷 JOUEUR B — Le visiteur honnête</div><div class="challenge-text">Tu ne comprends rien à ce tableau et tu le dis franchement ! Tu poses des questions naïves à A. Exemples : « Honnêtement... c'est quoi ce tableau ? » / « C'est beau ou c'est bizarre ? Je sais pas ! » / « Pourquoi les gens regardent ça pendant des heures ? »</div><div class="challenge-en">You understand nothing about this painting and say so! Ask naive questions to your new expert friend.</div></div>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 7b — LE TABLEAU -->
+<div class="slide accent-purple" id="slide-7b">
+  <div class="intro-wrap">
+    <p style="font-size:0.85rem;color:var(--muted);margin-bottom:16px;">🎨 Regardez ce tableau ensemble et commencez à improviser !</p>
+    <div class="painting-frame" style="max-width:680px;width:100%;">
+      <svg width="100%" viewBox="0 0 680 520" xmlns="http://www.w3.org/2000/svg" style="display:block;border-radius:2px;">
+        <rect x="0" y="0" width="680" height="520" fill="#8B6914"/>
+        <rect x="8" y="8" width="664" height="504" fill="#c9a227"/>
+        <rect x="16" y="16" width="648" height="488" fill="#8B6914"/>
+        <rect x="22" y="22" width="636" height="476" fill="#d4a96a"/>
+        <rect x="22" y="22" width="636" height="318" fill="#d4a96a"/>
+        <rect x="22" y="340" width="636" height="158" fill="#8B4513"/>
+        <rect x="22" y="408" width="636" height="90" fill="#6B3410"/>
+        <!-- Fenêtre droite -->
+        <rect x="455" y="45" width="175" height="210" fill="#87CEEB" rx="4"/>
+        <line x1="542" y1="45" x2="542" y2="255" stroke="#8B6914" stroke-width="4"/>
+        <line x1="455" y1="148" x2="630" y2="148" stroke="#8B6914" stroke-width="4"/>
+        <!-- Tortue volante -->
+        <g transform="translate(492,88)">
+          <ellipse cx="0" cy="0" rx="28" ry="19" fill="#3d6b33"/>
+          <ellipse cx="0" cy="-3" rx="22" ry="14" fill="#5a9e4e"/>
+          <ellipse cx="0" cy="-3" rx="10" ry="6" fill="#3d6b33"/>
+          <ellipse cx="-10" cy="-1" rx="7" ry="5" fill="#3d6b33"/>
+          <ellipse cx="10" cy="-1" rx="7" ry="5" fill="#3d6b33"/>
+          <ellipse cx="30" cy="2" rx="11" ry="9" fill="#5a9e4e"/>
+          <ellipse cx="39" cy="1" rx="5" ry="4" fill="#5a9e4e"/>
+          <circle cx="37" cy="-1" r="2.5" fill="#1a1a00"/>
+          <path d="M-28 3 Q-40 6 -36 14" stroke="#3d6b33" stroke-width="4" fill="none" stroke-linecap="round"/>
+          <ellipse cx="-14" cy="17" rx="11" ry="5" fill="#5a9e4e" transform="rotate(-25,-14,17)"/>
+          <ellipse cx="10" cy="17" rx="11" ry="5" fill="#5a9e4e" transform="rotate(15,10,17)"/>
+          <ellipse cx="-12" cy="-16" rx="11" ry="5" fill="#5a9e4e" transform="rotate(20,-12,-16)"/>
+          <ellipse cx="8" cy="-16" rx="11" ry="5" fill="#5a9e4e" transform="rotate(-20,8,-16)"/>
+          <path d="M-8,-13 Q-4,-28 6,-24 Q2,-11 -8,-13" fill="#a8e08a"/>
+          <path d="M6,-13 Q10,-28 20,-24 Q16,-11 6,-13" fill="#a8e08a"/>
+        </g>
+        <!-- Fenêtre gauche croissants -->
+        <rect x="48" y="48" width="125" height="168" fill="#87CEEB" rx="4"/>
+        <line x1="110" y1="48" x2="110" y2="216" stroke="#8B6914" stroke-width="3"/>
+        <line x1="48" y1="132" x2="173" y2="132" stroke="#8B6914" stroke-width="3"/>
+        <g transform="translate(73,82) rotate(-30)"><path d="M0,-13 A15,15 0 0,1 15,0 A15,15 0 0,1 0,13 A11,11 0 0,0 9,0 A11,11 0 0,0 0,-13" fill="#c8721a"/><path d="M2,-9 A10,10 0 0,1 10,0 A10,10 0 0,1 2,9 A8,8 0 0,0 7,0 A8,8 0 0,0 2,-9" fill="#e8a050" opacity="0.5"/></g>
+        <g transform="translate(138,78) rotate(20)"><path d="M0,-13 A15,15 0 0,1 15,0 A15,15 0 0,1 0,13 A11,11 0 0,0 9,0 A11,11 0 0,0 0,-13" fill="#c8721a"/><path d="M2,-9 A10,10 0 0,1 10,0 A10,10 0 0,1 2,9 A8,8 0 0,0 7,0 A8,8 0 0,0 2,-9" fill="#e8a050" opacity="0.5"/></g>
+        <g transform="translate(65,148) rotate(10)"><path d="M0,-13 A15,15 0 0,1 15,0 A15,15 0 0,1 0,13 A11,11 0 0,0 9,0 A11,11 0 0,0 0,-13" fill="#c8721a"/><path d="M2,-9 A10,10 0 0,1 10,0 A10,10 0 0,1 2,9 A8,8 0 0,0 7,0 A8,8 0 0,0 2,-9" fill="#e8a050" opacity="0.5"/></g>
+        <g transform="translate(138,155) rotate(-15)"><path d="M0,-13 A15,15 0 0,1 15,0 A15,15 0 0,1 0,13 A11,11 0 0,0 9,0 A11,11 0 0,0 0,-13" fill="#c8721a"/><path d="M2,-9 A10,10 0 0,1 10,0 A10,10 0 0,1 2,9 A8,8 0 0,0 7,0 A8,8 0 0,0 2,-9" fill="#e8a050" opacity="0.5"/></g>
+        <g transform="translate(95,195) rotate(35)"><path d="M0,-13 A15,15 0 0,1 15,0 A15,15 0 0,1 0,13 A11,11 0 0,0 9,0 A11,11 0 0,0 0,-13" fill="#c8721a"/><path d="M2,-9 A10,10 0 0,1 10,0 A10,10 0 0,1 2,9 A8,8 0 0,0 7,0 A8,8 0 0,0 2,-9" fill="#e8a050" opacity="0.5"/></g>
+        <!-- Horloge -->
+        <circle cx="200" cy="92" r="22" fill="#f5e6c8" stroke="#5a3a1a" stroke-width="2"/>
+        <circle cx="200" cy="92" r="18" fill="#faf0d0" stroke="#8B6914" stroke-width="1"/>
+        <text x="200" y="76" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="#3d1a00" font-weight="bold">12</text>
+        <text x="218" y="96" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="#3d1a00" font-weight="bold">3</text>
+        <text x="182" y="96" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="#3d1a00" font-weight="bold">9</text>
+        <text x="200" y="112" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="#3d1a00" font-weight="bold">6</text>
+        <path d="M200 92 Q196 88 198 85" stroke="#3d1a00" stroke-width="1" fill="none" stroke-linecap="round"/>
+        <circle cx="200" cy="92" r="2" fill="#3d1a00"/>
+        <!-- Grenouille couronnée — arrière plan -->
+        <g transform="translate(468, 400) scale(0.72)">
+          <ellipse cx="-30" cy="40" rx="22" ry="10" fill="#4a8c3f" transform="rotate(-30,-30,40)"/>
+          <ellipse cx="30" cy="40" rx="22" ry="10" fill="#4a8c3f" transform="rotate(30,30,40)"/>
+          <ellipse cx="0" cy="22" rx="38" ry="30" fill="#5aaa4a"/>
+          <ellipse cx="0" cy="28" rx="24" ry="20" fill="#90d080"/>
+          <ellipse cx="-28" cy="42" rx="14" ry="8" fill="#4a8c3f" transform="rotate(20,-28,42)"/>
+          <ellipse cx="28" cy="42" rx="14" ry="8" fill="#4a8c3f" transform="rotate(-20,28,42)"/>
+          <circle cx="-18" cy="-8" r="16" fill="#5aaa4a"/>
+          <circle cx="18" cy="-8" r="16" fill="#5aaa4a"/>
+          <circle cx="0" cy="2" r="22" fill="#5aaa4a"/>
+          <circle cx="-18" cy="-12" r="12" fill="white"/>
+          <circle cx="18" cy="-12" r="12" fill="white"/>
+          <circle cx="-18" cy="-12" r="7" fill="#2a6a00"/>
+          <circle cx="18" cy="-12" r="7" fill="#2a6a00"/>
+          <circle cx="-18" cy="-12" r="4" fill="#1a1a00"/>
+          <circle cx="18" cy="-12" r="4" fill="#1a1a00"/>
+          <circle cx="-16" cy="-14" r="2" fill="white" opacity="0.7"/>
+          <circle cx="20" cy="-14" r="2" fill="white" opacity="0.7"/>
+          <path d="M-20 10 Q0 24 20 10" stroke="#2a6a00" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <rect x="-20" y="-32" width="40" height="14" fill="#f5c842" rx="2"/>
+          <polygon points="-20,-32 -14,-46 -8,-32" fill="#f5c842"/>
+          <polygon points="-4,-32 0,-48 4,-32" fill="#f5c842"/>
+          <polygon points="8,-32 14,-46 20,-32" fill="#f5c842"/>
+          <circle cx="-11" cy="-28" r="3" fill="#e63946"/>
+          <circle cx="0" cy="-29" r="3" fill="#4a9eff"/>
+          <circle cx="11" cy="-28" r="3" fill="#e63946"/>
+        </g>
+        <!-- Personnage principal -->
+        <rect x="270" y="240" width="100" height="160" fill="#1a1a6e" rx="6"/>
+        <ellipse cx="320" cy="208" rx="48" ry="50" fill="#FDBCB4"/>
+        <path d="M300 232 Q320 246 340 232" stroke="#3d1a00" stroke-width="4" fill="none"/>
+        <ellipse cx="305" cy="203" rx="7" ry="8" fill="#3d1a00"/>
+        <ellipse cx="335" cy="203" rx="7" ry="8" fill="#3d1a00"/>
+        <ellipse cx="307" cy="200" rx="2" ry="2" fill="white" opacity="0.6"/>
+        <ellipse cx="337" cy="200" rx="2" ry="2" fill="white" opacity="0.6"/>
+        <path d="M297 191 Q305 186 313 191" stroke="#3d1a00" stroke-width="2" fill="none"/>
+        <path d="M327 191 Q335 186 343 191" stroke="#3d1a00" stroke-width="2" fill="none"/>
+        <path d="M308 224 Q320 236 332 224" stroke="#3d1a00" stroke-width="2" fill="none"/>
+        <ellipse cx="320" cy="166" rx="60" ry="14" fill="#00008B"/>
+        <rect x="272" y="112" width="96" height="58" fill="#00008B" rx="6"/>
+        <rect x="272" y="158" width="96" height="9" fill="#4444cc"/>
+        <rect x="175" y="247" width="95" height="26" fill="#1a1a6e" rx="10"/>
+        <rect x="370" y="247" width="95" height="26" fill="#1a1a6e" rx="10"/>
+        <rect x="285" y="395" width="28" height="53" fill="#2c2c2c" rx="4"/>
+        <rect x="327" y="395" width="28" height="53" fill="#2c2c2c" rx="4"/>
+        <ellipse cx="299" cy="448" rx="22" ry="10" fill="#1a0a00"/>
+        <ellipse cx="341" cy="448" rx="22" ry="10" fill="#1a0a00"/>
+        <!-- Poulet rôti -->
+        <g transform="translate(155,262)">
+          <ellipse cx="0" cy="0" rx="35" ry="22" fill="#d4831e"/>
+          <ellipse cx="-5" cy="-6" rx="22" ry="12" fill="#f0a030" opacity="0.5"/>
+          <ellipse cx="-18" cy="16" rx="12" ry="8" fill="#b86818" transform="rotate(-20,-18,16)"/>
+          <ellipse cx="10" cy="18" rx="12" ry="8" fill="#b86818" transform="rotate(15,10,18)"/>
+          <line x1="-22" y1="8" x2="-28" y2="-8" stroke="#e8d5a0" stroke-width="4" stroke-linecap="round"/>
+          <ellipse cx="-29" cy="-11" rx="6" ry="4" fill="#e8d5a0"/>
+          <line x1="14" y1="8" x2="20" y2="-6" stroke="#e8d5a0" stroke-width="4" stroke-linecap="round"/>
+          <ellipse cx="21" cy="-9" rx="6" ry="4" fill="#e8d5a0"/>
+          <path d="M-8,-20 Q-12,-30 -8,-40" stroke="#ddd" stroke-width="2" fill="none" opacity="0.6" stroke-linecap="round"/>
+          <path d="M4,-22 Q0,-32 4,-42" stroke="#ddd" stroke-width="2" fill="none" opacity="0.6" stroke-linecap="round"/>
+        </g>
+        <!-- Parapluie -->
+        <line x1="478" y1="262" x2="478" y2="144" stroke="#8B4513" stroke-width="4"/>
+        <path d="M440 172 Q478 130 516 172" fill="#e63946" stroke="#c0392b" stroke-width="2"/>
+        <path d="M440 172 Q459 156 478 172" fill="#ff8888"/>
+        <path d="M478 172 Q497 156 516 172" fill="#ff8888"/>
+        <path d="M478 262 Q486 274 478 282" stroke="#5a3a1a" stroke-width="4" fill="none"/>
+        <!-- Titre -->
+        <rect x="22" y="460" width="636" height="38" fill="#1a0f05" opacity="0.88"/>
+        <text x="340" y="477" text-anchor="middle" font-family="Georgia,serif" font-size="13" fill="#f5e6c8" font-style="italic">"L'Homme au Chapeau Bleu et au Poulet Rôti"</text>
+        <text x="340" y="494" text-anchor="middle" font-family="Georgia,serif" font-size="11" fill="#c9a227">Henri Dubois, 1847 — huile sur toile</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- SITUATION 8 — AU SUPERMARCHÉ -->
+<div class="slide accent-green" id="slide-8">
+  <div class="slide-inner">
+    <div class="sit-header">
+      <div class="sit-emoji">🛒</div>
+      <div><div class="sit-title accent">AU SUPERMARCHÉ</div><div class="sit-title-en">At the supermarket</div></div>
+      <div class="sit-num">08</div>
+    </div>
+    <div class="section-box accent-border vocab-section" style="margin-bottom:12px;">
+      <div class="section-label">📚 Vocabulaire clé — cliquez sur chaque carte</div>
+      <div class="vocab-grid">
+        <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front accent-card"><div class="flip-word accent-word">La caisse</div><div class="flip-en">The checkout</div><div class="flip-hint">clic →</div></div><div class="flip-back"><div class="flip-fr">La caisse</div><div class="flip-ex">« Il y a une caisse libre là-bas ! »</div></div></div></div>
+        <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front accent-card"><div class="flip-word accent-word">Un chariot</div><div class="flip-en">A shopping cart</div><div class="flip-hint">clic →</div></div><div class="flip-back"><div class="flip-fr">Un chariot</div><div class="flip-ex">« Vous avez un grand chariot ! Vous faites les courses pour la semaine ? »</div></div></div></div>
+        <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front accent-card"><div class="flip-word accent-word">Passer devant</div><div class="flip-en">To go ahead</div><div class="flip-hint">clic →</div></div><div class="flip-back"><div class="flip-fr">Passer devant</div><div class="flip-ex">« Vous voulez passer devant ? Vous avez juste 2 articles ! »</div></div></div></div>
+        <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front accent-card"><div class="flip-word accent-word">La carte bancaire</div><div class="flip-en">The credit card</div><div class="flip-hint">clic →</div></div><div class="flip-back"><div class="flip-fr">La carte bancaire</div><div class="flip-ex">« Vous payez par carte ou en liquide ? »</div></div></div></div>
+        <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front accent-card"><div class="flip-word accent-word">En promotion</div><div class="flip-en">On sale</div><div class="flip-hint">clic →</div></div><div class="flip-back"><div class="flip-fr">En promotion</div><div class="flip-ex">« Ce produit est en promotion cette semaine ! »</div></div></div></div>
+      </div>
+    </div>
+    <div class="scene-box" style="margin-bottom:12px;">
+      <div class="section-label">🎬 La situation</div>
+      <div class="scene-text">Deux inconnus sont dans la ligne d'attente à la caisse du supermarché. La file est longue... la conversation commence naturellement !<br><span style="font-size:0.82rem;color:var(--muted);font-style:italic;display:block;margin-top:6px;">Two strangers are in the checkout line at the supermarket. The line is long... conversation starts naturally!</span></div>
+    </div>
+    <div class="sit-grid">
+      <div class="challenge-wrap" onclick="revealChallenge(this)"><div class="challenge-flip">
+        <div class="challenge-face challenge-front-a"><span class="lock-icon">🔒</span><div class="lock-label">MISSION SECRÈTE A</div><div class="lock-sublabel">Le chef cuisinier — cliquez pour révéler</div><div class="lock-retip">cliquez à nouveau pour cacher</div></div>
+        <div class="challenge-face challenge-back challenge-back-a"><div class="challenge-who">🎂 JOUEUR A — Le chef cuisinier amateur</div><div class="challenge-text">Tu as cuisiné un gâteau au chocolat ce week-end et tu veux absolument en parler ! Tu ramènes tout à ton gâteau. Exemples : « Tu aimes cuisiner ? » / « J'ai fait un gâteau au chocolat incroyable hier ! » / « Tu connais une bonne recette toi ? »</div><div class="challenge-en">You baked an incredible chocolate cake this weekend and want to talk about it! Bring everything back to your cake.</div></div>
+      </div></div>
+      <div class="challenge-wrap" onclick="revealChallenge(this)"><div class="challenge-flip">
+        <div class="challenge-face challenge-front-b"><span class="lock-icon">🔒</span><div class="lock-label">MISSION SECRÈTE B</div><div class="lock-sublabel">Le client pressé — cliquez pour révéler</div><div class="lock-retip">cliquez à nouveau pour cacher</div></div>
+        <div class="challenge-face challenge-back challenge-back-b"><div class="challenge-who">⏰ JOUEUR B — Le client pressé</div><div class="challenge-text">Tu es très pressé mais tu restes poli ! Tu cherches à avancer dans la file sans vexer personne. Exemples : « Mon chat est tout seul à la maison, j'ai pas le temps ! » / « Il fait chaud ici non ? » / « J'ai juste 3 articles... je peux passer devant peut-être ? »</div><div class="challenge-en">You're in a rush but stay polite! Try to move forward in the line without upsetting anyone.</div></div>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<!-- SITUATION 9 — DANS L'AVION -->
+<div class="slide accent-rose" id="slide-9">
+  <div class="slide-inner">
+    <div class="sit-header">
+      <div class="sit-emoji">✈️</div>
+      <div><div class="sit-title accent">DANS L'AVION POUR PARIS</div><div class="sit-title-en">On the plane to Paris</div></div>
+      <div class="sit-num">09</div>
+    </div>
+    <div class="section-box accent-border vocab-section" style="margin-bottom:12px;">
+      <div class="section-label">📚 Vocabulaire clé — cliquez sur chaque carte</div>
+      <div class="vocab-grid">
+        <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front accent-card"><div class="flip-word accent-word">Le siège</div><div class="flip-en">The seat</div><div class="flip-hint">clic →</div></div><div class="flip-back"><div class="flip-fr">Le siège</div><div class="flip-ex">« Excusez-moi, c'est votre siège ou il est libre ? »</div></div></div></div>
+        <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front accent-card"><div class="flip-word accent-word">Le décollage</div><div class="flip-en">The takeoff</div><div class="flip-hint">clic →</div></div><div class="flip-back"><div class="flip-fr">Le décollage</div><div class="flip-ex">« Vous aimez le décollage ? »</div></div></div></div>
+        <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front accent-card"><div class="flip-word accent-word">Un long voyage</div><div class="flip-en">A long trip</div><div class="flip-hint">clic →</div></div><div class="flip-back"><div class="flip-fr">Un long voyage</div><div class="flip-ex">« C'est un long voyage, 8 heures ! »</div></div></div></div>
+        <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front accent-card"><div class="flip-word accent-word">Visiter</div><div class="flip-en">To visit</div><div class="flip-hint">clic →</div></div><div class="flip-back"><div class="flip-fr">Visiter</div><div class="flip-ex">« C'est votre première fois à Paris ? »</div></div></div></div>
+        <div class="flip-card" onclick="flipCard(this)"><div class="flip-inner"><div class="flip-front accent-card"><div class="flip-word accent-word">Le décalage horaire</div><div class="flip-en">Jet lag</div><div class="flip-hint">clic →</div></div><div class="flip-back"><div class="flip-fr">Le décalage horaire</div><div class="flip-ex">« Le décalage horaire ça me fatigue toujours ! »</div></div></div></div>
+      </div>
+    </div>
+    <div class="scene-box" style="margin-bottom:12px;">
+      <div class="section-label">🎬 La situation</div>
+      <div class="scene-text">Deux inconnus sont assis côte à côte dans l'avion pour Paris. 8 heures de vol... chacun a une raison très particulière de faire ce voyage !<br><span style="font-size:0.82rem;color:var(--muted);font-style:italic;display:block;margin-top:6px;">Two strangers are sitting next to each other on the plane to Paris. 8 hours of flight — each has a very special reason for the trip!</span></div>
+    </div>
+    <div class="sit-grid">
+      <div class="challenge-wrap" onclick="revealChallenge(this)"><div class="challenge-flip">
+        <div class="challenge-face challenge-front-a"><span class="lock-icon">🔒</span><div class="lock-label">MISSION SECRÈTE A</div><div class="lock-sublabel">cliquez pour révéler</div><div class="lock-retip">cliquez à nouveau pour cacher</div></div>
+        <div class="challenge-face challenge-back challenge-back-a"><div class="challenge-who">👨‍👩‍👧 JOUEUR A</div><div class="challenge-text">Tu vas à Paris pour rencontrer ta famille française que tu n'as jamais vue ! Tu es très curieux sur la France et les Français. Exemples : « Les Français sont sympa en général ? » / « C'est quoi le premier truc à faire à Paris ? » / « Tu manges souvent français toi ? »</div><div class="challenge-en">You're going to Paris to meet your French family for the first time! You're very curious about France and French people.</div></div>
+      </div></div>
+      <div class="challenge-wrap" onclick="revealChallenge(this)"><div class="challenge-flip">
+        <div class="challenge-face challenge-front-b"><span class="lock-icon">🔒</span><div class="lock-label">MISSION SECRÈTE B</div><div class="lock-sublabel">cliquez pour révéler</div><div class="lock-retip">cliquez à nouveau pour cacher</div></div>
+        <div class="challenge-face challenge-back challenge-back-b"><div class="challenge-who">🥐 JOUEUR B</div><div class="challenge-text">Tu vas à Paris pour un métier incroyable : tu es goûteur officiel de croissants pour un grand magazine américain ! Tu poses des questions sur Paris et les croissants. Exemples : « Tu connais une bonne boulangerie à Paris ? » / « Tu préfères le croissant au beurre ou nature ? » / « C'est mon 10ème voyage à Paris pour les croissants ! »</div><div class="challenge-en">You're going to Paris for an incredible job: you're the official croissant taster for a major American magazine!</div></div>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE FIN -->
+<div class="slide" id="slide-10">
+  <div class="intro-wrap">
+    <div class="neon-title" style="font-size:clamp(2.5rem,6vw,5rem);">
+      🏆 BRAVO !
+      <span class="sub" style="font-size:45%;">VOUS AVEZ JOUÉ LES 9 SITUATIONS</span>
+    </div>
+    <p class="intro-desc">Vous avez rencontré des inconnus, improvisé en français et surtout... <strong style="color:var(--gold)">vous avez osé parler !</strong></p>
+    <div class="intro-badges">
+      <div class="badge">✅ 9 situations</div>
+      <div class="badge">🎯 Vocabulaire en contexte</div>
+      <div class="badge">🗣️ Expression orale</div>
+      <div class="badge">😄 Bonne humeur garantie</div>
+    </div>
+    <div style="margin-top:16px;font-size:0.95rem;color:var(--muted);text-align:center;line-height:1.8;">
+      <div style="color:var(--white);font-weight:700;margin-bottom:8px;">C'est carrément bien ! 🇫🇷</div>
+      <div>KingCretot Experience</div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+// Slide order: 0=intro, 1-6=situations, 7=musée, 7b=tableau, 8-9=situations, 10=fin
+const slideOrder = ['0','1','2','3','4','5','6','7','7b','8','9','10'];
+let currentIndex = 0;
+
+(function generateStars() {
+  const container = document.getElementById('stars');
+  for (let i = 0; i < 80; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const size = Math.random() * 2.5 + 0.5;
+    s.style.cssText = `left:${Math.random()*100}%;top:${Math.random()*100}%;width:${size}px;height:${size}px;--d:${(Math.random()*3+2).toFixed(1)}s;animation-delay:${(Math.random()*4).toFixed(1)}s;`;
+    container.appendChild(s);
+  }
+})();
+
+function buildDots() {
+  const wrap = document.getElementById('navDots');
+  wrap.innerHTML = '';
+  for (let i = 0; i < slideOrder.length; i++) {
+    const d = document.createElement('div');
+    d.className = 'nav-dot' + (i === currentIndex ? ' active' : '');
+    d.onclick = () => goToIndex(i);
+    wrap.appendChild(d);
+  }
+}
+
+function goToIndex(n) {
+  if (n < 0 || n >= slideOrder.length) return;
+  document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+  currentIndex = n;
+  const id = slideOrder[n];
+  const target = document.getElementById('slide-' + id);
+  if (target) target.classList.add('active');
+  const total = slideOrder.length;
+  const pct = n === 0 ? 0 : n >= total - 1 ? 100 : Math.round((n / (total - 2)) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  const numEl = document.getElementById('slideNum');
+  // Show situation number (skip 7b which is not a numbered situation)
+  if (n === 0 || n === total - 1) { numEl.textContent = '—'; }
+  else if (id === '7b') { numEl.textContent = '7'; }
+  else { numEl.textContent = id; }
+  buildDots();
+}
+
+function goToSlide(situationNum) {
+  const idx = slideOrder.indexOf(String(situationNum));
+  if (idx !== -1) goToIndex(idx);
+}
+
+function nextSlide() { goToIndex(currentIndex + 1); }
+function prevSlide() { goToIndex(currentIndex - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') nextSlide();
+  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   prevSlide();
+});
+
+function flipCard(card) { card.classList.toggle('flipped'); }
+
+function revealChallenge(wrap) {
+  const wasFlipped = wrap.classList.contains('flipped');
+  wrap.classList.toggle('flipped');
+  if (!wasFlipped) spawnConfetti(wrap);
+}
+
+function spawnConfetti(el) {
+  const colors = ['#f5c842','#e63946','#2ec4b6','#4a9eff','#b39ddb','#ff8c42'];
+  const rect = el.getBoundingClientRect();
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top + rect.height / 2;
+  for (let i = 0; i < 28; i++) {
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    const angle = Math.random() * 360;
+    const dist  = Math.random() * 120 + 40;
+    const dx = Math.cos(angle * Math.PI / 180) * dist;
+    piece.style.cssText = `left:${cx+dx-5}px;top:${cy-20}px;background:${colors[Math.floor(Math.random()*colors.length)]};transform:rotate(${Math.random()*360}deg);animation-duration:${(Math.random()*0.6+0.8).toFixed(2)}s;animation-delay:${(Math.random()*0.2).toFixed(2)}s;border-radius:${Math.random()>0.5?'50%':'2px'};`;
+    document.body.appendChild(piece);
+    setTimeout(() => piece.remove(), 1800);
+  }
+}
+
+goToIndex(0);
+</script>
+</body>
+</html>
