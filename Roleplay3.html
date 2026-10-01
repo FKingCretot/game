@@ -1,0 +1,1467 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KingCretot Jeux de Rôle</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #0a1628;
+  --navy2: #0f2044;
+  --gold: #f5c842;
+  --gold2: #e8a800;
+  --red: #e63946;
+  --green: #2ec4b6;
+  --white: #f0f4ff;
+  --muted: #8899bb;
+  --card-bg: #131f3a;
+  --card-border: #1e3060;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background: var(--navy);
+  color: var(--white);
+  min-height: 100vh;
+  overflow: hidden;
+  position: relative;
+}
+
+.stars {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+.star {
+  position: absolute;
+  background: #fff;
+  border-radius: 50%;
+  animation: twinkle var(--d) ease-in-out infinite alternate;
+}
+@keyframes twinkle {
+  from { opacity: 0.1; transform: scale(1); }
+  to   { opacity: 0.8; transform: scale(1.4); }
+}
+
+.topbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 28px;
+  background: rgba(10,22,40,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 2px solid var(--gold);
+}
+.topbar-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.5rem;
+  letter-spacing: 2px;
+  color: var(--gold);
+}
+.topbar-logo span { color: var(--white); }
+.progress-bar {
+  flex: 1;
+  max-width: 420px;
+  margin: 0 24px;
+  height: 7px;
+  background: var(--card-border);
+  border-radius: 99px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold), var(--red));
+  border-radius: 99px;
+  transition: width 0.6s cubic-bezier(.4,0,.2,1);
+}
+.slide-counter {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.slide-counter span { color: var(--gold); font-weight: 700; }
+
+.timer-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.timer-display {
+  font-family: 'Space Mono', monospace;
+  font-size: 1rem;
+  color: var(--green);
+  font-weight: 700;
+  min-width: 48px;
+}
+.timer-btn {
+  background: none;
+  border: 1.5px solid var(--green);
+  color: var(--green);
+  border-radius: 6px;
+  padding: 2px 10px;
+  font-size: 0.78rem;
+  cursor: pointer;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  transition: all 0.2s;
+}
+.timer-btn:hover { background: var(--green); color: var(--navy); }
+.timer-warn { color: var(--red) !important; animation: pulse 0.7s ease-in-out infinite alternate; }
+@keyframes pulse { from { opacity: 1; } to { opacity: 0.4; } }
+
+.slides-wrap {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 60px;
+}
+
+.slide {
+  display: none;
+  width: 100%;
+  max-width: 1100px;
+  padding: 0 24px 20px;
+  animation: slideIn 0.45s cubic-bezier(.4,0,.2,1);
+}
+.slide.active { display: block; }
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.intro-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: calc(100vh - 90px);
+  gap: 24px;
+}
+.neon-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(3.2rem, 7vw, 6rem);
+  letter-spacing: 4px;
+  line-height: 1;
+  color: var(--gold);
+  text-shadow: 0 0 40px rgba(245,200,66,0.5), 0 0 80px rgba(245,200,66,0.2);
+}
+.neon-title .sub { font-size: 55%; color: var(--white); display: block; letter-spacing: 8px; text-shadow: none; margin-top: 4px; }
+.intro-desc {
+  max-width: 600px;
+  font-size: 1.1rem;
+  color: var(--muted);
+  line-height: 1.7;
+}
+.intro-badges {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.badge {
+  background: var(--card-bg);
+  border: 1.5px solid var(--card-border);
+  border-radius: 99px;
+  padding: 6px 18px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--gold);
+}
+.intro-situations {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 700px;
+}
+.sit-pill {
+  background: var(--card-bg);
+  border: 1.5px solid var(--card-border);
+  border-radius: 10px;
+  padding: 8px 14px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.sit-pill:hover { border-color: var(--gold); color: var(--gold); transform: translateY(-2px); }
+
+.sit-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+.sit-emoji {
+  font-size: 2.8rem;
+  filter: drop-shadow(0 0 12px rgba(245,200,66,0.4));
+}
+.sit-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.4rem;
+  letter-spacing: 2px;
+  color: var(--gold);
+  line-height: 1;
+}
+.sit-title-en {
+  font-size: 0.9rem;
+  color: var(--muted);
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+.sit-num {
+  margin-left: auto;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 3.5rem;
+  color: var(--card-border);
+  line-height: 1;
+}
+
+.sit-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.section-box {
+  background: var(--card-bg);
+  border: 1.5px solid var(--card-border);
+  border-radius: 16px;
+  padding: 16px 18px;
+}
+.section-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 2px;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.vocab-section { grid-column: 1 / -1; }
+.vocab-grid {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.flip-card {
+  flex: 1;
+  min-width: 150px;
+  height: 100px;
+  perspective: 900px;
+  cursor: pointer;
+}
+.flip-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.55s cubic-bezier(.4,0,.2,1);
+  border-radius: 12px;
+}
+.flip-card.flipped .flip-inner { transform: rotateY(180deg); }
+.flip-front, .flip-back {
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  backface-visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  text-align: center;
+}
+.flip-front {
+  background: linear-gradient(135deg, #1a2f5a, #0f2044);
+  border: 1.5px solid var(--gold);
+}
+.flip-back {
+  background: linear-gradient(135deg, #0d3d2e, #0a2820);
+  border: 1.5px solid var(--green);
+  transform: rotateY(180deg);
+}
+.flip-word {
+  font-weight: 900;
+  font-size: 0.95rem;
+  color: var(--gold);
+  line-height: 1.2;
+}
+.flip-en {
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-top: 4px;
+}
+.flip-fr {
+  font-size: 0.8rem;
+  color: var(--green);
+  font-weight: 700;
+  line-height: 1.2;
+}
+.flip-ex {
+  font-size: 0.68rem;
+  color: rgba(255,255,255,0.5);
+  margin-top: 4px;
+  font-style: italic;
+}
+.flip-hint {
+  position: absolute;
+  bottom: 5px;
+  right: 8px;
+  font-size: 0.6rem;
+  color: rgba(255,255,255,0.25);
+}
+
+.scene-box {
+  background: linear-gradient(135deg, #1a1a3a, #0f0f2e);
+  border: 1.5px solid #2d2d6e;
+  border-radius: 16px;
+  padding: 16px 18px;
+  grid-column: 1 / -1;
+}
+.scene-text {
+  font-size: 0.95rem;
+  line-height: 1.65;
+  color: rgba(240,244,255,0.85);
+}
+
+.challenge-wrap {
+  perspective: 1000px;
+  height: 200px;
+  cursor: pointer;
+}
+.challenge-flip {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(.4,0,.2,1);
+  border-radius: 16px;
+}
+.challenge-wrap.flipped .challenge-flip { transform: rotateY(180deg); }
+
+.challenge-face {
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  padding: 16px 18px;
+  backface-visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.challenge-front-a {
+  background: linear-gradient(135deg, #2a0a0a, #1a0606);
+  border: 2px solid var(--red);
+  animation: wobble 3s ease-in-out infinite;
+}
+.challenge-front-b {
+  background: linear-gradient(135deg, #0a1a2a, #060f1a);
+  border: 2px solid #4a9eff;
+  animation: wobble 3s ease-in-out infinite 0.5s;
+}
+.challenge-wrap.flipped .challenge-front-a,
+.challenge-wrap.flipped .challenge-front-b { animation: none; }
+
+@keyframes wobble {
+  0%,100% { transform: rotate(0deg); }
+  25%      { transform: rotate(-0.4deg); }
+  75%      { transform: rotate(0.4deg); }
+}
+
+.challenge-back {
+  transform: rotateY(180deg);
+  align-items: flex-start;
+  justify-content: flex-start;
+  overflow-y: auto;
+}
+.challenge-back-a {
+  background: linear-gradient(135deg, #1a0a2a, #120720);
+  border: 2px solid var(--red);
+}
+.challenge-back-b {
+  background: linear-gradient(135deg, #0a1525, #060d1a);
+  border: 2px solid #4a9eff;
+}
+
+.lock-icon {
+  font-size: 2.4rem;
+  display: block;
+  text-align: center;
+  margin-bottom: 6px;
+  animation: lock-float 2s ease-in-out infinite alternate;
+}
+@keyframes lock-float {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-5px); }
+}
+.challenge-wrap.flipped .lock-icon { animation: none; }
+
+.lock-label {
+  text-align: center;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.3rem;
+  letter-spacing: 2px;
+}
+.challenge-front-a .lock-label { color: var(--red); }
+.challenge-front-b .lock-label { color: #4a9eff; }
+.lock-sublabel {
+  text-align: center;
+  font-size: 0.72rem;
+  color: var(--muted);
+  margin-top: 4px;
+}
+.lock-retip {
+  text-align: center;
+  font-size: 0.62rem;
+  color: rgba(255,255,255,0.18);
+  margin-top: 10px;
+  font-style: italic;
+}
+
+.challenge-who {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.1rem;
+  letter-spacing: 2px;
+  margin-bottom: 6px;
+  width: 100%;
+}
+.challenge-back-a .challenge-who { color: var(--red); }
+.challenge-back-b .challenge-who { color: #4a9eff; }
+.challenge-text {
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: var(--white);
+  font-weight: 600;
+  width: 100%;
+}
+.challenge-en {
+  margin-top: 8px;
+  font-size: 0.75rem;
+  color: var(--muted);
+  font-style: italic;
+  line-height: 1.5;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  padding-top: 6px;
+  width: 100%;
+}
+
+.nav-wrap {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 12px 28px;
+  background: rgba(10,22,40,0.92);
+  backdrop-filter: blur(12px);
+  border-top: 1.5px solid var(--card-border);
+}
+.nav-btn {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1rem;
+  letter-spacing: 2px;
+  padding: 10px 28px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.nav-prev {
+  background: var(--card-bg);
+  color: var(--muted);
+  border: 1.5px solid var(--card-border);
+}
+.nav-prev:hover { border-color: var(--muted); color: var(--white); }
+.nav-next {
+  background: var(--gold);
+  color: var(--navy);
+  font-weight: 900;
+  box-shadow: 0 4px 24px rgba(245,200,66,0.3);
+}
+.nav-next:hover { background: var(--gold2); box-shadow: 0 4px 32px rgba(245,200,66,0.5); transform: translateY(-1px); }
+.nav-dots {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.nav-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--card-border);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.nav-dot.active { background: var(--gold); transform: scale(1.4); }
+.nav-dot:hover { background: var(--muted); }
+
+.confetti-piece {
+  position: fixed;
+  width: 10px;
+  height: 10px;
+  pointer-events: none;
+  z-index: 9999;
+  border-radius: 2px;
+  animation: confetti-fall 1.2s ease-in forwards;
+}
+@keyframes confetti-fall {
+  0%   { opacity: 1; transform: translateY(-20px) rotate(0deg) scale(1); }
+  100% { opacity: 0; transform: translateY(400px) rotate(720deg) scale(0.3); }
+}
+
+.slide-inner {
+  max-height: calc(100vh - 130px);
+  overflow-y: auto;
+  padding-bottom: 8px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--card-border) transparent;
+}
+
+.accent-red    { --accent: #e63946; }
+.accent-orange { --accent: #ff8c42; }
+.accent-sky    { --accent: #38b2e8; }
+.accent-lime   { --accent: #a8e063; }
+.accent-pink   { --accent: #f06292; }
+.accent-teal   { --accent: #2ec4b6; }
+.accent-purple { --accent: #b39ddb; }
+.accent-cyan   { --accent: #4dd0e1; }
+.accent-amber  { --accent: #ffca28; }
+
+.sit-title.accent { color: var(--accent, var(--gold)); }
+.section-box.accent-border { border-color: var(--accent, var(--card-border)); }
+.flip-front.accent-card { border-color: var(--accent, var(--gold)); }
+.flip-word.accent-word { color: var(--accent, var(--gold)); }
+</style>
+</head>
+<body>
+
+<div class="stars" id="stars"></div>
+
+<div class="topbar">
+  <div class="topbar-logo">👑 King<span>Cretot</span> <span style="color:var(--muted);font-size:0.85rem;letter-spacing:1px;">JEUX DE RÔLE</span></div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  <div class="slide-counter">Situation <span id="slideNum">—</span> / 8</div>
+  <div class="timer-wrap" style="margin-left:18px;">
+    <div class="timer-display" id="timerDisplay">3:00</div>
+    <button class="timer-btn" id="timerBtn" onclick="toggleTimer()">▶ GO</button>
+  </div>
+</div>
+
+<div class="nav-wrap">
+  <button class="nav-btn nav-prev" onclick="prevSlide()">◀ PRÉCÉDENT</button>
+  <div class="nav-dots" id="navDots"></div>
+  <button class="nav-btn nav-next" onclick="nextSlide()">SUIVANT ▶</button>
+</div>
+
+<div class="slides-wrap">
+
+<!-- SLIDE 0 — INTRO -->
+<div class="slide active" id="slide-0">
+  <div class="intro-wrap">
+    <div class="neon-title">
+      🎬 JEUX DE RÔLE
+      <span class="sub">KINGCRETOT EXPERIENCE</span>
+    </div>
+    <p class="intro-desc">8 situations authentiques à jouer en duo. Chaque joueur a une <strong style="color:var(--gold)">mission secrète</strong>. Prêt à improviser en français ?</p>
+    <div class="intro-badges">
+      <div class="badge">🎯 Niveau A2–B1</div>
+      <div class="badge">⏱️ 3 min / situation</div>
+      <div class="badge">👥 2 étudiants</div>
+      <div class="badge">🇫🇷 En français !</div>
+    </div>
+    <p style="font-size:0.85rem;color:var(--muted);margin-top:8px;">Cliquez sur une situation pour y aller directement, ou utilisez les boutons de navigation</p>
+    <div class="intro-situations">
+      <div class="sit-pill" onclick="goToSlide(1)">🏥 Chez le médecin</div>
+      <div class="sit-pill" onclick="goToSlide(2)">💊 À la pharmacie</div>
+      <div class="sit-pill" onclick="goToSlide(3)">🏖️ À la plage</div>
+      <div class="sit-pill" onclick="goToSlide(4)">🍷 Apéro entre amis</div>
+      <div class="sit-pill" onclick="goToSlide(5)">📞 Appel téléphonique</div>
+      <div class="sit-pill" onclick="goToSlide(6)">🚕 Dans un taxi</div>
+      <div class="sit-pill" onclick="goToSlide(7)">🎁 Acheter un cadeau</div>
+      <div class="sit-pill" onclick="goToSlide(8)">☕ Dans un café</div>
+    </div>
+  </div>
+</div>
+
+<!-- SITUATION 1 — CHEZ LE MÉDECIN -->
+<div class="slide accent-red" id="slide-1">
+  <div class="slide-inner">
+    <div class="sit-header">
+      <div class="sit-emoji">🏥</div>
+      <div>
+        <div class="sit-title accent">CHEZ LE MÉDECIN</div>
+        <div class="sit-title-en">At the doctor's</div>
+      </div>
+      <div class="sit-num">01</div>
+    </div>
+
+    <div class="section-box accent-border vocab-section" style="margin-bottom:12px;">
+      <div class="section-label">📚 Vocabulaire clé — cliquez sur chaque carte</div>
+      <div class="vocab-grid">
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">Un rendez-vous</div><div class="flip-en">An appointment</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">Un rendez-vous</div><div class="flip-ex">« J'ai rendez-vous avec le docteur Martin. »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">J'ai mal à...</div><div class="flip-en">I have a pain in...</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">J'ai mal à...</div><div class="flip-ex">« J'ai mal à la gorge depuis 3 jours. »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">Une ordonnance</div><div class="flip-en">A prescription</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">Une ordonnance</div><div class="flip-ex">« Le médecin m'a donné une ordonnance. »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">Depuis quand ?</div><div class="flip-en">Since when?</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">Depuis quand ?</div><div class="flip-ex">« Depuis quand avez-vous ces symptômes ? »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">Faire une piqûre</div><div class="flip-en">To give an injection</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">Faire une piqûre</div><div class="flip-ex">« Il va falloir vous faire une piqûre. »</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="scene-box" style="margin-bottom:12px;">
+      <div class="section-label">🎬 La situation</div>
+      <div class="scene-text">Un patient arrive chez le médecin avec des symptômes très vagues et très dramatiques. Le médecin essaie de comprendre ce qui se passe... mais le patient a un <strong>objectif caché</strong> !<br><span style="font-size:0.82rem;color:var(--muted);font-style:italic;display:block;margin-top:6px;">A patient arrives at the doctor's with very vague and very dramatic symptoms. The doctor tries to understand... but the patient has a hidden goal!</span></div>
+    </div>
+
+    <div class="sit-grid">
+      <div class="challenge-wrap" onclick="revealChallenge(this)">
+        <div class="challenge-flip">
+          <div class="challenge-face challenge-front-a">
+            <span class="lock-icon">🔒</span>
+            <div class="lock-label">MISSION SECRÈTE A</div>
+            <div class="lock-sublabel">Le médecin — cliquez pour révéler</div>
+            <div class="lock-retip">cliquez à nouveau pour cacher</div>
+          </div>
+          <div class="challenge-face challenge-back challenge-back-a">
+            <div class="challenge-who">🩺 JOUEUR A — Le médecin</div>
+            <div class="challenge-text">Tu es un médecin très sérieux. Tu poses des questions classiques (« Où avez-vous mal ? Depuis quand ? Vous avez de la fièvre ? »). Mais tu es convaincu que tous les problèmes se soignent avec la même solution : « Buvez 3 litres d'eau par jour et mangez des carottes. » Peu importe le symptôme, c'est toujours ta réponse !</div>
+            <div class="challenge-en">You're a very serious doctor. You ask classic questions but you're convinced everything can be cured with the same solution: "Drink 3 litres of water and eat carrots." No matter the symptom!</div>
+          </div>
+        </div>
+      </div>
+      <div class="challenge-wrap" onclick="revealChallenge(this)">
+        <div class="challenge-flip">
+          <div class="challenge-face challenge-front-b">
+            <span class="lock-icon">🔒</span>
+            <div class="lock-label">MISSION SECRÈTE B</div>
+            <div class="lock-sublabel">Le patient — cliquez pour révéler</div>
+            <div class="lock-retip">cliquez à nouveau pour cacher</div>
+          </div>
+          <div class="challenge-face challenge-back challenge-back-b">
+            <div class="challenge-who">🤒 JOUEUR B — Le patient</div>
+            <div class="challenge-text">Tu as « mal partout » mais en réalité tu veux juste un certificat médical pour ne pas aller au travail lundi. Tu dois expliquer ta vraie raison sans être trop direct ! Exemples : « J'ai très très mal... surtout le lundi ! » / « C'est grave docteur ? Je peux pas travailler lundi ? » / « Vous pouvez écrire ça sur un papier officiel ? »</div>
+            <div class="challenge-en">You "hurt everywhere" but really you just want a medical note to skip work on Monday. Explain your real reason without being too direct!</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SITUATION 2 — À LA PHARMACIE -->
+<div class="slide accent-orange" id="slide-2">
+  <div class="slide-inner">
+    <div class="sit-header">
+      <div class="sit-emoji">💊</div>
+      <div>
+        <div class="sit-title accent">À LA PHARMACIE</div>
+        <div class="sit-title-en">At the pharmacy</div>
+      </div>
+      <div class="sit-num">02</div>
+    </div>
+
+    <div class="section-box accent-border vocab-section" style="margin-bottom:12px;">
+      <div class="section-label">📚 Vocabulaire clé — cliquez sur chaque carte</div>
+      <div class="vocab-grid">
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">Une ordonnance</div><div class="flip-en">A prescription</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">Une ordonnance</div><div class="flip-ex">« J'ai une ordonnance de mon médecin. »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">Un médicament</div><div class="flip-en">A medicine</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">Un médicament</div><div class="flip-ex">« Ce médicament est disponible sans ordonnance ? »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">Les effets secondaires</div><div class="flip-en">Side effects</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">Les effets secondaires</div><div class="flip-ex">« Quels sont les effets secondaires ? »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">Avoir de la fièvre</div><div class="flip-en">To have a fever</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">Avoir de la fièvre</div><div class="flip-ex">« Mon enfant a de la fièvre depuis ce matin. »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">Un sirop</div><div class="flip-en">A syrup</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">Un sirop</div><div class="flip-ex">« Vous avez un bon sirop pour la toux ? »</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="scene-box" style="margin-bottom:12px;">
+      <div class="section-label">🎬 La situation</div>
+      <div class="scene-text">Un client entre à la pharmacie avec une ordonnance illisible et beaucoup de questions. Le pharmacien fait de son mieux... mais quelque chose ne tourne pas rond !<br><span style="font-size:0.82rem;color:var(--muted);font-style:italic;display:block;margin-top:6px;">A customer enters the pharmacy with an unreadable prescription and lots of questions. The pharmacist does their best... but something is not quite right!</span></div>
+    </div>
+
+    <div class="sit-grid">
+      <div class="challenge-wrap" onclick="revealChallenge(this)">
+        <div class="challenge-flip">
+          <div class="challenge-face challenge-front-a">
+            <span class="lock-icon">🔒</span>
+            <div class="lock-label">MISSION SECRÈTE A</div>
+            <div class="lock-sublabel">Le pharmacien — cliquez pour révéler</div>
+            <div class="lock-retip">cliquez à nouveau pour cacher</div>
+          </div>
+          <div class="challenge-face challenge-back challenge-back-a">
+            <div class="challenge-who">💊 JOUEUR A — Le pharmacien</div>
+            <div class="challenge-text">Tu es pharmacien très professionnel mais tu confonds systématiquement les médicaments avec des produits alimentaires ! Tu proposes du camembert pour la toux, du chocolat pour la fièvre, du café pour les douleurs... avec le plus grand sérieux !</div>
+            <div class="challenge-en">You're a very professional pharmacist but you mix up medicines with food! You recommend camembert for coughs, chocolate for fever, coffee for pain... completely seriously!</div>
+          </div>
+        </div>
+      </div>
+      <div class="challenge-wrap" onclick="revealChallenge(this)">
+        <div class="challenge-flip">
+          <div class="challenge-face challenge-front-b">
+            <span class="lock-icon">🔒</span>
+            <div class="lock-label">MISSION SECRÈTE B</div>
+            <div class="lock-sublabel">Le client — cliquez pour révéler</div>
+            <div class="lock-retip">cliquez à nouveau pour cacher</div>
+          </div>
+          <div class="challenge-face challenge-back challenge-back-b">
+            <div class="challenge-who">🤷 JOUEUR B — Le client</div>
+            <div class="challenge-text">Tu as une ordonnance mais tu n'as aucune idée de ce que tu as ! Tu poses des questions très précises sur des choses totalement inutiles. Exemples : « Ce médicament, il est disponible en rose ? J'aime pas le blanc. » / « Je peux le prendre avec du vin rouge ? » / « C'est remboursé par mon chat ? »</div>
+            <div class="challenge-en">You have a prescription but no idea what's wrong with you! Ask very precise questions about totally useless things.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SITUATION 3 — À LA PLAGE -->
+<div class="slide accent-sky" id="slide-3">
+  <div class="slide-inner">
+    <div class="sit-header">
+      <div class="sit-emoji">🏖️</div>
+      <div>
+        <div class="sit-title accent">À LA PLAGE</div>
+        <div class="sit-title-en">At the beach</div>
+      </div>
+      <div class="sit-num">03</div>
+    </div>
+
+    <div class="section-box accent-border vocab-section" style="margin-bottom:12px;">
+      <div class="section-label">📚 Vocabulaire clé — cliquez sur chaque carte</div>
+      <div class="vocab-grid">
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">La crème solaire</div><div class="flip-en">Sunscreen</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">La crème solaire</div><div class="flip-ex">« Tu as de la crème solaire ? J'ai oublié la mienne ! »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">Une serviette</div><div class="flip-en">A towel</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">Une serviette</div><div class="flip-ex">« Je peux poser ma serviette ici ? »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">Il fait chaud !</div><div class="flip-en">It's hot!</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">Il fait chaud !</div><div class="flip-ex">« Il fait vraiment chaud aujourd'hui, non ? »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">Les vagues</div><div class="flip-en">The waves</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">Les vagues</div><div class="flip-ex">« Les vagues sont fortes aujourd'hui ! »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">Un glacier</div><div class="flip-en">An ice cream seller</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">Un glacier</div><div class="flip-ex">« Il y a un glacier près de la plage ? »</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="scene-box" style="margin-bottom:12px;">
+      <div class="section-label">🎬 La situation</div>
+      <div class="scene-text">Deux touristes se retrouvent côte à côte sur la plage. L'un profite du soleil, l'autre a besoin d'aide. La conversation part dans tous les sens !<br><span style="font-size:0.82rem;color:var(--muted);font-style:italic;display:block;margin-top:6px;">Two tourists end up side by side on the beach. One wants to relax, the other needs help. The conversation goes in all directions!</span></div>
+    </div>
+
+    <div class="sit-grid">
+      <div class="challenge-wrap" onclick="revealChallenge(this)">
+        <div class="challenge-flip">
+          <div class="challenge-face challenge-front-a">
+            <span class="lock-icon">🔒</span>
+            <div class="lock-label">MISSION SECRÈTE A</div>
+            <div class="lock-sublabel">Le vacancier zen — cliquez pour révéler</div>
+            <div class="lock-retip">cliquez à nouveau pour cacher</div>
+          </div>
+          <div class="challenge-face challenge-back challenge-back-a">
+            <div class="challenge-who">😎 JOUEUR A — Le vacancier zen</div>
+            <div class="challenge-text">Tu veux juste dormir au soleil. Ton voisin te parle sans arrêt ! Tu réponds poliment mais tu essaies toujours de mettre fin à la conversation. Exemples : « Oui... bon... je vais fermer les yeux là ! » / « Je vais finir de lire mon livre maintenant. » / « C'est le moment pour ma méditation. »</div>
+            <div class="challenge-en">You just want to sleep in the sun. Your neighbour won't stop talking! Be polite but always try to end the conversation.</div>
+          </div>
+        </div>
+      </div>
+      <div class="challenge-wrap" onclick="revealChallenge(this)">
+        <div class="challenge-flip">
+          <div class="challenge-face challenge-front-b">
+            <span class="lock-icon">🔒</span>
+            <div class="lock-label">MISSION SECRÈTE B</div>
+            <div class="lock-sublabel">Le vacancier stressé — cliquez pour révéler</div>
+            <div class="lock-retip">cliquez à nouveau pour cacher</div>
+          </div>
+          <div class="challenge-face challenge-back challenge-back-b">
+            <div class="challenge-who">😰 JOUEUR B — Le vacancier stressé</div>
+            <div class="challenge-text">Tu as tout oublié : crème solaire, serviette, eau, chapeau. Tu demandes tout à ton voisin, très poliment, un truc après l'autre ! Exemples : « Excuse-moi, tu as de l'eau ? J'ai très soif ! » / « Tu peux garder mes affaires 2 minutes ? » / « Tu connais un bon restaurant pas loin ? »</div>
+            <div class="challenge-en">You forgot everything: sunscreen, towel, water, hat. Ask your neighbour for everything, very politely, one thing at a time!</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SITUATION 4 — APÉRO ENTRE AMIS -->
+<div class="slide accent-purple" id="slide-4">
+  <div class="slide-inner">
+    <div class="sit-header">
+      <div class="sit-emoji">🍷</div>
+      <div>
+        <div class="sit-title accent">APÉRO ENTRE AMIS</div>
+        <div class="sit-title-en">Drinks with friends</div>
+      </div>
+      <div class="sit-num">04</div>
+    </div>
+
+    <div class="section-box accent-border vocab-section" style="margin-bottom:12px;">
+      <div class="section-label">📚 Vocabulaire clé — cliquez sur chaque carte</div>
+      <div class="vocab-grid">
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">Trinquer</div><div class="flip-en">To clink glasses</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">Trinquer</div><div class="flip-ex">« Allez, on trinque ! À ta santé ! »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">Un verre</div><div class="flip-en">A drink</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">Un verre</div><div class="flip-ex">« On se fait un verre ce soir ? »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">La gueule de bois</div><div class="flip-en">A hangover</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">La gueule de bois</div><div class="flip-ex">« Aïe... j'ai la gueule de bois ce matin ! »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">Raconter</div><div class="flip-en">To tell / to share a story</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">Raconter</div><div class="flip-ex">« Raconte-moi ce qui s'est passé ! »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">C'est n'importe quoi !</div><div class="flip-en">That's crazy / nonsense!</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">C'est n'importe quoi !</div><div class="flip-ex">« Attends... c'est n'importe quoi cette histoire ! »</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="scene-box" style="margin-bottom:12px;">
+      <div class="section-label">🎬 La situation</div>
+      <div class="scene-text">Deux amis se retrouvent en visio pour l'apéro du vendredi soir. Chacun a quelque chose d'important à raconter... mais personne n'écoute vraiment l'autre !<br><span style="font-size:0.82rem;color:var(--muted);font-style:italic;display:block;margin-top:6px;">Two friends meet online for Friday evening drinks. Each one has something important to share... but nobody really listens to the other!</span></div>
+    </div>
+
+    <div class="sit-grid">
+      <div class="challenge-wrap" onclick="revealChallenge(this)">
+        <div class="challenge-flip">
+          <div class="challenge-face challenge-front-a">
+            <span class="lock-icon">🔒</span>
+            <div class="lock-label">MISSION SECRÈTE A</div>
+            <div class="lock-sublabel">cliquez pour révéler</div>
+            <div class="lock-retip">cliquez à nouveau pour cacher</div>
+          </div>
+          <div class="challenge-face challenge-back challenge-back-a">
+            <div class="challenge-who">⭐ JOUEUR A</div>
+            <div class="challenge-text">Tu as une histoire INCROYABLE à raconter : tu as vu Beyoncé dans la rue aujourd'hui ! Tu veux absolument tout raconter dans les détails. Exemples : « Attends laisse-moi finir ! » / « Non mais tu imagines ?! » / « C'est pas fini, écoute la suite ! »</div>
+            <div class="challenge-en">You have an INCREDIBLE story: you saw Beyoncé in the street today! You want to tell every single detail. Don't let your friend interrupt!</div>
+          </div>
+        </div>
+      </div>
+      <div class="challenge-wrap" onclick="revealChallenge(this)">
+        <div class="challenge-flip">
+          <div class="challenge-face challenge-front-b">
+            <span class="lock-icon">🔒</span>
+            <div class="lock-label">MISSION SECRÈTE B</div>
+            <div class="lock-sublabel">cliquez pour révéler</div>
+            <div class="lock-retip">cliquez à nouveau pour cacher</div>
+          </div>
+          <div class="challenge-face challenge-back challenge-back-b">
+            <div class="challenge-who">🐱 JOUEUR B</div>
+            <div class="challenge-text">Ton ami parle mais toi aussi tu as une anecdote urgente : ton chat a mangé ton téléphone portable ce matin ! Tu interromps poliment tout le temps. Exemples : « Oui oui... mais, j'ai une histoire, c'est mon chat... » / « C'est ouf ton histoire, mais à propos de mon chat... » / « Pour finir mon histoire, mon chat... »</div>
+            <div class="challenge-en">Your friend is talking but you also have urgent news: your cat ate your mobile phone this morning! Politely interrupt all the time.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SITUATION 5 — APPEL TÉLÉPHONIQUE -->
+<div class="slide accent-lime" id="slide-5">
+  <div class="slide-inner">
+    <div class="sit-header">
+      <div class="sit-emoji">📞</div>
+      <div>
+        <div class="sit-title accent">APPEL TÉLÉPHONIQUE</div>
+        <div class="sit-title-en">A phone call between friends</div>
+      </div>
+      <div class="sit-num">05</div>
+    </div>
+
+    <div class="section-box accent-border vocab-section" style="margin-bottom:12px;">
+      <div class="section-label">📚 Vocabulaire clé — cliquez sur chaque carte</div>
+      <div class="vocab-grid">
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">Allô ?</div><div class="flip-en">Hello? (on the phone)</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">Allô ?</div><div class="flip-ex">« Allô ? Tu m'entends bien ? »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">Rappeler</div><div class="flip-en">To call back</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">Rappeler</div><div class="flip-ex">« Je peux te rappeler dans 5 minutes ? »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">Rendre service</div><div class="flip-en">To do a favour</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">Rendre service</div><div class="flip-ex">« Tu peux me rendre un petit service ? »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">C'est urgent !</div><div class="flip-en">It's urgent!</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">C'est urgent !</div><div class="flip-ex">« Désolé de t'appeler maintenant, c'est urgent ! »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">Pas de problème !</div><div class="flip-en">No problem!</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">Pas de problème !</div><div class="flip-ex">« Pas de problème, je m'en occupe ! »</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="scene-box" style="margin-bottom:12px;">
+      <div class="section-label">🎬 La situation</div>
+      <div class="scene-text">Un ami appelle pour demander un grand service... mais l'autre ami a aussi besoin d'un service. Les deux veulent parler en même temps !<br><span style="font-size:0.82rem;color:var(--muted);font-style:italic;display:block;margin-top:6px;">A friend calls to ask a big favour... but the other friend also needs a favour. Both want to talk at the same time!</span></div>
+    </div>
+
+    <div class="sit-grid">
+      <div class="challenge-wrap" onclick="revealChallenge(this)">
+        <div class="challenge-flip">
+          <div class="challenge-face challenge-front-a">
+            <span class="lock-icon">🔒</span>
+            <div class="lock-label">MISSION SECRÈTE A</div>
+            <div class="lock-sublabel">cliquez pour révéler</div>
+            <div class="lock-retip">cliquez à nouveau pour cacher</div>
+          </div>
+          <div class="challenge-face challenge-back challenge-back-a">
+            <div class="challenge-who">🐶 JOUEUR A</div>
+            <div class="challenge-text">Tu appelles ton ami pour lui demander de garder ton chien ce week-end. Ton chien est... très spécial ! Exemples : « Il mange seulement des pâtes ! » / « Il dort dans le lit, c'est important ! » / « Il a peur de tout mais il est adorable ! »</div>
+            <div class="challenge-en">You call your friend to ask them to look after your dog this weekend. Your dog is... very special! Describe all his quirks.</div>
+          </div>
+        </div>
+      </div>
+      <div class="challenge-wrap" onclick="revealChallenge(this)">
+        <div class="challenge-flip">
+          <div class="challenge-face challenge-front-b">
+            <span class="lock-icon">🔒</span>
+            <div class="lock-label">MISSION SECRÈTE B</div>
+            <div class="lock-sublabel">cliquez pour révéler</div>
+            <div class="lock-retip">cliquez à nouveau pour cacher</div>
+          </div>
+          <div class="challenge-face challenge-back challenge-back-b">
+            <div class="challenge-who">📦 JOUEUR B</div>
+            <div class="challenge-text">Tu profites pour demander de t'aider à déménager ce week-end ! Tu veux demander avec politesse. Exemples : « À mon tour de demander ! » / « Ah c'est une chance tu me tel, je voudrais te demander... » / « Oui bien sûr... mais ce week-end pour moi aussi ! »</div>
+            <div class="challenge-en">Take the opportunity to ask your friend to help you move house this weekend! Be polite but determined.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SITUATION 6 — DANS UN TAXI -->
+<div class="slide accent-amber" id="slide-6">
+  <div class="slide-inner">
+    <div class="sit-header">
+      <div class="sit-emoji">🚕</div>
+      <div>
+        <div class="sit-title accent">DANS UN TAXI</div>
+        <div class="sit-title-en">In a taxi / Uber</div>
+      </div>
+      <div class="sit-num">06</div>
+    </div>
+
+    <div class="section-box accent-border vocab-section" style="margin-bottom:12px;">
+      <div class="section-label">📚 Vocabulaire clé — cliquez sur chaque carte</div>
+      <div class="vocab-grid">
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">C'est loin ?</div><div class="flip-en">Is it far?</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">C'est loin ?</div><div class="flip-ex">« C'est loin, le centre-ville ? »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">Tourner à gauche</div><div class="flip-en">Turn left</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">Tourner à gauche / droite</div><div class="flip-ex">« Tournez à gauche après le feu ! »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">Être en retard</div><div class="flip-en">To be late</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">Être en retard</div><div class="flip-ex">« Je suis en retard, vous pouvez aller plus vite ? »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">Le trajet</div><div class="flip-en">The journey</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">Le trajet</div><div class="flip-ex">« Le trajet dure combien de temps ? »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">Le pourboire</div><div class="flip-en">The tip</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">Le pourboire</div><div class="flip-ex">« Je laisse un pourboire ? »</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="scene-box" style="margin-bottom:12px;">
+      <div class="section-label">🎬 La situation</div>
+      <div class="scene-text">Un passager monte dans un taxi pour aller à l'aéroport. Il est très pressé. Le chauffeur, lui, est très très détendu !<br><span style="font-size:0.82rem;color:var(--muted);font-style:italic;display:block;margin-top:6px;">A passenger gets in a taxi to go to the airport. They are in a huge rush. The driver, however, is very very relaxed!</span></div>
+    </div>
+
+    <div class="sit-grid">
+      <div class="challenge-wrap" onclick="revealChallenge(this)">
+        <div class="challenge-flip">
+          <div class="challenge-face challenge-front-a">
+            <span class="lock-icon">🔒</span>
+            <div class="lock-label">MISSION SECRÈTE A</div>
+            <div class="lock-sublabel">Le chauffeur — cliquez pour révéler</div>
+            <div class="lock-retip">cliquez à nouveau pour cacher</div>
+          </div>
+          <div class="challenge-face challenge-back challenge-back-a">
+            <div class="challenge-who">🧘 JOUEUR A — Le chauffeur zen</div>
+            <div class="challenge-text">Tu conduis tranquillement, tu n'es jamais pressé. Tu fais la conversation sur tout et n'importe quoi ! Exemples : « Vous connaissez ce quartier ? » / « Moi j'aime pas l'autoroute, c'est plus joli par ici ! » / « Vous voulez de la musique ? »</div>
+            <div class="challenge-en">You drive calmly, you're never in a hurry. You make conversation about everything and anything!</div>
+          </div>
+        </div>
+      </div>
+      <div class="challenge-wrap" onclick="revealChallenge(this)">
+        <div class="challenge-flip">
+          <div class="challenge-face challenge-front-b">
+            <span class="lock-icon">🔒</span>
+            <div class="lock-label">MISSION SECRÈTE B</div>
+            <div class="lock-sublabel">Le passager — cliquez pour révéler</div>
+            <div class="lock-retip">cliquez à nouveau pour cacher</div>
+          </div>
+          <div class="challenge-face challenge-back challenge-back-b">
+            <div class="challenge-who">😱 JOUEUR B — Le passager stressé</div>
+            <div class="challenge-text">Tu es super en retard pour ton avion ! Tu essaies de presser le chauffeur poliment. Exemples : « S'il vous plaît, c'est urgent ! » / « Mon avion est dans 30 minutes ! » / « Vous pouvez prendre l'autoroute ? »</div>
+            <div class="challenge-en">You're super late for your flight! Try to politely hurry the driver.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SITUATION 7 — ACHETER UN CADEAU -->
+<div class="slide accent-pink" id="slide-7">
+  <div class="slide-inner">
+    <div class="sit-header">
+      <div class="sit-emoji">🎁</div>
+      <div>
+        <div class="sit-title accent">ACHETER UN CADEAU</div>
+        <div class="sit-title-en">Buying a gift</div>
+      </div>
+      <div class="sit-num">07</div>
+    </div>
+
+    <div class="section-box accent-border vocab-section" style="margin-bottom:12px;">
+      <div class="section-label">📚 Vocabulaire clé — cliquez sur chaque carte</div>
+      <div class="vocab-grid">
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">C'est pour offrir</div><div class="flip-en">It's a gift</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">C'est pour offrir</div><div class="flip-ex">« C'est pour offrir, vous pouvez faire un joli paquet ? »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">Le budget</div><div class="flip-en">The budget</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">Le budget</div><div class="flip-ex">« Mon budget c'est environ 20 euros. »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">Ça coûte combien ?</div><div class="flip-en">How much is it?</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">Ça coûte combien ?</div><div class="flip-ex">« Ça coûte combien ce petit tableau ? »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">Une idée cadeau</div><div class="flip-en">A gift idea</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">Une idée cadeau</div><div class="flip-ex">« Vous avez une idée cadeau pour une maman ? »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">Trop cher !</div><div class="flip-en">Too expensive!</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">Trop cher !</div><div class="flip-ex">« Oh là là, c'est un peu trop cher pour moi ! »</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="scene-box" style="margin-bottom:12px;">
+      <div class="section-label">🎬 La situation</div>
+      <div class="scene-text">Un client cherche un cadeau dans une boutique française. Le vendeur veut absolument vendre son œuvre d'art... personnelle !<br><span style="font-size:0.82rem;color:var(--muted);font-style:italic;display:block;margin-top:6px;">A customer is looking for a gift in a French shop. The salesperson really wants to sell their... personal masterpiece!</span></div>
+    </div>
+
+    <div class="sit-grid">
+      <div class="challenge-wrap" onclick="revealChallenge(this)">
+        <div class="challenge-flip">
+          <div class="challenge-face challenge-front-a">
+            <span class="lock-icon">🔒</span>
+            <div class="lock-label">MISSION SECRÈTE A</div>
+            <div class="lock-sublabel">Le vendeur — cliquez pour révéler</div>
+            <div class="lock-retip">cliquez à nouveau pour cacher</div>
+          </div>
+          <div class="challenge-face challenge-back challenge-back-a">
+            <div class="challenge-who">🖼️ JOUEUR A — Le vendeur artiste</div>
+            <div class="challenge-text">Tu as peint toi-même un tableau de Napoléon. Tu es artiste — très modeste bien sûr ! Tu es convaincu que c'est le cadeau idéal pour tout le monde. Prix : 3 500 euros. Exemples : « C'est moi qui l'ai peint, je fais un peu d'art... » / « Tout le monde adore Napoléon ! » / « C'est une opportunité unique ! »</div>
+            <div class="challenge-en">You painted a portrait of Napoleon yourself. You're an artist — very modest of course! You're convinced it's the perfect gift for everyone. Price: 3,500 euros.</div>
+          </div>
+        </div>
+      </div>
+      <div class="challenge-wrap" onclick="revealChallenge(this)">
+        <div class="challenge-flip">
+          <div class="challenge-face challenge-front-b">
+            <span class="lock-icon">🔒</span>
+            <div class="lock-label">MISSION SECRÈTE B</div>
+            <div class="lock-sublabel">Le client — cliquez pour révéler</div>
+            <div class="lock-retip">cliquez à nouveau pour cacher</div>
+          </div>
+          <div class="challenge-face challenge-back challenge-back-b">
+            <div class="challenge-who">😬 JOUEUR B — Le client anxieux</div>
+            <div class="challenge-text">C'est un cadeau pour ta belle-mère et tu n'as pas le droit à l'erreur ! Tu hésites et tu as besoin d'être rassuré. Exemples : « Vous êtes sûr qu'elle va aimer ? » / « C'est pas très moderne ! » / « Vous avez Jeanne d'Arc ? »</div>
+            <div class="challenge-en">It's a gift for your mother-in-law and you can't get it wrong! You hesitate and need reassurance.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SITUATION 8 — DANS UN CAFÉ -->
+<div class="slide accent-teal" id="slide-8">
+  <div class="slide-inner">
+    <div class="sit-header">
+      <div class="sit-emoji">☕</div>
+      <div>
+        <div class="sit-title accent">DANS UN CAFÉ</div>
+        <div class="sit-title-en">At a café</div>
+      </div>
+      <div class="sit-num">08</div>
+    </div>
+
+    <div class="section-box accent-border vocab-section" style="margin-bottom:12px;">
+      <div class="section-label">📚 Vocabulaire clé — cliquez sur chaque carte</div>
+      <div class="vocab-grid">
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">Commander</div><div class="flip-en">To order</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">Commander</div><div class="flip-ex">« Je voudrais commander s'il vous plaît ! »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">L'addition</div><div class="flip-en">The bill</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">L'addition</div><div class="flip-ex">« L'addition s'il vous plaît ! »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">Un demi</div><div class="flip-en">A small beer</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">Un demi</div><div class="flip-ex">« Je prends un demi et une eau gazeuse ! »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">C'est offert !</div><div class="flip-en">It's on the house!</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">C'est offert !</div><div class="flip-ex">« C'est offert par le patron, bonne soirée ! »</div></div>
+          </div>
+        </div>
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front accent-card"><div class="flip-word accent-word">Avoir soif</div><div class="flip-en">To be thirsty</div><div class="flip-hint">clic →</div></div>
+            <div class="flip-back"><div class="flip-fr">Avoir soif</div><div class="flip-ex">« J'ai très soif, vous avez quelque chose de frais ? »</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="scene-box" style="margin-bottom:12px;">
+      <div class="section-label">🎬 La situation</div>
+      <div class="scene-text">Un client entre dans un café parisien. Le serveur est très professionnel... mais aussi très philosophe. La soirée va être mémorable !<br><span style="font-size:0.82rem;color:var(--muted);font-style:italic;display:block;margin-top:6px;">A customer enters a Parisian café. The waiter is very professional... but also a great philosopher. The evening will be memorable!</span></div>
+    </div>
+
+    <div class="sit-grid">
+      <div class="challenge-wrap" onclick="revealChallenge(this)">
+        <div class="challenge-flip">
+          <div class="challenge-face challenge-front-a">
+            <span class="lock-icon">🔒</span>
+            <div class="lock-label">MISSION SECRÈTE A</div>
+            <div class="lock-sublabel">Le serveur — cliquez pour révéler</div>
+            <div class="lock-retip">cliquez à nouveau pour cacher</div>
+          </div>
+          <div class="challenge-face challenge-back challenge-back-a">
+            <div class="challenge-who">🧠 JOUEUR A — Le serveur philosophe</div>
+            <div class="challenge-text">Chaque commande t'inspire une réflexion profonde sur la vie ! Exemples : « Un café... comme la vie, chaud et rapide ! » / « L'eau gazeuse... comme nos rêves, ça disparaît ! » / « Un croissant... symbole de la liberté ! » / « Le vin rouge... c'est le sang de la France ! »</div>
+            <div class="challenge-en">Every order inspires a deep reflection on life! A coffee, water, croissant, wine — each one is a philosophical moment.</div>
+          </div>
+        </div>
+      </div>
+      <div class="challenge-wrap" onclick="revealChallenge(this)">
+        <div class="challenge-flip">
+          <div class="challenge-face challenge-front-b">
+            <span class="lock-icon">🔒</span>
+            <div class="lock-label">MISSION SECRÈTE B</div>
+            <div class="lock-sublabel">Le client — cliquez pour révéler</div>
+            <div class="lock-retip">cliquez à nouveau pour cacher</div>
+          </div>
+          <div class="challenge-face challenge-back challenge-back-b">
+            <div class="challenge-who">🤨 JOUEUR B — Le client bizarre</div>
+            <div class="challenge-text">Tu poses des questions très bizarres sur chaque produit du menu, avec le plus grand sérieux ! Exemples : « Le café, il est chaud ou froid ? » / « L'eau gazeuse, c'est de la vraie eau ? » / « Le croissant, c'est fait aujourd'hui ? » / « Le vin, il est français ? »</div>
+            <div class="challenge-en">Ask very strange questions about each item on the menu, with total seriousness!</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE FIN -->
+<div class="slide" id="slide-9">
+  <div class="intro-wrap">
+    <div class="neon-title" style="font-size:clamp(2.5rem,6vw,5rem);">
+      🏆 BRAVO !
+      <span class="sub" style="font-size:45%;">VOUS AVEZ JOUÉ LES 8 SITUATIONS</span>
+    </div>
+    <p class="intro-desc">Vous avez utilisé du vocabulaire authentique, improvisé en français et surtout... <strong style="color:var(--gold)">vous avez osé parler !</strong></p>
+    <div class="intro-badges">
+      <div class="badge">✅ 8 situations</div>
+      <div class="badge">🎯 Vocabulaire en contexte</div>
+      <div class="badge">🗣️ Expression orale</div>
+      <div class="badge">😄 Bonne humeur garantie</div>
+    </div>
+    <div style="margin-top:16px;font-size:0.95rem;color:var(--muted);text-align:center;line-height:1.8;">
+      <div style="color:var(--white);font-weight:700;margin-bottom:8px;">C'est carrément bien ! 🇫🇷</div>
+      <div>KingCretot Experience — Groupe A2/B1</div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+let currentSlide = 0;
+const totalSlides = 10; // 0 intro + 8 situations + 1 fin
+
+(function generateStars() {
+  const container = document.getElementById('stars');
+  for (let i = 0; i < 80; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const size = Math.random() * 2.5 + 0.5;
+    s.style.cssText = `
+      left:${Math.random()*100}%;
+      top:${Math.random()*100}%;
+      width:${size}px;
+      height:${size}px;
+      --d:${(Math.random()*3+2).toFixed(1)}s;
+      animation-delay:${(Math.random()*4).toFixed(1)}s;
+    `;
+    container.appendChild(s);
+  }
+})();
+
+function buildDots() {
+  const wrap = document.getElementById('navDots');
+  wrap.innerHTML = '';
+  for (let i = 0; i < totalSlides; i++) {
+    const d = document.createElement('div');
+    d.className = 'nav-dot' + (i === currentSlide ? ' active' : '');
+    d.onclick = () => goToSlide(i);
+    wrap.appendChild(d);
+  }
+}
+
+function goToSlide(n) {
+  if (n < 0 || n >= totalSlides) return;
+  document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+  currentSlide = n;
+  const target = document.getElementById('slide-' + n);
+  if (target) target.classList.add('active');
+  const pct = n === 0 ? 0 : n >= totalSlides - 1 ? 100 : Math.round((n / (totalSlides - 2)) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  const numEl = document.getElementById('slideNum');
+  if (n === 0 || n === totalSlides - 1) {
+    numEl.textContent = '—';
+  } else {
+    numEl.textContent = n;
+  }
+  buildDots();
+  resetTimer();
+}
+
+function nextSlide() { goToSlide(currentSlide + 1); }
+function prevSlide() { goToSlide(currentSlide - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') nextSlide();
+  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   prevSlide();
+});
+
+function flipCard(card) {
+  card.classList.toggle('flipped');
+}
+
+function revealChallenge(wrap) {
+  const wasFlipped = wrap.classList.contains('flipped');
+  wrap.classList.toggle('flipped');
+  if (!wasFlipped) spawnConfetti(wrap);
+}
+
+function spawnConfetti(el) {
+  const colors = ['#f5c842','#e63946','#2ec4b6','#4a9eff','#b39ddb','#ff8c42'];
+  const rect = el.getBoundingClientRect();
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top + rect.height / 2;
+  for (let i = 0; i < 28; i++) {
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    const angle = Math.random() * 360;
+    const dist  = Math.random() * 120 + 40;
+    const dx = Math.cos(angle * Math.PI / 180) * dist;
+    piece.style.cssText = `
+      left:${cx + dx - 5}px;
+      top:${cy - 20}px;
+      background:${colors[Math.floor(Math.random()*colors.length)]};
+      transform:rotate(${Math.random()*360}deg);
+      animation-duration:${(Math.random()*0.6+0.8).toFixed(2)}s;
+      animation-delay:${(Math.random()*0.2).toFixed(2)}s;
+      border-radius:${Math.random()>0.5?'50%':'2px'};
+    `;
+    document.body.appendChild(piece);
+    setTimeout(() => piece.remove(), 1800);
+  }
+}
+
+let timerInterval = null;
+let timerSeconds  = 180;
+let timerRunning  = false;
+
+function resetTimer() {
+  clearInterval(timerInterval);
+  timerRunning = false;
+  timerSeconds = 180;
+  const d = document.getElementById('timerDisplay');
+  const b = document.getElementById('timerBtn');
+  d.textContent = '3:00';
+  d.classList.remove('timer-warn');
+  b.textContent = '▶ GO';
+}
+
+function toggleTimer() {
+  if (timerRunning) {
+    clearInterval(timerInterval);
+    timerRunning = false;
+    document.getElementById('timerBtn').textContent = '▶ GO';
+  } else {
+    timerRunning = true;
+    document.getElementById('timerBtn').textContent = '⏸ PAUSE';
+    timerInterval = setInterval(() => {
+      timerSeconds--;
+      const m = Math.floor(timerSeconds / 60);
+      const s = timerSeconds % 60;
+      const d = document.getElementById('timerDisplay');
+      d.textContent = m + ':' + String(s).padStart(2,'0');
+      if (timerSeconds <= 30) d.classList.add('timer-warn');
+      if (timerSeconds <= 0) {
+        clearInterval(timerInterval);
+        timerRunning = false;
+        document.getElementById('timerBtn').textContent = '▶ GO';
+        d.textContent = 'FIN !';
+      }
+    }, 1000);
+  }
+}
+
+buildDots();
+</script>
+</body>
+</html>
