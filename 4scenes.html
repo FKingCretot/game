@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Denise à Perpignan — Kingcretot Experience</title>
+<style>
+  :root{
+    --sang:#8C1D1D;
+    --sang-clair:#A83232;
+    --or:#C8971B;
+    --or-clair:#E3C46A;
+    --creme:#FBF7F0;
+    --creme2:#F3ECE0;
+    --ardoise:#2A343D;
+    --gris:#6B7680;
+    --blanc:#FFFFFF;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--creme);
+    color:var(--ardoise);
+    font-family:"Helvetica Neue",Arial,sans-serif;
+    font-size:20px;
+    line-height:1.6;
+  }
+  .wrap{max-width:1100px;margin:0 auto;padding:24px 20px 80px;}
+
+  /* ---------- HEADER ---------- */
+  header{
+    background:linear-gradient(135deg,var(--sang) 0%,var(--sang-clair) 100%);
+    color:var(--blanc);
+    padding:34px 20px 28px;
+    text-align:center;
+    border-bottom:6px solid var(--or);
+  }
+  header h1{
+    font-family:Georgia,serif;
+    font-size:48px;
+    margin:0 0 6px;
+    letter-spacing:.5px;
+  }
+  header .sub{
+    font-size:21px;
+    color:var(--or-clair);
+    font-style:italic;
+    margin:0;
+  }
+  header .marque{
+    font-size:15px;
+    letter-spacing:3px;
+    text-transform:uppercase;
+    color:rgba(255,255,255,.7);
+    margin-top:14px;
+  }
+
+  /* ---------- NAV ---------- */
+  nav{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    justify-content:center;
+    padding:20px 12px;
+    background:var(--creme2);
+    position:sticky;
+    top:0;
+    z-index:50;
+    border-bottom:1px solid #E0D6C4;
+  }
+  nav button{
+    font-size:18px;
+    font-weight:600;
+    padding:12px 20px;
+    border:2px solid var(--sang);
+    background:transparent;
+    color:var(--sang);
+    border-radius:40px;
+    cursor:pointer;
+    transition:.15s;
+  }
+  nav button:hover{background:#F0E2E2;}
+  nav button.actif{background:var(--sang);color:var(--blanc);}
+
+  section{display:none;}
+  section.visible{display:block;animation:fade .25s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  h2{
+    font-family:Georgia,serif;
+    font-size:40px;
+    color:var(--sang);
+    margin:34px 0 6px;
+  }
+  .chapo{font-size:21px;color:var(--gris);margin:0 0 28px;font-style:italic;}
+
+  h3{
+    font-family:Georgia,serif;
+    font-size:30px;
+    margin:34px 0 12px;
+    color:var(--ardoise);
+  }
+
+  .carte{
+    background:var(--blanc);
+    border-radius:14px;
+    padding:26px 28px;
+    margin-bottom:22px;
+    box-shadow:0 2px 10px rgba(0,0,0,.06);
+    border-left:7px solid var(--or);
+  }
+
+  /* ---------- QUIZ ---------- */
+  .question{font-size:26px;font-weight:600;margin-bottom:16px;}
+  .options{display:flex;flex-wrap:wrap;gap:12px;}
+  .opt{
+    font-size:20px;
+    padding:14px 22px;
+    border:2px solid #D8CDBA;
+    background:var(--creme);
+    border-radius:10px;
+    cursor:pointer;
+    font-family:inherit;
+    color:var(--ardoise);
+    transition:.15s;
+  }
+  .opt:hover{border-color:var(--or);}
+  .opt.juste{background:#E4F1E4;border-color:#3E8E41;color:#1F5B22;font-weight:700;}
+  .opt.faux{background:#F7E4E4;border-color:#B14646;color:#7E2626;opacity:.75;}
+  .explication{
+    display:none;
+    margin-top:18px;
+    padding:18px 20px;
+    background:var(--creme2);
+    border-radius:10px;
+    font-size:19px;
+  }
+  .explication.montre{display:block;}
+
+  /* ---------- OUTILS ---------- */
+  .grille{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:18px;}
+  .outil{
+    background:var(--blanc);
+    border-radius:12px;
+    padding:22px 24px;
+    cursor:pointer;
+    border:2px solid #E5DBC9;
+    transition:.15s;
+  }
+  .outil:hover{border-color:var(--or);transform:translateY(-2px);}
+  .outil .fr{
+    font-family:Georgia,serif;
+    font-size:26px;
+    font-style:italic;
+    color:var(--ardoise);
+    line-height:1.35;
+  }
+  .outil .en{
+    display:none;
+    margin-top:14px;
+    padding-top:14px;
+    border-top:1px dashed #D8CDBA;
+    font-size:18px;
+    color:var(--gris);
+  }
+  .outil.ouvert .en{display:block;}
+  .outil .quand{color:var(--or);font-weight:600;display:block;margin-top:8px;font-size:17px;}
+  .etoile{
+    border-color:var(--or);
+    background:linear-gradient(180deg,#FFFDF6 0%,#FDF6E3 100%);
+  }
+  .tag{
+    display:inline-block;
+    background:var(--or);
+    color:var(--blanc);
+    font-size:14px;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    padding:4px 12px;
+    border-radius:20px;
+    margin-bottom:10px;
+    font-weight:700;
+  }
+  .astuce{font-size:16px;color:var(--gris);text-align:center;margin-bottom:18px;font-style:italic;}
+
+  /* ---------- SCENES ---------- */
+  .scene{
+    background:var(--blanc);
+    border-radius:16px;
+    margin-bottom:34px;
+    overflow:hidden;
+    box-shadow:0 3px 14px rgba(0,0,0,.08);
+  }
+  .scene-tete{
+    background:var(--ardoise);
+    color:var(--blanc);
+    padding:22px 28px;
+    display:flex;
+    align-items:center;
+    gap:18px;
+    flex-wrap:wrap;
+  }
+  .num{
+    background:var(--or);
+    color:var(--ardoise);
+    font-family:Georgia,serif;
+    font-size:30px;
+    font-weight:700;
+    width:56px;height:56px;
+    border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;
+  }
+  .scene-tete h3{margin:0;color:var(--blanc);font-size:32px;}
+  .duree{margin-left:auto;font-size:17px;color:var(--or-clair);letter-spacing:1px;}
+  .scene-corps{padding:26px 28px;}
+
+  .mission{
+    background:#EAF0F5;
+    border-left:6px solid #4A6FA5;
+    padding:20px 22px;
+    border-radius:0 10px 10px 0;
+    margin-bottom:20px;
+  }
+  .mission .qui{
+    text-transform:uppercase;letter-spacing:2px;font-size:15px;
+    color:#4A6FA5;font-weight:700;margin-bottom:8px;
+  }
+  .mission .txt{font-size:22px;}
+  .mission ul{margin:12px 0 0;padding-left:24px;}
+  .mission li{margin-bottom:6px;font-size:20px;}
+
+  .zone-patricia{
+    background:#F6F1F8;
+    border:2px dashed #8E6BA8;
+    border-radius:12px;
+    padding:20px 22px;
+  }
+  .zone-patricia .qui{
+    text-transform:uppercase;letter-spacing:2px;font-size:15px;
+    color:#7A529A;font-weight:700;margin-bottom:6px;
+  }
+  .alerte{
+    font-size:16px;color:#7A529A;margin-bottom:14px;
+  }
+  .boutons{display:flex;gap:12px;flex-wrap:wrap;}
+  .btn{
+    font-size:18px;font-weight:600;font-family:inherit;
+    padding:13px 22px;border-radius:10px;cursor:pointer;
+    border:2px solid #7A529A;background:#7A529A;color:var(--blanc);
+    transition:.15s;
+  }
+  .btn.creux{background:transparent;color:#7A529A;}
+  .btn:hover{opacity:.85;}
+  .contenu-secret{
+    display:none;
+    margin-top:18px;
+    background:var(--blanc);
+    border-radius:10px;
+    padding:20px 22px;
+    font-size:20px;
+  }
+  .contenu-secret.montre{display:block;}
+  .contenu-secret .role{font-family:Georgia,serif;font-size:24px;color:#5E3A78;margin-bottom:10px;}
+  .contenu-secret .repliques{margin:14px 0 0;padding-left:0;list-style:none;}
+  .contenu-secret .repliques li{
+    font-family:Georgia,serif;font-style:italic;font-size:22px;
+    padding:10px 0 10px 20px;border-left:4px solid var(--or-clair);margin-bottom:10px;
+  }
+  .twist{
+    margin-top:16px;background:#FFF6E0;border-radius:8px;padding:16px 18px;font-size:19px;
+  }
+  .twist b{color:var(--sang);}
+  .note-prof{
+    margin-top:18px;font-size:17px;color:var(--gris);
+    border-top:1px solid #E5DBC9;padding-top:14px;
+  }
+  .cache{position:absolute;left:-9999px;white-space:pre-wrap;}
+
+  .savais{
+    background:linear-gradient(135deg,#FDF6E3,#F7EDD4);
+    border-radius:14px;padding:24px 28px;margin:26px 0;
+    border-left:7px solid var(--or);
+  }
+  .savais h4{margin:0 0 10px;font-size:24px;font-family:Georgia,serif;color:var(--sang);}
+  .savais ul{margin:0;padding-left:24px;}
+  .savais li{margin-bottom:10px;font-size:19px;}
+
+  .mots{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-top:18px;}
+  .mot{background:var(--blanc);border-radius:10px;padding:16px;text-align:center;border:2px solid var(--or-clair);}
+  .mot .cat{font-family:Georgia,serif;font-size:26px;color:var(--sang);}
+  .mot .fr2{font-size:17px;color:var(--gris);margin-top:4px;}
+
+  .flash{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;}
+  .flash .carte{margin:0;border-left-color:var(--sang-clair);}
+  .flash .carte b{font-size:22px;}
+
+  footer{
+    text-align:center;padding:36px 20px;color:var(--gris);font-size:16px;
+    border-top:1px solid #E0D6C4;margin-top:40px;
+  }
+  @media(max-width:640px){
+    body{font-size:18px;}
+    header h1{font-size:34px;}
+    h2{font-size:30px;}
+    .scene-tete h3{font-size:24px;}
+    .mission .txt{font-size:20px;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Denise à Perpignan</h1>
+  <p class="sub">Une semaine avant le départ — mises en situation réelles</p>
+  <div class="marque">Kingcretot Experience</div>
+</header>
+
+<nav>
+  <button class="actif" onclick="aller('s1',this)">1 · Perpinyà</button>
+  <button onclick="aller('s2',this)">2 · Boîte à outils</button>
+  <button onclick="aller('s3',this)">3 · Les 4 scènes</button>
+  <button onclick="aller('s4',this)">4 · Scène inversée</button>
+  <button onclick="aller('s5',this)">5 · Bonus &amp; débrief</button>
+</nav>
+
+<div class="wrap">
+
+<!-- ================= SECTION 1 ================= -->
+<section id="s1" class="visible">
+  <h2>Perpignan, c'est la Catalogne</h2>
+  <p class="chapo">Avant de parler aux gens, il faut avoir quelque chose à leur dire. Voilà tes munitions.</p>
+
+  <div class="carte">
+    <div class="question">1. Perpignan est française depuis quelle année&nbsp;?</div>
+    <div class="options">
+      <button class="opt" onclick="repondre(this,0)">1492</button>
+      <button class="opt" onclick="repondre(this,1)">1659</button>
+      <button class="opt" onclick="repondre(this,0)">1789</button>
+    </div>
+    <div class="explication">
+      <b>1659.</b> Avant ça, Perpignan était espagnole. C'est le Traité des Pyrénées qui l'a rattachée à la France. Autrement dit&nbsp;: la ville est française depuis «&nbsp;seulement&nbsp;» 365 ans — et les Perpignanais ne l'ont pas oublié.
+      <br><br><i>English: Perpignan was Spanish until 1659. That's very recent by French standards — and locals still feel it.</i>
+    </div>
+  </div>
+
+  <div class="carte">
+    <div class="question">2. Perpignan a été la capitale de quel royaume&nbsp;?</div>
+    <div class="options">
+      <button class="opt" onclick="repondre(this,0)">Le royaume d'Aragon</button>
+      <button class="opt" onclick="repondre(this,1)">Le royaume de Majorque</button>
+      <button class="opt" onclick="repondre(this,0)">Le royaume de Navarre</button>
+    </div>
+    <div class="explication">
+      <b>Le royaume de Majorque</b>, au XIII<sup>e</sup> siècle. Tu peux encore visiter le <b>Palais des Rois de Majorque</b>, en haut de la ville, avec sa cour à arcades.
+      <br><br><i>English: Perpignan was the mainland capital of the Kingdom of Majorca. The palace is still there — go up for the view.</i>
+    </div>
+  </div>
+
+  <div class="carte">
+    <div class="question">3. Quelle langue vas-tu voir sur les plaques de rue, à côté du français&nbsp;?</div>
+    <div class="options">
+      <button class="opt" onclick="repondre(this,0)">L'espagnol</button>
+      <button class="opt" onclick="repondre(this,0)">L'occitan</button>
+      <button class="opt" onclick="repondre(this,1)">Le catalan</button>
+    </div>
+    <div class="explication">
+      <b>Le catalan.</b> En catalan, Perpignan se dit <b>Perpinyà</b>. La ville revendique son identité catalane partout&nbsp;: les couleurs <b>sang et or</b> (rouge et jaune), le drapeau, les fêtes.
+      <br><br><i>English: Street signs are bilingual French/Catalan. Perpignan = Perpinyà.</i>
+    </div>
+  </div>
+
+  <div class="savais">
+    <h4>Tu le savais&nbsp;?</h4>
+    <ul>
+      <li>Le <b>Castillet</b>, la grande porte en brique rouge, est le symbole de la ville. C'était une prison.</li>
+      <li>Le <b>Campo Santo</b> est un cimetière-cloître médiéval, l'un des mieux conservés de France. Aujourd'hui on y donne des concerts.</li>
+      <li>La <b>cathédrale Saint-Jean</b> est de style gothique <i>catalan</i> — plus large, plus sobre, très différent de Notre-Dame.</li>
+      <li>Sur la <b>place Cassanyes</b>, il y a un marché nord-africain plein de couleurs et d'odeurs. Rien à voir avec le marché «&nbsp;carte postale&nbsp;».</li>
+      <li>Ici on danse la <b>sardane</b>&nbsp;: en cercle, en se tenant les mains, tout le monde peut entrer dans la ronde.</li>
+      <li>À goûter&nbsp;: les <b>rousquilles</b> (petits biscuits glacés au citron) et la <b>botifarra</b> (saucisse catalane).</li>
+    </ul>
+  </div>
+
+  <h3>5 mots de catalan pour faire sourire les gens</h3>
+  <p class="chapo" style="margin-bottom:0;">Personne ne l'attend d'une Américaine. C'est exactement pour ça que ça marche.</p>
+  <div class="mots">
+    <div class="mot"><div class="cat">Bon dia</div><div class="fr2">Bonjour</div></div>
+    <div class="mot"><div class="cat">Adéu</div><div class="fr2">Au revoir</div></div>
+    <div class="mot"><div class="cat">Si us plau</div><div class="fr2">S'il vous plaît</div></div>
+    <div class="mot"><div class="cat">Gràcies</div><div class="fr2">Merci</div></div>
+    <div class="mot"><div class="cat">Perpinyà</div><div class="fr2">Perpignan</div></div>
+  </div>
+
+  <div class="carte" style="margin-top:28px;border-left-color:var(--sang);">
+    <b style="font-size:24px;">Micro-défi oral (2 min)</b>
+    <p style="font-size:21px;margin-bottom:0;">Denise, en 30 secondes&nbsp;: raconte-moi Perpignan à quelqu'un qui n'y est jamais allé. Utilise trois informations d'en haut. Patricia, tu chronomètres.</p>
+  </div>
+</section>
+
+<!-- ================= SECTION 2 ================= -->
+<section id="s2">
+  <h2>La boîte à outils de survie</h2>
+  <p class="chapo">Ces phrases ne sont pas du «&nbsp;vocabulaire&nbsp;». Ce sont tes airbags. On les répète à voix haute jusqu'à ce qu'elles sortent toutes seules.</p>
+  <p class="astuce">Clique sur une carte pour voir la traduction et le mode d'emploi.</p>
+
+  <div class="grille">
+    <div class="outil" onclick="ouvrir(this)">
+      <div class="fr">Pardon&nbsp;?</div>
+      <div class="en">The shortest tool you have. One word, and the other person repeats.
+        <span class="quand">Quand tu n'as pas compris. Point.</span></div>
+    </div>
+
+    <div class="outil" onclick="ouvrir(this)">
+      <div class="fr">Vous pouvez répéter, s'il vous plaît&nbsp;?</div>
+      <div class="en">Could you say that again, please?
+        <span class="quand">La version polie et complète. Jamais gênante.</span></div>
+    </div>
+
+    <div class="outil" onclick="ouvrir(this)">
+      <div class="fr">Vous pouvez parler un peu plus lentement&nbsp;?</div>
+      <div class="en">Could you speak a bit more slowly?
+        <span class="quand">Dans le Sud, les gens parlent vite. Tu as le droit de demander.</span></div>
+    </div>
+
+    <div class="outil" onclick="ouvrir(this)">
+      <div class="fr">Comment on dit… en français&nbsp;?</div>
+      <div class="en">How do you say… in French?
+        <span class="quand">Transforme un blanc en question. Les Français adorent répondre à ça.</span></div>
+    </div>
+
+    <div class="outil" onclick="ouvrir(this)">
+      <div class="fr">Attendez, je cherche mes mots.</div>
+      <div class="en">Hold on, I'm looking for my words.
+        <span class="quand">Tu achètes 5 secondes et tu gardes la parole. Très naturel.</span></div>
+    </div>
+
+    <div class="outil" onclick="ouvrir(this)">
+      <div class="fr">Vous voulez dire… ?</div>
+      <div class="en">Do you mean…?
+        <span class="quand">Tu reformules pour vérifier. C'est ce que font les vrais bilingues.</span></div>
+    </div>
+
+    <div class="outil etoile" onclick="ouvrir(this)">
+      <span class="tag">La phrase clé</span>
+      <div class="fr">Je préfère continuer en français, ça m'aide énormément.</div>
+      <div class="en">I'd rather keep going in French, it really helps me.
+        <span class="quand">À sortir dès qu'on passe à l'anglais. Souriante, pas agressive. Ça marche à 90 %.</span></div>
+    </div>
+
+    <div class="outil etoile" onclick="ouvrir(this)">
+      <span class="tag">Les mots qui donnent du temps</span>
+      <div class="fr">Alors… / En fait… / Comment dire… / Disons que…</div>
+      <div class="en">Well… / Actually… / How can I put it… / Let's say…
+        <span class="quand">Ce ne sont pas des mots vides&nbsp;: ce sont des béquilles de fluidité. Les Français les utilisent tout le temps.</span></div>
+    </div>
+  </div>
+
+  <div class="carte" style="margin-top:28px;border-left-color:var(--sang);">
+    <b style="font-size:24px;">Drill express (3 min)</b>
+    <p style="font-size:21px;">Fabrice dit une phrase très vite et incompréhensible. Denise réagit avec un outil différent à chaque fois. Puis on inverse&nbsp;: Patricia parle vite, Denise réagit.
+    <br><br><b>Règle&nbsp;:</b> interdiction d'utiliser deux fois le même outil.</p>
+  </div>
+</section>
+
+<!-- ================= SECTION 3 ================= -->
+<section id="s3">
+  <h2>Les 4 mises en situation</h2>
+  <p class="chapo">Denise voit sa mission. Patricia reçoit sa carte en message privé Zoom. Personne ne triche.</p>
+
+  <!-- SCENE 1 -->
+  <div class="scene">
+    <div class="scene-tete">
+      <div class="num">1</div>
+      <h3>L'apéritif catalan</h3>
+      <div class="duree">8 MIN</div>
+    </div>
+    <div class="scene-corps">
+      <div class="mission">
+        <div class="qui">Mission de Denise — visible</div>
+        <div class="txt">Fin de la première journée. Le groupe prend l'apéritif. Tu te retrouves assise à côté d'une femme que tu ne connais pas du tout.</div>
+        <ul>
+          <li>Engage la conversation toi-même (ne l'attends pas)</li>
+          <li>Tiens 4 minutes</li>
+          <li>Parle de Sarasota <b>et</b> pose au moins 3 questions</li>
+        </ul>
+      </div>
+
+      <div class="zone-patricia">
+        <div class="qui">Carte de Patricia</div>
+        <div class="alerte">⚠️ Ne pas afficher pendant le partage d'écran — envoyer en message privé.</div>
+        <div class="boutons">
+          <button class="btn" onclick="copier(this)">📋 Copier pour le chat privé</button>
+          <button class="btn creux" onclick="secret(this)">👁 Afficher / masquer</button>
+        </div>
+        <div class="contenu-secret">
+          <div class="role">Tu es Nathalie, 55 ans, de Perpignan. Tu es professeure de danse. Chaleureuse, curieuse, tu poses beaucoup de questions.</div>
+          <ul class="repliques">
+            <li>« Alors, c'est votre première fois à Perpignan&nbsp;? »</li>
+            <li>« Vous êtes venue avec le groupe de Sarasota, c'est ça&nbsp;? »</li>
+            <li>« Il fait quel temps en Floride en ce moment&nbsp;? »</li>
+          </ul>
+          <div class="twist"><b>Twist secret&nbsp;:</b> après une minute environ, tu accélères et tu poses <b>deux questions d'affilée</b> sans laisser de pause. Denise doit s'accrocher ou demander de ralentir.</div>
+        </div>
+        <div class="cache">PATRICIA - SCENE 1 : L'APERITIF
+Tu es Nathalie, 55 ans, de Perpignan, professeure de danse. Chaleureuse, curieuse, tu poses beaucoup de questions.
+Tes repliques de depart :
+- "Alors, c'est votre premiere fois a Perpignan ?"
+- "Vous etes venue avec le groupe de Sarasota, c'est ca ?"
+- "Il fait quel temps en Floride en ce moment ?"
+TWIST SECRET : apres une minute, tu acceleres et tu poses DEUX questions d'affilee sans laisser de pause.</div>
+      </div>
+
+      <div class="note-prof"><b>Note Fabrice&nbsp;:</b> scène d'échauffement, elle doit être agréable. Si Denise bloque, laisse Patricia relancer avec une réplique écrite — elle n'est jamais dans le vide.</div>
+    </div>
+  </div>
+
+  <!-- SCENE 2 -->
+  <div class="scene">
+    <div class="scene-tete">
+      <div class="num">2</div>
+      <h3>Au marché</h3>
+      <div class="duree">8 MIN</div>
+    </div>
+    <div class="scene-corps">
+      <div class="mission">
+        <div class="qui">Mission de Denise — visible</div>
+        <div class="txt">Marché du matin, en plein centre. Tu veux acheter quelque chose de local à rapporter ou à goûter.</div>
+        <ul>
+          <li>Demande le prix <b>et</b> la quantité</li>
+          <li>Demande à goûter</li>
+          <li>Fais ton choix et paie</li>
+        </ul>
+      </div>
+
+      <div class="zone-patricia">
+        <div class="qui">Carte de Patricia</div>
+        <div class="alerte">⚠️ Ne pas afficher pendant le partage d'écran — envoyer en message privé.</div>
+        <div class="boutons">
+          <button class="btn" onclick="copier(this)">📋 Copier pour le chat privé</button>
+          <button class="btn creux" onclick="secret(this)">👁 Afficher / masquer</button>
+        </div>
+        <div class="contenu-secret">
+          <div class="role">Tu es la vendeuse du marché. Tu es directe, tu plaisantes, tu tutoies presque tout de suite. Tu parles fort.</div>
+          <ul class="repliques">
+            <li>« Bonjour&nbsp;! Qu'est-ce qu'il vous faut aujourd'hui&nbsp;? »</li>
+            <li>« Goûtez, goûtez, c'est offert&nbsp;! »</li>
+            <li>« Ça, c'est des rousquilles, c'est de chez nous. »</li>
+          </ul>
+          <div class="twist"><b>Twist secret&nbsp;:</b> tu insistes gentiment pour lui vendre un produit qu'elle ne connaît pas du tout — la <b>botifarra</b> (saucisse catalane). Tu ne lâches pas tout de suite. Denise doit refuser poliment <i>ou</i> se laisser convaincre — mais en français.</div>
+        </div>
+        <div class="cache">PATRICIA - SCENE 2 : AU MARCHE
+Tu es la vendeuse du marche. Directe, tu plaisantes, tu tutoies presque tout de suite, tu parles fort.
+Tes repliques de depart :
+- "Bonjour ! Qu'est-ce qu'il vous faut aujourd'hui ?"
+- "Goutez, goutez, c'est offert !"
+- "Ca, c'est des rousquilles, c'est de chez nous."
+TWIST SECRET : tu insistes gentiment pour lui vendre la BOTIFARRA (saucisse catalane) qu'elle ne connait pas. Tu ne laches pas tout de suite.</div>
+      </div>
+
+      <div class="note-prof"><b>Note Fabrice&nbsp;:</b> vocabulaire à faire émerger — <i>une tranche, un morceau, une demi-livre, ça fait combien&nbsp;?, je vais en prendre deux, ça ira comme ça</i>.</div>
+    </div>
+  </div>
+
+  <!-- SCENE 3 -->
+  <div class="scene">
+    <div class="scene-tete">
+      <div class="num">3</div>
+      <h3>Quand il passe à l'anglais ⭐</h3>
+      <div class="duree">10 MIN</div>
+    </div>
+    <div class="scene-corps">
+      <div class="mission">
+        <div class="qui">Mission de Denise — visible</div>
+        <div class="txt">Terrasse de café, place de la République. Tu commandes.</div>
+        <ul>
+          <li><b>Reste en français quoi qu'il arrive.</b></li>
+          <li>Gentiment. Sans vexer. Avec le sourire.</li>
+          <li>Tu as le droit d'utiliser la phrase clé de la boîte à outils.</li>
+        </ul>
+      </div>
+
+      <div class="zone-patricia">
+        <div class="qui">Carte de Patricia</div>
+        <div class="alerte">⚠️ Ne pas afficher pendant le partage d'écran — envoyer en message privé.</div>
+        <div class="boutons">
+          <button class="btn" onclick="copier(this)">📋 Copier pour le chat privé</button>
+          <button class="btn creux" onclick="secret(this)">👁 Afficher / masquer</button>
+        </div>
+        <div class="contenu-secret">
+          <div class="role">Tu es le serveur. Tu es sympathique, souriant, tu crois <b>rendre service</b>. Tu n'es pas méchant du tout.</div>
+          <ul class="repliques">
+            <li>« Bonjour, qu'est-ce que je vous sers&nbsp;? »</li>
+            <li>Dès la 2<sup>e</sup> réplique&nbsp;: « Oh, you're American&nbsp;? No problem, I speak English&nbsp;! »</li>
+            <li>« Sorry, is it easier in English for you&nbsp;? »</li>
+          </ul>
+          <div class="twist"><b>Règle du jeu&nbsp;:</b> si Denise demande <b>une fois</b> de rester en français → tu reviens au français avec le sourire et tu la félicites. Si elle ne dit rien → tu continues en anglais jusqu'au bout.</div>
+        </div>
+        <div class="cache">PATRICIA - SCENE 3 : LE SERVEUR QUI PASSE A L'ANGLAIS
+Tu es le serveur. Sympathique, souriant. Tu crois RENDRE SERVICE, tu n'es pas mechant.
+Tes repliques :
+- "Bonjour, qu'est-ce que je vous sers ?"
+- Des la 2e replique : "Oh, you're American ? No problem, I speak English !"
+- "Sorry, is it easier in English for you ?"
+REGLE : si Denise demande UNE FOIS de rester en francais, tu reviens au francais avec le sourire. Si elle ne dit rien, tu continues en anglais jusqu'au bout.</div>
+      </div>
+
+      <div class="note-prof"><b>Note Fabrice&nbsp;:</b> c'est la scène centrale du cours. Si Denise ne réagit pas la première fois, <b>on arrête et on rejoue</b> — sans jugement. Le but est qu'elle sente physiquement le moment où il faut ouvrir la bouche. Débrief obligatoire&nbsp;: <i>qu'est-ce que tu as ressenti&nbsp;? Est-ce que tu as eu peur de le vexer&nbsp;?</i></div>
+    </div>
+  </div>
+
+  <!-- SCENE 4 -->
+  <div class="scene">
+    <div class="scene-tete">
+      <div class="num">4</div>
+      <h3>Le défi final — une vraie conversation</h3>
+      <div class="duree">10 MIN</div>
+    </div>
+    <div class="scene-corps">
+      <div class="mission">
+        <div class="qui">Mission de Denise — visible</div>
+        <div class="txt">Fin de journée. <b>Jeannette</b> te prend par le bras et te présente à une amie française du groupe.</div>
+        <ul>
+          <li>5 minutes de conversation. Aucune préparation.</li>
+          <li>Tu n'as pas le droit de dire «&nbsp;je ne sais pas quoi dire&nbsp;».</li>
+          <li>Si tu bloques&nbsp;: outil de la boîte, puis tu repars.</li>
+        </ul>
+      </div>
+
+      <div class="zone-patricia">
+        <div class="qui">Carte de Patricia</div>
+        <div class="alerte">⚠️ Ne pas afficher pendant le partage d'écran — envoyer en message privé.</div>
+        <div class="boutons">
+          <button class="btn" onclick="copier(this)">📋 Copier pour le chat privé</button>
+          <button class="btn creux" onclick="secret(this)">👁 Afficher / masquer</button>
+        </div>
+        <div class="contenu-secret">
+          <div class="role">Tu es Christine, une Française qui voyage avec le groupe. Élégante, un peu directe, très bavarde.</div>
+          <ul class="repliques">
+            <li>Jeannette vient de dire&nbsp;: «&nbsp;Christine, je te présente Denise — elle apprend le français depuis des années&nbsp;!&nbsp;» → tu enchaînes sur cette phrase.</li>
+          </ul>
+          <div class="twist"><b>Tes 3 questions surprises</b> — sors-les une par une, quand la conversation ralentit&nbsp;:<br>
+          1. «&nbsp;Qu'est-ce qui vous a le plus surprise depuis votre arrivée&nbsp;?&nbsp;»<br>
+          2. «&nbsp;Et votre mari, il fait quoi dans la vie&nbsp;?&nbsp;»<br>
+          3. «&nbsp;Vous pourriez vivre en France, vous&nbsp;?&nbsp;»</div>
+        </div>
+        <div class="cache">PATRICIA - SCENE 4 : LE DEFI FINAL
+Tu es Christine, une Francaise qui voyage avec le groupe. Elegante, un peu directe, tres bavarde.
+Jeannette vient de dire : "Christine, je te presente Denise, elle apprend le francais depuis des annees !" - tu enchaines sur cette phrase.
+TES 3 QUESTIONS SURPRISES (une par une, quand ca ralentit) :
+1. "Qu'est-ce qui vous a le plus surprise depuis votre arrivee ?"
+2. "Et votre mari, il fait quoi dans la vie ?"
+3. "Vous pourriez vivre en France, vous ?"</div>
+      </div>
+
+      <div class="note-prof"><b>Note Fabrice&nbsp;:</b> la question 2 est un cadeau — George et sa découpe de papier, Denise a de la matière pour deux minutes. La question 3 fait basculer vers l'opinion, donc vers du vrai B2.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SECTION 4 ================= -->
+<section id="s4">
+  <h2>Scène inversée — au tour de Patricia</h2>
+  <p class="chapo">On échange les rôles. Denise devient française, Patricia devient la voyageuse.</p>
+
+  <div class="scene">
+    <div class="scene-tete">
+      <div class="num">5</div>
+      <h3>Devant le Castillet</h3>
+      <div class="duree">8 MIN</div>
+    </div>
+    <div class="scene-corps">
+      <div class="mission" style="background:#F6F1F8;border-left-color:#7A529A;">
+        <div class="qui" style="color:#7A529A;">Mission de Patricia — visible</div>
+        <div class="txt">Tu viens d'arriver à Perpignan. Tu es un peu perdue, place de la Victoire. Tu abordes une Perpignanaise.</div>
+        <ul>
+          <li>Demande ton chemin jusqu'au Castillet</li>
+          <li>Demande une bonne adresse pour déjeuner</li>
+          <li>Pose une question sur la ville (une seule, mais une vraie)</li>
+        </ul>
+      </div>
+
+      <div class="mission">
+        <div class="qui">Rôle de Denise — visible</div>
+        <div class="txt">Tu es perpignanaise, fière de ta ville, pressée mais serviable.</div>
+        <ul>
+          <li>Tu recommandes le Campo Santo, pas seulement le Castillet</li>
+          <li>Tu donnes ton avis sur les restaurants — avec un avis tranché</li>
+          <li>Tu glisses un mot de catalan</li>
+        </ul>
+      </div>
+
+      <div class="note-prof"><b>Pourquoi cette scène&nbsp;:</b> jouer un Français force à prendre le rythme, le débit et les tics de langage français. C'est l'exercice de prononciation le plus efficace qui existe — et Patricia y gagne autant que Denise. Elle n'est pas là pour servir de décor.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SECTION 5 ================= -->
+<section id="s5">
+  <h2>Cartes flash &amp; débrief</h2>
+  <p class="chapo">S'il reste du temps. 30 secondes chacune, à la volée.</p>
+
+  <div class="flash">
+    <div class="carte"><b>Chez le buraliste</b><p>Denise veut un ticket à gratter. Patricia&nbsp;: «&nbsp;Lequel&nbsp;? On en a quinze.&nbsp;»</p></div>
+    <div class="carte"><b>Dans la rue</b><p>Denise demande à un passant de la prendre en photo. Patricia accepte… puis cadre très mal.</p></div>
+    <div class="carte"><b>Dans une boutique</b><p>Denise cherche un chapeau. Patricia&nbsp;: «&nbsp;Franchement, celui-là ne vous va pas du tout.&nbsp;»</p></div>
+    <div class="carte"><b>Au téléphone</b><p>Denise appelle un restaurant pour réserver. Patricia parle vite et il y a du bruit.</p></div>
+  </div>
+
+  <h3>Débrief — 5 minutes, à l'oral</h3>
+  <div class="carte">
+    <ul style="font-size:22px;padding-left:24px;margin:0;">
+      <li>Denise&nbsp;: quel a été le moment le plus difficile&nbsp;? Pourquoi&nbsp;?</li>
+      <li>Quelle phrase de la boîte à outils tu vas vraiment utiliser à Perpignan&nbsp;?</li>
+      <li>Patricia&nbsp;: qu'est-ce que tu as remarqué en jouant les Français&nbsp;?</li>
+      <li>Un objectif concret pour la semaine à Perpignan — <b>une seule chose</b>, mesurable.</li>
+    </ul>
+  </div>
+
+  <div class="savais" style="margin-top:30px;">
+    <h4>Le vrai objectif du voyage</h4>
+    <p style="font-size:21px;margin:0;">Pas de parler un français parfait. <b>De ne jamais s'arrêter de parler.</b> Se débrouiller, comprendre à moitié, répondre quand même, et continuer. C'est ça, être à l'aise dans une langue.</p>
+  </div>
+</section>
+
+</div>
+
+<footer>
+  Kingcretot Experience · Cours semi-privé — Denise &amp; Patricia<br>
+  Bon voyage à Perpignan 🇫🇷 · Bon viatge a Perpinyà 🟥🟨
+</footer>
+
+<script>
+function aller(id, btn){
+  var sections = document.querySelectorAll('section');
+  for(var i=0;i<sections.length;i++){ sections[i].classList.remove('visible'); }
+  document.getElementById(id).classList.add('visible');
+  var boutons = document.querySelectorAll('nav button');
+  for(var j=0;j<boutons.length;j++){ boutons[j].classList.remove('actif'); }
+  btn.classList.add('actif');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function repondre(btn, juste){
+  var bloc = btn.closest('.carte');
+  var opts = bloc.querySelectorAll('.opt');
+  for(var i=0;i<opts.length;i++){
+    opts[i].disabled = true;
+    opts[i].classList.add('faux');
+  }
+  btn.classList.remove('faux');
+  btn.classList.add(juste === 1 ? 'juste' : 'faux');
+  var bonnes = bloc.querySelectorAll('.opt');
+  for(var k=0;k<bonnes.length;k++){
+    if(bonnes[k].getAttribute('onclick').indexOf('this,1') > -1){
+      bonnes[k].classList.remove('faux');
+      bonnes[k].classList.add('juste');
+    }
+  }
+  bloc.querySelector('.explication').classList.add('montre');
+}
+
+function ouvrir(el){
+  el.classList.toggle('ouvert');
+}
+
+function secret(btn){
+  var zone = btn.closest('.zone-patricia');
+  zone.querySelector('.contenu-secret').classList.toggle('montre');
+}
+
+function copier(btn){
+  var zone = btn.closest('.zone-patricia');
+  var texte = zone.querySelector('.cache').textContent;
+  var fini = function(){
+    var avant = btn.textContent;
+    btn.textContent = '✅ Copié !';
+    setTimeout(function(){ btn.textContent = avant; }, 1800);
+  };
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(texte).then(fini, function(){ secours(texte, fini); });
+  } else {
+    secours(texte, fini);
+  }
+}
+
+function secours(texte, fini){
+  var zone = document.createElement('textarea');
+  zone.value = texte;
+  zone.style.position = 'fixed';
+  zone.style.left = '-9999px';
+  document.body.appendChild(zone);
+  zone.select();
+  try { document.execCommand('copy'); fini(); } catch(e) { alert(texte); }
+  document.body.removeChild(zone);
+}
+</script>
+</body>
+</html>
