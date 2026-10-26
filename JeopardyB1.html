@@ -1,0 +1,520 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jeopardy! à la française · B1</title>
+<style>
+  :root{
+    --navy:#0B1D3A; --navy2:#132B55; --deep:#061226;
+    --tileA:#1F4894; --tileB:#163672;
+    --gold:#F2C14E; --muted:#B7C6E0;
+    --used:#252F40; --usedInk:#5E6B82;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:var(--navy);color:#fff;
+    font-family:"Segoe UI",system-ui,-apple-system,Roboto,"Helvetica Neue",Arial,sans-serif;}
+  [hidden]{display:none !important}
+  button{font:inherit;color:inherit}
+  .serif{font-family:Georgia,"Times New Roman",serif}
+
+  /* ---------- Title page ---------- */
+  #home{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:clamp(18px,3vh,32px);padding:24px 16px;text-align:center;
+    background:radial-gradient(ellipse at top,#173468 0%,var(--navy) 60%,var(--deep) 100%);}
+  .logo-title{margin:0;line-height:.95}
+  .logo-title .big{display:block;font-family:Georgia,serif;font-weight:700;color:var(--gold);
+    font-size:clamp(56px,12vw,150px);text-shadow:0 5px 0 rgba(0,0,0,.4)}
+  .logo-title .small{display:block;font-family:Georgia,serif;font-style:italic;color:#fff;
+    font-size:clamp(26px,5vw,60px);margin-top:.15em}
+  .rule-line{width:min(320px,60%);height:3px;background:var(--gold);border-radius:2px;opacity:.8}
+  .level{color:var(--muted);font-size:clamp(18px,2.6vw,30px);letter-spacing:.08em;text-transform:uppercase;font-weight:700}
+  .setup{background:var(--navy2);border:1px solid rgba(242,193,78,.35);border-radius:18px;
+    padding:clamp(16px,3vw,28px);width:min(640px,100%);display:flex;flex-direction:column;gap:16px}
+  .setup h2{margin:0;font-size:clamp(18px,2.4vw,26px);color:var(--gold)}
+  .seg{display:flex;gap:8px;justify-content:center}
+  .seg button{width:64px;height:56px;border-radius:12px;border:2px solid rgba(255,255,255,.35);
+    background:transparent;font-size:26px;font-weight:800;cursor:pointer}
+  .seg button[aria-pressed="true"]{background:var(--gold);color:var(--navy);border-color:var(--gold)}
+  .names{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .names label{display:flex;align-items:center;gap:10px;background:var(--deep);border-radius:12px;padding:6px 12px;border-left:8px solid var(--pc)}
+  .names input{flex:1;min-width:0;background:transparent;border:none;color:#fff;font-size:20px;font-weight:700;padding:8px 0;outline:none}
+  .names input:focus{box-shadow:0 2px 0 var(--gold)}
+  .home-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+  .howto{color:var(--muted);font-size:15px;margin:0;line-height:1.5}
+
+  /* ---------- Buttons ---------- */
+  .btn{border:none;border-radius:12px;padding:.55em 1.2em;cursor:pointer;font-weight:800;
+    font-size:clamp(18px,2.3vw,30px);line-height:1.2}
+  .btn.gold{background:var(--gold);color:var(--navy)}
+  .btn.gold:hover{filter:brightness(1.08)}
+  .btn.ghost{background:transparent;color:#fff;border:2px solid rgba(255,255,255,.5)}
+  .btn.ghost:hover{border-color:#fff}
+  .btn:disabled{opacity:.35;cursor:not-allowed;filter:none}
+  .btn:focus-visible,.tile:focus-visible,.pbtn:focus-visible,.seg button:focus-visible{outline:4px solid #fff;outline-offset:2px}
+
+  /* ---------- Game ---------- */
+  #game{display:flex;flex-direction:column;height:100vh;height:100dvh}
+  .scorebar{display:flex;gap:12px;padding:12px;background:var(--deep);align-items:stretch;flex-wrap:wrap}
+  #scores{display:flex;gap:12px;flex:1 1 600px;flex-wrap:wrap}
+  .chip{--pc:#fff;flex:1 1 170px;background:var(--navy2);border-radius:12px;border-top:7px solid var(--pc);
+    padding:6px 12px;display:flex;align-items:center;gap:10px;transition:transform .2s}
+  .chip .name{color:var(--pc);font-weight:800;font-size:clamp(16px,1.9vw,26px);flex:1;min-width:0;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left}
+  .chip .score{font-size:clamp(26px,3.3vw,46px);font-weight:800;font-variant-numeric:tabular-nums}
+  .chip .adj{display:flex;flex-direction:column;gap:3px}
+  .chip .adj button{width:26px;height:22px;border-radius:6px;border:1px solid rgba(255,255,255,.25);background:transparent;
+    color:var(--muted);font-size:14px;line-height:1;cursor:pointer;padding:0}
+  .chip .adj button:hover{color:#fff;border-color:#fff}
+  .chip.pop{transform:scale(1.08)}
+  .tools{display:flex;gap:8px;align-items:center}
+  .tools .btn{font-size:clamp(14px,1.5vw,20px);padding:.5em .9em}
+
+  #board{flex:1;min-height:0;display:grid;grid-template-columns:repeat(5,1fr);
+    grid-template-rows:auto repeat(3,1fr);gap:10px;padding:12px}
+  .cat{background:var(--deep);border-radius:10px;border-bottom:4px solid var(--gold);display:flex;align-items:center;justify-content:center;
+    text-align:center;padding:12px 8px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;
+    font-size:clamp(12px,1.55vw,24px);line-height:1.2;min-height:4.4em;hyphens:auto}
+  .tile{position:relative;border:none;border-radius:10px;cursor:pointer;min-height:64px;
+    background:linear-gradient(180deg,var(--tileA),var(--tileB));color:var(--gold);
+    font-family:Georgia,serif;font-weight:700;font-size:clamp(28px,6vw,86px);
+    box-shadow:inset 0 0 0 2px rgba(242,193,78,.25),0 4px 0 rgba(0,0,0,.35);text-shadow:0 3px 0 rgba(0,0,0,.45);
+    transition:filter .15s,transform .15s}
+  .tile:hover{filter:brightness(1.18);transform:translateY(-2px)}
+  .tile.used{background:var(--used);color:var(--usedInk);cursor:default;box-shadow:none;text-shadow:none;transform:none;filter:none}
+  .tile .dots{position:absolute;left:0;right:0;bottom:8px;display:flex;gap:5px;justify-content:center}
+  .tile .dot{width:14px;height:14px;border-radius:50%}
+
+  /* ---------- Overlays ---------- */
+  .overlay{position:fixed;inset:0;background:rgba(3,8,18,.85);display:flex;align-items:center;justify-content:center;padding:14px;z-index:10}
+  .card{position:relative;background:var(--navy2);border:3px solid var(--gold);border-radius:22px;width:min(1240px,100%);
+    max-height:100%;overflow:auto;padding:clamp(18px,3vw,44px);display:flex;flex-direction:column;
+    gap:clamp(12px,2.2vh,26px);text-align:center;animation:pop .22s ease-out}
+  @keyframes pop{from{transform:scale(.92);opacity:0}to{transform:none;opacity:1}}
+  .meta{display:flex;justify-content:center;align-items:center;gap:14px;flex-wrap:wrap;color:var(--gold);font-weight:800;
+    text-transform:uppercase;letter-spacing:.04em;font-size:clamp(14px,1.8vw,24px);padding:0 40px}
+  .meta .pts{background:var(--gold);color:var(--navy);border-radius:8px;padding:2px 12px}
+  .qrule{align-self:center;background:rgba(242,193,78,.15);color:var(--gold);border-radius:10px;padding:8px 16px;
+    font-weight:700;font-size:clamp(16px,2vw,28px)}
+  .question{font-family:Georgia,serif;font-weight:700;font-size:clamp(26px,4.5vw,68px);line-height:1.28;margin:0}
+  .blank{display:inline-block;width:3.2em;height:.9em;border-bottom:.08em solid var(--gold);margin:0 .12em}
+  .hint{color:var(--muted);font-style:italic;font-size:clamp(17px,2.2vw,32px);margin:0}
+  .hint .tag{font-style:normal;font-weight:800;font-size:.62em;border:2px solid currentColor;border-radius:6px;padding:1px 7px;margin-right:10px;vertical-align:.18em}
+  .answer{background:var(--gold);color:var(--navy);border-radius:16px;padding:clamp(12px,2vw,26px);
+    font-family:Georgia,serif;font-weight:700;font-size:clamp(24px,3.7vw,56px);line-height:1.25}
+  .answer .or{font-family:"Segoe UI",system-ui,sans-serif;font-size:.42em;text-transform:uppercase;letter-spacing:.15em;opacity:.65;margin:.25em 0}
+  .answer .note{font-size:.48em;font-style:italic;font-weight:600;margin-top:.5em;opacity:.85}
+  .award{display:flex;flex-direction:column;gap:14px;outline:none}
+  .award h3{margin:0;font-size:clamp(18px,2.3vw,30px);color:#fff}
+  .players{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+  .pbtn{--pc:#fff;border:3px solid var(--pc);background:transparent;border-radius:14px;cursor:pointer;
+    padding:.45em 1em;font-weight:800;font-size:clamp(18px,2.3vw,30px);display:flex;align-items:center;gap:.4em}
+  .pbtn .ck{display:inline-flex;width:1.1em;height:1.1em;border-radius:50%;border:2px solid var(--pc);align-items:center;justify-content:center;font-size:.8em;color:transparent}
+  .pbtn[aria-pressed="true"]{background:var(--pc);color:#0B1D3A}
+  .pbtn[aria-pressed="true"] .ck{background:#fff;border-color:#fff;color:#0B1D3A}
+  .row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+  .xbtn{position:absolute;top:10px;right:14px;width:44px;height:44px;border-radius:50%;border:2px solid rgba(255,255,255,.35);
+    background:transparent;font-size:26px;line-height:1;cursor:pointer;color:var(--muted)}
+  .xbtn:hover{color:#fff;border-color:#fff}
+
+  .final h2{margin:0;font-family:Georgia,serif;color:var(--gold);font-size:clamp(36px,6vw,80px)}
+  .final .winner{font-size:clamp(20px,3vw,40px);font-weight:800;margin:0}
+  .ranking{display:flex;flex-direction:column;gap:10px;width:min(640px,100%);align-self:center}
+  .rank{display:flex;align-items:center;gap:14px;background:var(--deep);border-radius:12px;padding:10px 18px;border-left:10px solid var(--pc);
+    font-size:clamp(20px,2.8vw,36px);font-weight:800}
+  .rank .nm{flex:1;text-align:left;color:var(--pc)}
+
+  @media (max-width:640px){
+    .scorebar{padding:8px;gap:8px}
+    #scores{gap:8px}
+    .chip{flex:1 1 40%;padding:4px 8px}
+    .tools{width:100%;justify-content:flex-end}
+    #board{gap:5px;padding:6px}
+    .cat{font-size:10px;padding:6px 3px;letter-spacing:0;border-bottom-width:3px}
+    .tile{font-size:24px;min-height:56px}
+    .tile .dot{width:8px;height:8px}
+    .names{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ TITLE PAGE ============ -->
+<section id="home">
+  <h1 class="logo-title"><span class="big">Jeopardy!</span><span class="small">à la française</span></h1>
+  <div class="rule-line"></div>
+  <div class="level">Révision · Niveau B1</div>
+
+  <div class="setup">
+    <h2>Nombre de joueurs</h2>
+    <div class="seg" id="countSeg"></div>
+    <div class="names" id="names"></div>
+    <div class="home-btns">
+      <button class="btn gold" id="startBtn">Commencer ▸</button>
+      <button class="btn ghost" id="resumeBtn" hidden>Reprendre la partie</button>
+    </div>
+    <p class="howto" id="howto"></p>
+  </div>
+</section>
+
+<!-- ============ GAME ============ -->
+<section id="game" hidden>
+  <header class="scorebar">
+    <div id="scores"></div>
+    <div class="tools">
+      <button class="btn ghost" id="resetBtn">Réinitialiser</button>
+      <button class="btn ghost" id="homeBtn" title="Page d’accueil">Accueil</button>
+    </div>
+  </header>
+  <main id="board"></main>
+</section>
+
+<!-- ============ QUESTION WINDOW ============ -->
+<div class="overlay" id="modal" hidden>
+  <div class="card" role="dialog" aria-modal="true" aria-labelledby="mQ">
+    <button class="xbtn" id="xBtn" aria-label="Fermer">×</button>
+    <div class="meta"><span id="mCat"></span><span class="pts" id="mPts"></span></div>
+    <div class="qrule" id="mRule" hidden></div>
+    <p class="question" id="mQ"></p>
+    <p class="hint" id="mHint"></p>
+    <div class="answer" id="mAnswer" hidden></div>
+    <div class="row" id="revealRow"><button class="btn gold" id="revealBtn">Réponse ▸</button></div>
+    <div class="award" id="award" tabindex="-1" hidden>
+      <h3 id="awardTitle"></h3>
+      <div class="players" id="awardPlayers"></div>
+      <div class="row">
+        <button class="btn gold" id="confirmBtn" disabled>Valider ✓</button>
+        <button class="btn ghost" id="noneBtn">Personne !</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ FINAL SCREEN ============ -->
+<div class="overlay" id="final" hidden>
+  <div class="card final" role="dialog" aria-modal="true">
+    <h2 id="finalTitle"></h2>
+    <p class="winner" id="finalWinner"></p>
+    <div class="ranking" id="ranking"></div>
+    <div class="row">
+      <button class="btn ghost" id="seeBoardBtn">Voir le plateau</button>
+      <button class="btn gold" id="newGameBtn">Nouvelle partie</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   QUESTIONS — edit here. "___" draws a blank line.
+   a: list of accepted answers (all are shown).
+   ========================================================= */
+const CATS = [
+  { name: "Le subjonctif", qs: [
+    { q: "Il faut que tu ___ (être) à l’heure demain.",
+      hint: "You have to be on time tomorrow.", a: ["sois"] },
+    { q: "Je suis ravi que vous ___ (pouvoir) venir ce soir !",
+      hint: "I’m delighted you can come tonight!", a: ["puissiez"] },
+    { q: "Traduisez : « Although it’s raining, we’re going to the beach. »",
+      hint: "“Although” = bien que + subjunctive",
+      a: ["Bien qu’il pleuve, nous allons à la plage.", "Bien qu’il pleuve, on va à la plage."] }
+  ]},
+  { name: "Imparfait ou passé composé ?", qs: [
+    { q: "Quand j’étais petit, je ___ (jouer) au foot tous les samedis.",
+      hint: "A habit in the past", a: ["jouais"] },
+    { q: "Je ___ (regarder) la télé quand le téléphone ___ (sonner).",
+      hint: "Background action + sudden event", a: ["regardais … a sonné"] },
+    { q: "Vous arrivez en retard au travail. Expliquez : « I was leaving the house when I realized I had forgotten my keys. »",
+      hint: "Three past tenses in one sentence!",
+      a: ["Je sortais de la maison quand je me suis rendu compte que j’avais oublié mes clés.",
+          "Je quittais la maison quand j’ai remarqué que j’avais oublié mes clés."] }
+  ]},
+  { name: "Qui, que, dont, où ?", qs: [
+    { q: "Le gâteau ___ tu as fait est délicieux !",
+      hint: "The cake you made is delicious!", a: ["que"] },
+    { q: "C’est la ville ___ je suis né.",
+      hint: "That’s the town where I was born.", a: ["où"] },
+    { q: "Voici le livre ___ j’ai besoin pour mon cours.",
+      hint: "Think: avoir besoin de…", a: ["dont"] }
+  ]},
+  { name: "Expressions imagées", qs: [
+    { q: "Prends un parapluie, il pleut des ___ !",
+      hint: "It’s raining cats and dogs!", a: ["cordes"] },
+    { q: "Marc devait me retrouver au café à 18 h, mais il n’est jamais venu. Il m’a posé un ___ !",
+      hint: "He stood me up! (an animal…)", a: ["lapin"] },
+    { q: "Ton ami raconte une histoire incroyable. Tu ne le crois pas. Comment dire : « You’re pulling my leg! » ?",
+      hint: "Two idioms work here", a: ["Tu me fais marcher !", "Tu me mènes en bateau !"] }
+  ]},
+  { name: "Qui a dit ça ?", rule: "Répondez sous forme de question : « Qui est… ? »", qs: [
+    { q: "« Qu’ils mangent de la brioche ! »",
+      hint: "“Let them eat cake!” — a queen of France",
+      a: ["Qui est Marie-Antoinette ?"], note: "… mais elle ne l’a probablement jamais dit !" },
+    { q: "« On ne voit bien qu’avec le cœur. L’essentiel est invisible pour les yeux. »",
+      hint: "An aviator-writer, a little prince…",
+      a: ["Qui est Antoine de Saint-Exupéry ?", "Qui est le renard du Petit Prince ?"] },
+    { q: "« L’enfer, c’est les autres. »",
+      hint: "“Hell is other people.” — an existentialist, 1944 play",
+      a: ["Qui est Jean-Paul Sartre ?"] }
+  ]}
+];
+const POINTS = [100, 200, 300];
+const COLORS = ["#FF6B5B", "#4FB3FF", "#4CD787", "#C792FF"];
+const TOTAL = CATS.length * POINTS.length;
+const KEY = "jeopardy-fr-b1-v1";
+
+/* ---------- French typography ---------- */
+const NBSP = "\u00A0", NNBSP = "\u202F";
+function fr(s){
+  return s
+    .replace(/\s+([?!;])/g, NNBSP + "$1")
+    .replace(/\s+([:»])/g, NBSP + "$1")
+    .replace(/«\s+/g, "«" + NBSP)
+    .replace(/(\d)\s+h\b/g, "$1" + NBSP + "h");
+}
+function rich(el, s){
+  el.textContent = "";
+  s.split("___").forEach((part, i) => {
+    if (i) { const b = document.createElement("span"); b.className = "blank"; el.appendChild(b); }
+    el.appendChild(document.createTextNode(fr(part)));
+  });
+}
+const $ = id => document.getElementById(id);
+function mk(tag, cls, text){ const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+
+/* ---------- State (saved in the browser so a refresh doesn't lose the game) ---------- */
+function fresh(n, names){
+  return { n, names: names || [1,2,3,4].map(i => "Joueur " + i), scores: [0,0,0,0], used: {}, inGame: false };
+}
+function load(){
+  try { const v = JSON.parse(localStorage.getItem(KEY)); if (v && Array.isArray(v.names) && v.used) return v; } catch(e){}
+  return null;
+}
+function save(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e){} }
+let S = load() || fresh(4);
+let homeN = S.n;
+let cur = null;
+
+/* ---------- Title page ---------- */
+const nameInputs = [];
+function buildHome(){
+  const seg = $("countSeg");
+  for (let n = 1; n <= 4; n++){
+    const b = mk("button", null, String(n));
+    b.setAttribute("aria-label", n + " joueur" + (n > 1 ? "s" : ""));
+    b.addEventListener("click", () => { homeN = n; renderHome(); });
+    seg.appendChild(b);
+  }
+  const box = $("names");
+  for (let i = 0; i < 4; i++){
+    const lab = mk("label"); lab.style.setProperty("--pc", COLORS[i]);
+    const inp = mk("input"); inp.type = "text"; inp.maxLength = 18; inp.value = S.names[i];
+    inp.setAttribute("aria-label", "Prénom du joueur " + (i + 1));
+    inp.addEventListener("focus", () => inp.select());
+    lab.appendChild(inp); box.appendChild(lab); nameInputs.push(inp);
+  }
+  $("howto").textContent = fr("Cliquez sur une case → « Réponse ▸ » → cochez le ou les gagnants → « Valider ✓ ». Échap : fermer. Touches 1–4 : cocher un joueur.");
+}
+function renderHome(){
+  [...$("countSeg").children].forEach((b, i) => b.setAttribute("aria-pressed", String(i + 1 === homeN)));
+  nameInputs.forEach((inp, i) => { inp.parentElement.hidden = i >= homeN; });
+  $("resumeBtn").hidden = !(S.inGame && homeN === S.n);
+}
+function readNames(n){
+  const names = S.names.slice();
+  for (let i = 0; i < n; i++) names[i] = nameInputs[i].value.trim() || ("Joueur " + (i + 1));
+  return names;
+}
+function startGame(){
+  S = fresh(homeN, readNames(homeN)); S.inGame = true; save(); showGame();
+}
+function resumeGame(){
+  S.names = readNames(S.n); save(); showGame();
+}
+function showHome(){
+  nameInputs.forEach((inp, i) => inp.value = S.names[i]);
+  homeN = S.n; renderHome();
+  $("game").hidden = true; $("home").hidden = false;
+}
+function showGame(){
+  $("home").hidden = true; $("game").hidden = false;
+  renderScores(); renderBoard();
+}
+
+/* ---------- Scoreboard ---------- */
+function renderScores(){
+  const box = $("scores"); box.textContent = "";
+  for (let i = 0; i < S.n; i++){
+    const c = mk("div", "chip"); c.id = "chip" + i; c.style.setProperty("--pc", COLORS[i]);
+    c.appendChild(mk("span", "name", S.names[i]));
+    c.appendChild(mk("span", "score", String(S.scores[i])));
+    const adj = mk("div", "adj");
+    const plus = mk("button", null, "+"); plus.title = "+100"; plus.setAttribute("aria-label", "+100 pour " + S.names[i]);
+    const minus = mk("button", null, "−"); minus.title = "−100"; minus.setAttribute("aria-label", "−100 pour " + S.names[i]);
+    plus.addEventListener("click", () => adjust(i, 100));
+    minus.addEventListener("click", () => adjust(i, -100));
+    adj.append(plus, minus); c.appendChild(adj);
+    box.appendChild(c);
+  }
+}
+function bump(i){
+  const c = $("chip" + i); if (!c) return;
+  c.classList.add("pop"); setTimeout(() => c.classList.remove("pop"), 260);
+}
+function adjust(i, d){ S.scores[i] += d; save(); renderScores(); bump(i); }
+
+/* ---------- Board ---------- */
+function renderBoard(){
+  const b = $("board"); b.textContent = "";
+  CATS.forEach(cat => b.appendChild(mk("div", "cat", fr(cat.name))));
+  for (let r = 0; r < POINTS.length; r++){
+    for (let c = 0; c < CATS.length; c++){
+      const key = c + "-" + r, used = S.used[key];
+      const t = mk("button", "tile", String(POINTS[r]));
+      t.dataset.c = c; t.dataset.r = r;
+      t.setAttribute("aria-label", fr(CATS[c].name) + ", " + POINTS[r] + " points" + (used ? " (déjà jouée)" : ""));
+      if (used){
+        t.classList.add("used"); t.disabled = true;
+        if (used.length){
+          const dots = mk("span", "dots");
+          used.forEach(i => { const d = mk("span", "dot"); d.style.background = COLORS[i]; dots.appendChild(d); });
+          t.appendChild(dots);
+        }
+      } else {
+        t.addEventListener("click", () => openTile(c, r));
+      }
+      b.appendChild(t);
+    }
+  }
+}
+
+/* ---------- Question window ---------- */
+function openTile(c, r){
+  const cat = CATS[c], q = cat.qs[r];
+  cur = { c, r, revealed: false, sel: new Set() };
+  $("mCat").textContent = fr(cat.name);
+  $("mPts").textContent = POINTS[r];
+  const rule = $("mRule");
+  if (cat.rule){ rule.textContent = fr(cat.rule); rule.hidden = false; } else rule.hidden = true;
+  rich($("mQ"), q.q);
+  const h = $("mHint"); h.textContent = "";
+  h.appendChild(mk("span", "tag", "EN")); h.appendChild(document.createTextNode(q.hint));
+  $("mAnswer").hidden = true; $("mAnswer").textContent = "";
+  $("revealRow").hidden = false;
+  $("award").hidden = true;
+  $("modal").hidden = false;
+  $("revealBtn").focus();
+}
+function reveal(){
+  if (!cur || cur.revealed) return;
+  cur.revealed = true;
+  const q = CATS[cur.c].qs[cur.r], box = $("mAnswer");
+  box.textContent = "";
+  q.a.forEach((a, i) => {
+    if (i) box.appendChild(mk("div", "or", "ou"));
+    box.appendChild(mk("div", null, fr(a)));
+  });
+  if (q.note) box.appendChild(mk("div", "note", fr(q.note)));
+  box.hidden = false;
+  $("revealRow").hidden = true;
+  $("awardTitle").textContent = fr("Qui marque " + POINTS[cur.r] + " points ?");
+  const pl = $("awardPlayers"); pl.textContent = "";
+  for (let i = 0; i < S.n; i++){
+    const b = mk("button", "pbtn"); b.style.setProperty("--pc", COLORS[i]);
+    b.setAttribute("aria-pressed", "false"); b.dataset.i = i;
+    b.appendChild(mk("span", "ck", "✓")); b.appendChild(document.createTextNode(S.names[i]));
+    b.addEventListener("click", () => toggleSel(i));
+    pl.appendChild(b);
+  }
+  updateConfirm();
+  $("award").hidden = false;
+  $("award").focus();
+}
+function toggleSel(i){
+  if (!cur || !cur.revealed || i >= S.n) return;
+  cur.sel.has(i) ? cur.sel.delete(i) : cur.sel.add(i);
+  const b = $("awardPlayers").children[i];
+  b.setAttribute("aria-pressed", String(cur.sel.has(i)));
+  updateConfirm();
+}
+function updateConfirm(){ $("confirmBtn").disabled = !cur || cur.sel.size === 0; }
+function confirmAward(){
+  if (!cur || !cur.revealed || cur.sel.size === 0) return;
+  const pts = POINTS[cur.r], winners = [...cur.sel].sort();
+  winners.forEach(i => S.scores[i] += pts);
+  S.used[cur.c + "-" + cur.r] = winners;
+  finish();
+  winners.forEach(bump);
+}
+function noOne(){
+  if (!cur) return;
+  S.used[cur.c + "-" + cur.r] = [];
+  finish();
+}
+function closeModal(){ $("modal").hidden = true; cur = null; }
+function finish(){
+  save(); closeModal(); renderScores(); renderBoard();
+  if (Object.keys(S.used).length >= TOTAL) setTimeout(showFinal, 400);
+}
+function escape(){
+  if (!$("final").hidden){ $("final").hidden = true; return; }
+  if (!cur) return;
+  if (cur.revealed) noOne();      // answer already seen → square is played, no points
+  else closeModal();              // not yet revealed → square stays open
+}
+
+/* ---------- Final screen ---------- */
+function showFinal(){
+  const order = [...Array(S.n).keys()].sort((a, b) => S.scores[b] - S.scores[a]);
+  const top = S.scores[order[0]];
+  const champs = order.filter(i => S.scores[i] === top);
+  $("finalTitle").textContent = fr("Fin de la partie !");
+  $("finalWinner").textContent = S.n === 1
+    ? fr("Score final : " + top + " points")
+    : champs.length > 1 ? fr("Égalité ! Bravo à " + champs.map(i => S.names[i]).join(" et ") + " !")
+                        : fr("Bravo, " + S.names[champs[0]] + " !");
+  const box = $("ranking"); box.textContent = "";
+  const medals = ["🥇", "🥈", "🥉", "4"];
+  let place = 0;
+  order.forEach((i, k) => {
+    if (k === 0 || S.scores[i] !== S.scores[order[k - 1]]) place = k;
+    const row = mk("div", "rank"); row.style.setProperty("--pc", COLORS[i]);
+    row.appendChild(mk("span", null, medals[place]));
+    row.appendChild(mk("span", "nm", S.names[i]));
+    row.appendChild(mk("span", null, String(S.scores[i])));
+    box.appendChild(row);
+  });
+  $("final").hidden = false;
+  $("newGameBtn").focus();
+}
+function resetGame(){
+  S.scores = [0,0,0,0]; S.used = {}; save(); renderScores(); renderBoard();
+}
+
+/* ---------- Wiring ---------- */
+buildHome(); renderHome();
+$("startBtn").addEventListener("click", startGame);
+$("resumeBtn").addEventListener("click", resumeGame);
+$("homeBtn").addEventListener("click", showHome);
+$("resetBtn").addEventListener("click", () => {
+  if (confirm(fr("Remettre les scores à zéro et rouvrir toutes les cases ?"))) resetGame();
+});
+$("revealBtn").addEventListener("click", reveal);
+$("confirmBtn").addEventListener("click", confirmAward);
+$("noneBtn").addEventListener("click", noOne);
+$("xBtn").addEventListener("click", escape);
+$("seeBoardBtn").addEventListener("click", () => { $("final").hidden = true; });
+$("newGameBtn").addEventListener("click", () => { $("final").hidden = true; resetGame(); });
+
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape"){ escape(); return; }
+  if (!cur) return;
+  const onButton = document.activeElement && document.activeElement.tagName === "BUTTON";
+  if (e.key === "Enter" && !onButton){
+    e.preventDefault();
+    if (!cur.revealed) reveal(); else if (cur.sel.size) confirmAward();
+  } else if (/^[1-4]$/.test(e.key) && cur.revealed){
+    toggleSel(Number(e.key) - 1);
+  }
+});
+</script>
+</body>
+</html>
