@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>L'Affaire du Pier d'Oceanside</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Caveat:wght@500;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --night:#0b1020; --night2:#18204a;
+  --kraft:#eadcbc; --kraft2:#dcc89c; --paper:#fffbef;
+  --ink:#2b2118; --ink2:#5a4a3a;
+  --red:#b3261e; --pumpkin:#f28c28; --gold:#d4af37;
+  --green:#2e7d4f;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--night);color:#f3ead8;font-family:'Lora',Georgia,serif;font-size:18px;line-height:1.6;overflow-x:hidden}
+button{font:inherit;cursor:pointer}
+h1,h2,h3,.type{font-family:'Special Elite','Courier New',monospace;font-weight:400}
+.hand{font-family:'Caveat',cursive}
+
+/* ---------- Ciel de nuit ---------- */
+.sky{position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse at 80% -10%,#2b3770 0%,#141a3a 35%,var(--night) 70%)}
+.stars i{position:absolute;width:2px;height:2px;background:#fff;border-radius:50%;animation:twinkle 3s ease-in-out infinite}
+@keyframes twinkle{0%,100%{opacity:.2}50%{opacity:1}}
+.moon{position:absolute;top:70px;right:7%;width:110px;height:110px;border-radius:50%;background:radial-gradient(circle at 38% 35%,#fffdf0,#f3e3a3 60%,#d5bf73);box-shadow:0 0 70px 25px rgba(255,236,170,.22);animation:moonglow 7s ease-in-out infinite}
+.moon::after{content:"";position:absolute;width:18px;height:18px;border-radius:50%;background:rgba(190,170,100,.35);top:30px;left:55px;box-shadow:-25px 30px 0 -3px rgba(190,170,100,.3),10px 45px 0 -6px rgba(190,170,100,.3)}
+@keyframes moonglow{50%{box-shadow:0 0 90px 35px rgba(255,236,170,.3)}}
+.fog{position:fixed;left:-50%;width:200%;height:260px;bottom:-70px;z-index:2;pointer-events:none;background:radial-gradient(ellipse at 30% 50%,rgba(205,215,235,.16),transparent 55%),radial-gradient(ellipse at 75% 60%,rgba(205,215,235,.12),transparent 50%);filter:blur(12px);animation:fog 45s linear infinite}
+.fog.f2{bottom:-110px;animation-duration:70s;animation-direction:reverse;opacity:.8}
+@keyframes fog{from{transform:translateX(0)}to{transform:translateX(25%)}}
+.bat{position:fixed;left:-70px;z-index:2;pointer-events:none;width:46px;animation:batfly linear infinite}
+.bat svg{display:block;animation:flap .22s ease-in-out infinite alternate;transform-origin:center}
+@keyframes flap{to{transform:scaleX(.55) scaleY(1.1)}}
+@keyframes batfly{0%{transform:translate(0,0)}25%{transform:translate(30vw,-50px)}50%{transform:translate(60vw,25px)}75%{transform:translate(88vw,-35px)}100%{transform:translate(118vw,10px)}}
+
+/* ---------- Navigation ---------- */
+.topnav{position:fixed;top:0;left:0;right:0;z-index:40;background:rgba(8,11,24,.85);backdrop-filter:blur(6px);border-bottom:1px solid rgba(255,255,255,.08)}
+.topnav .inner{max-width:1000px;margin:0 auto;display:flex;gap:6px;padding:8px 12px;overflow-x:auto;scrollbar-width:none}
+.topnav a{flex:none;color:#d9cfb8;text-decoration:none;font-family:'Special Elite',monospace;font-size:14px;padding:4px 10px;border-radius:20px;border:1px solid rgba(255,255,255,.12);transition:.2s}
+.topnav a:hover{background:var(--pumpkin);color:#1a1209;border-color:var(--pumpkin)}
+.progress{height:3px;background:linear-gradient(90deg,var(--pumpkin),var(--red));width:0;transition:width .1s}
+body:not(.unlocked) .topnav a.lk::before{content:"🔒 "}
+
+/* ---------- Mise en page ---------- */
+main{position:relative;z-index:3;max-width:1000px;margin:0 auto;padding:90px 16px 160px}
+.chapter{margin:90px 0;scroll-margin-top:70px}
+.sheet{position:relative;background:var(--kraft);color:var(--ink);padding:40px 44px;border-radius:3px;
+  background-image:radial-gradient(rgba(120,90,40,.08) 1px,transparent 1.5px),linear-gradient(180deg,rgba(255,255,255,.25),rgba(0,0,0,.04));background-size:7px 7px,100% 100%;
+  box-shadow:0 25px 50px rgba(0,0,0,.55),0 0 0 1px rgba(0,0,0,.08) inset}
+.sheet.tl{transform:rotate(-.5deg)} .sheet.tr{transform:rotate(.45deg)}
+.piece{position:absolute;top:-16px;left:30px;background:var(--red);color:#fff;font-family:'Special Elite',monospace;font-size:14px;letter-spacing:2px;padding:4px 14px;box-shadow:0 4px 10px rgba(0,0,0,.3);transform:rotate(-2deg)}
+.clip{position:absolute;top:-22px;right:50px;width:26px;height:70px;border:4px solid #9aa3ad;border-radius:14px;transform:rotate(8deg)}
+.clip::after{content:"";position:absolute;inset:8px 3px 14px;border:4px solid #9aa3ad;border-radius:10px}
+.sheet h2{font-size:2rem;margin:0 0 6px;line-height:1.2}
+.sub{color:var(--ink2);font-style:italic;margin:0 0 24px}
+.reveal{opacity:0;transform:translateY(40px);transition:opacity .8s ease,transform .8s ease}
+.reveal.in{opacity:1;transform:none}
+.sheet.tl.reveal.in{transform:rotate(-.5deg)} .sheet.tr.reveal.in{transform:rotate(.45deg)}
+.btn{display:inline-flex;align-items:center;gap:8px;background:var(--ink);color:#fff8e6;border:0;padding:12px 22px;border-radius:4px;font-family:'Special Elite',monospace;font-size:16px;letter-spacing:1px;box-shadow:0 4px 0 #000;transition:transform .1s,box-shadow .1s,background .2s}
+.btn:hover{background:var(--red)}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 #000}
+.btn.orange{background:var(--pumpkin);color:#1a1209}
+.btn.orange:hover{background:#ffa64d}
+.btn[disabled]{opacity:.5;cursor:default}
+
+/* ---------- Pièce 1 : dossier ---------- */
+.cover-wrap{perspective:1600px;max-width:760px;margin:0 auto}
+.folder{position:relative;min-height:520px}
+.folder-inside{position:relative;background:var(--paper);color:var(--ink);padding:44px;min-height:520px;border-radius:4px 14px 14px 4px;box-shadow:0 30px 60px rgba(0,0,0,.6)}
+.folder-front{position:absolute;inset:0;z-index:5;background:#c9a66b;border-radius:4px 14px 14px 4px;transform-origin:left center;transition:transform 1.4s cubic-bezier(.6,.05,.3,1);transform-style:preserve-3d;
+  background-image:radial-gradient(rgba(90,60,20,.12) 1px,transparent 1.5px);background-size:6px 6px;box-shadow:0 30px 60px rgba(0,0,0,.6);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px;color:#3a2810;backface-visibility:hidden}
+.folder-front::before{content:"";position:absolute;top:-28px;left:40px;width:190px;height:30px;background:#c9a66b;border-radius:10px 10px 0 0}
+.folder.open .folder-front{transform:rotateY(-165deg);pointer-events:none}
+.folder-front .case-no{font-family:'Special Elite',monospace;font-size:18px;letter-spacing:4px;border:2px solid #3a2810;padding:4px 14px;margin-bottom:18px}
+.folder-front h1{font-size:clamp(2rem,6vw,3.2rem);margin:6px 0;line-height:1.1;min-height:2.3em}
+.folder-front .tag{font-family:'Caveat',cursive;font-size:28px;margin:6px 0 24px}
+.cursor::after{content:"|";animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.stamp{position:absolute;font-family:'Special Elite',monospace;color:var(--red);border:5px double var(--red);padding:6px 18px;font-size:30px;letter-spacing:4px;opacity:0;pointer-events:none;mix-blend-mode:multiply}
+.stamp.slam{animation:slam .55s cubic-bezier(.2,1.5,.4,1) forwards}
+@keyframes slam{0%{opacity:0;transform:scale(3.2) rotate(var(--r,-14deg))}60%{opacity:.95}100%{opacity:.85;transform:scale(1) rotate(var(--r,-14deg))}}
+.folder-front .stamp{top:34px;right:26px;--r:12deg}
+.idcard{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:16px;text-align:left;background:rgba(255,255,255,.35);padding:12px 18px;border-radius:4px;margin-bottom:22px}
+.idcard b{font-family:'Special Elite',monospace;font-weight:400}
+.mission h3{font-size:1.5rem;margin:0 0 12px}
+.mission .steps{display:grid;gap:14px;margin:22px 0}
+.mission .step{display:flex;gap:14px;align-items:flex-start;background:#f3ead2;padding:14px 16px;border-left:5px solid var(--pumpkin)}
+.mission .step span{font-size:28px;line-height:1}
+.mission .step.later{border-left-color:var(--red)}
+
+/* ---------- Images modifiables ---------- */
+.slot{position:relative;overflow:hidden;background:#ddd}
+.slot>svg{display:block;width:100%;height:100%}
+.slot img.custom{display:none;width:100%;height:100%;object-fit:cover}
+.slot.has-custom img.custom{display:block}
+.slot.has-custom>svg{display:none}
+.slot-tools{position:absolute;z-index:20;top:8px;right:8px;display:none;gap:6px}
+.slot-tools button{background:rgba(20,16,10,.85);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:20px;padding:5px 12px;font-size:14px;font-family:'Lora',serif}
+.slot-tools button:hover{background:var(--pumpkin);color:#1a1209}
+body.edit-images .slot-tools{display:flex}
+body.edit-images .slot{outline:3px dashed var(--pumpkin);outline-offset:-3px}
+.mirror{overflow:hidden;background:#ddd}
+.mirror svg,.mirror img{display:block;width:100%;height:100%;object-fit:cover}
+
+/* ---------- Pièce 2 : rapport + scène ---------- */
+.report{background:var(--paper);padding:26px 30px;border:1px solid #d6c9a8;box-shadow:0 6px 16px rgba(0,0,0,.15);font-family:'Special Elite',monospace;font-size:16.5px;line-height:1.75;position:relative}
+.report header{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;border-bottom:2px solid var(--ink);padding-bottom:10px;margin-bottom:14px;font-size:14px;letter-spacing:1px}
+.report .stamp{right:20px;bottom:18px;font-size:20px;--r:-8deg}
+.vocab{border-bottom:2px dotted var(--red);cursor:help;position:relative;outline:none}
+.vocab::after{content:attr(data-en);position:absolute;bottom:135%;left:50%;transform:translate(-50%,6px);background:var(--ink);color:#fff;font-family:'Lora',serif;font-size:14px;padding:4px 10px;border-radius:4px;white-space:nowrap;opacity:0;pointer-events:none;transition:.2s;z-index:10}
+.vocab:hover::after,.vocab:focus::after{opacity:1;transform:translate(-50%,0)}
+.scene-wrap{margin-top:30px}
+.scene{position:relative;aspect-ratio:16/9;border:10px solid #fff;border-bottom-width:44px;box-shadow:0 18px 40px rgba(0,0,0,.45);transform:rotate(.6deg);cursor:crosshair;touch-action:none;--x:50%;--y:50%}
+.scene .slot{position:absolute;inset:0}
+.scene .caption{position:absolute;bottom:-38px;left:0;right:0;text-align:center;font-family:'Caveat',cursive;font-size:24px;color:var(--ink)}
+.dark{position:absolute;inset:0;z-index:5;pointer-events:none;background:radial-gradient(circle at var(--x) var(--y),rgba(255,240,200,.08) 0,transparent 75px,rgba(4,6,16,.6) 125px,rgba(4,6,16,.95) 175px);transition:opacity 1.2s}
+.scene.lit .dark{opacity:0}
+.hot{position:absolute;z-index:4;width:62px;height:62px;margin:-31px 0 0 -31px;border-radius:50%;border:3px dashed rgba(255,190,80,.55);background:transparent;animation:pulse 1.8s ease-in-out infinite;padding:0}
+.hot.found{border:3px solid #7CFC9A;animation:none;background:rgba(124,252,154,.12)}
+.hot.found::after{content:"✔";position:absolute;top:-12px;right:-10px;background:#7CFC9A;color:#0b1020;width:24px;height:24px;border-radius:50%;font-size:14px;line-height:24px;text-align:center}
+@keyframes pulse{50%{transform:scale(1.15);border-color:rgba(255,190,80,.9)}}
+.scene-bar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin:62px 0 12px}
+.counter{font-family:'Special Elite',monospace;font-size:18px;background:var(--ink);color:#ffd27a;padding:6px 14px;border-radius:4px}
+.obs{list-style:none;padding:0;margin:0;display:grid;gap:10px}
+.obs li{background:#fff8dc;border-left:5px solid var(--pumpkin);padding:10px 14px;animation:slideIn .5s ease both}
+.obs li small{display:block;color:var(--ink2);font-style:italic}
+@keyframes slideIn{from{opacity:0;transform:translateX(-30px)}}
+
+/* ---------- Pièce 3 : Louis ---------- */
+.witness{display:grid;grid-template-columns:minmax(220px,340px) 1fr;gap:36px;align-items:start}
+.polaroid{background:#fff;padding:12px 12px 48px;box-shadow:0 14px 30px rgba(0,0,0,.35);transform:rotate(-3deg);position:relative}
+.polaroid .slot{aspect-ratio:1/1}
+.polaroid .cap{position:absolute;bottom:8px;left:0;right:0;text-align:center;font-family:'Caveat',cursive;font-size:24px;color:var(--ink)}
+.tape{position:absolute;top:-14px;left:50%;width:110px;height:30px;margin-left:-55px;background:rgba(255,245,200,.7);transform:rotate(-4deg);box-shadow:0 2px 4px rgba(0,0,0,.1)}
+.wiggle{animation:wiggle .7s ease}
+@keyframes wiggle{0%,100%{transform:rotate(-3deg)}20%{transform:rotate(3deg) scale(1.04)}40%{transform:rotate(-6deg)}60%{transform:rotate(2deg)}80%{transform:rotate(-4deg)}}
+.ear{transform-box:view-box}
+.ear-l{transform-origin:112px 128px;animation:earL 4s ease-in-out infinite}
+.ear-r{transform-origin:188px 128px;animation:earR 4s ease-in-out infinite}
+@keyframes earL{0%,80%,100%{transform:rotate(0)}86%{transform:rotate(-14deg)}93%{transform:rotate(7deg)}}
+@keyframes earR{0%,80%,100%{transform:rotate(0)}86%{transform:rotate(14deg)}93%{transform:rotate(-7deg)}}
+.wiggle .ear-l{animation:earFastL .18s ease-in-out 4 alternate}
+.wiggle .ear-r{animation:earFastR .18s ease-in-out 4 alternate}
+@keyframes earFastL{to{transform:rotate(-20deg)}}
+@keyframes earFastR{to{transform:rotate(20deg)}}
+.fiche{font-size:16px;background:#fff8dc;padding:14px 18px;border:1px dashed var(--ink2);margin:16px 0 22px}
+.fiche div{margin:3px 0}
+.fiche b{font-family:'Special Elite',monospace;font-weight:400}
+.heard{list-style:none;padding:0;margin:22px 0 0;display:grid;gap:14px}
+.heard li{display:none;grid-template-columns:70px 1fr;gap:14px;align-items:start}
+.heard li.show{display:grid;animation:pop .55s cubic-bezier(.3,1.6,.5,1) both}
+@keyframes pop{from{opacity:0;transform:scale(.6)}}
+.heard .time{font-family:'Special Elite',monospace;background:var(--ink);color:#ffd27a;padding:4px 0;text-align:center;border-radius:4px;font-size:15px}
+.bubble{background:#fff;border-radius:16px;padding:10px 16px;position:relative;box-shadow:0 5px 12px rgba(0,0,0,.15)}
+.bubble::before{content:"";position:absolute;left:-10px;top:12px;border:8px solid transparent;border-right-color:#fff;border-left:0}
+.bubble .sound{font-family:'Caveat',cursive;font-size:30px;line-height:1.1;color:var(--red);display:block}
+.after-louis{display:none;font-style:italic;margin-top:16px}
+.after-louis.show{display:block;animation:slideIn .5s both}
+
+/* ---------- Pièce 4 : suspects ---------- */
+.suspects{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.card{perspective:1300px;height:560px}
+.card-inner{position:relative;height:100%;transition:transform .9s cubic-bezier(.4,.2,.2,1);transform-style:preserve-3d}
+.card.flipped .card-inner{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:4px;box-shadow:0 14px 30px rgba(0,0,0,.35);display:flex;flex-direction:column}
+.front{background:#2a2f3a;color:#fff;padding:14px}
+.mug{position:relative;flex:1;background:repeating-linear-gradient(180deg,#c9ccd2 0 1px,#e7e9ec 1px 38px);display:flex;align-items:flex-end;justify-content:center;overflow:hidden}
+.mug .marks{position:absolute;left:4px;top:0;bottom:0;font-family:'Special Elite',monospace;font-size:11px;color:#555;display:flex;flex-direction:column;justify-content:space-around}
+.mug .slot{width:82%;aspect-ratio:1/1;margin-bottom:0}
+.plate{background:#111;font-family:'Special Elite',monospace;text-align:center;padding:8px;margin-top:10px;letter-spacing:1px}
+.plate small{display:block;color:#ffb347;font-size:13px}
+.back{background:var(--paper);color:var(--ink);transform:rotateY(180deg);padding:20px 20px 16px;overflow:auto;font-size:15.5px}
+.back h3{margin:0 0 8px;font-size:1.3rem}
+.back dl{margin:0}
+.back dt{font-family:'Special Elite',monospace;color:var(--red);font-size:13px;letter-spacing:1px;margin-top:10px}
+.back dd{margin:2px 0 0}
+.alibi{background:#fff1d6;border-left:4px solid var(--pumpkin);padding:8px 12px;font-style:italic;margin-top:4px}
+mark.pqp{background:rgba(242,140,40,.38);color:inherit;padding:0 3px;border-radius:3px}
+.flip{margin-top:12px;align-self:center;background:var(--pumpkin);color:#1a1209;border:0;border-radius:20px;padding:8px 16px;font-family:'Special Elite',monospace;font-size:14px}
+.back .flip{background:var(--ink);color:#fff}
+.legend{margin-top:22px;font-size:15px;color:var(--ink2)}
+
+/* ---------- Pièce 5 : carnet ---------- */
+.notebook{background:var(--paper);border-radius:6px;box-shadow:0 10px 26px rgba(0,0,0,.25);overflow:hidden;position:relative}
+.tabs{display:flex;flex-wrap:wrap;background:#e1d3b0;border-bottom:2px solid #c9b88d}
+.tab{background:none;border:0;padding:12px 18px;font-family:'Special Elite',monospace;font-size:15px;color:var(--ink2);border-right:1px solid #c9b88d}
+.tab.active{background:var(--paper);color:var(--red)}
+.page{display:none;padding:26px 30px 30px 64px;min-height:360px;position:relative;
+  background-image:linear-gradient(90deg,transparent 46px,rgba(179,38,30,.4) 46px,rgba(179,38,30,.4) 48px,transparent 48px),repeating-linear-gradient(180deg,transparent 0 31px,rgba(80,130,190,.18) 31px 32px)}
+.page.active{display:block;animation:pageIn .6s ease both}
+@keyframes pageIn{from{opacity:0;transform:perspective(900px) rotateY(-12deg) translateX(30px)}}
+.page h3{font-family:'Caveat',cursive;font-size:32px;margin:0 0 10px;color:var(--red)}
+.page ul{margin:6px 0 16px;padding-left:20px}
+.page li{margin:4px 0}
+.q{font-weight:600}
+.tline{display:flex;align-items:center;gap:10px;margin:14px 0;font-size:15px;flex-wrap:wrap}
+.tline .dot{width:16px;height:16px;border-radius:50%;background:var(--pumpkin);flex:none}
+.tline .dot.b{background:var(--red)}
+.tline .bar{flex:1;min-width:40px;height:3px;background:var(--ink2)}
+.ex-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:10px 0;padding:6px 8px;border-radius:6px;transition:background .3s}
+.ex-row input{font:inherit;font-family:'Caveat',cursive;font-size:24px;width:180px;border:0;border-bottom:2px solid var(--ink2);background:transparent;padding:0 6px;color:var(--ink)}
+.ex-row input:focus{outline:none;border-bottom-color:var(--pumpkin)}
+.ex-row.good{background:rgba(46,125,79,.15)}
+.ex-row.good::after{content:"✔";color:var(--green);font-weight:700;animation:pop .4s both}
+.ex-row.bad{background:rgba(179,38,30,.12);animation:shake .4s}
+.ex-score{font-family:'Special Elite',monospace;margin-left:12px}
+.phrases{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.phrase{background:#fff;border:2px solid var(--ink);padding:10px 14px;transform:rotate(-1deg);transition:transform .25s;box-shadow:3px 3px 0 var(--ink)}
+.phrase:nth-child(even){transform:rotate(1deg)}
+.phrase:hover{transform:scale(1.04) rotate(0)}
+.phrase b{display:block;font-family:'Special Elite',monospace;font-weight:400;font-size:17px}
+.phrase small{color:var(--ink2);font-style:italic}
+.mission-box{margin-top:30px;background:#fff8dc;border:3px dashed var(--pumpkin);padding:22px 24px}
+.mission-box h3{margin:0 0 8px;font-size:1.4rem}
+.notes{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:14px}
+.notes label{font-family:'Special Elite',monospace;font-size:15px}
+.notes textarea,.notes-wide textarea{width:100%;min-height:150px;font-family:'Caveat',cursive;font-size:22px;line-height:1.3;border:1px solid #cdbb90;background:repeating-linear-gradient(180deg,#fffdf5 0 28px,#e3ecf5 28px 29px);padding:6px 10px;color:var(--ink);resize:vertical}
+.notes-wide{margin-top:14px}
+.notes-wide textarea{min-height:90px}
+.saved{font-size:14px;color:var(--ink2);font-style:italic;margin-top:8px}
+
+/* ---------- Verrou ---------- */
+.lockbox{text-align:center;max-width:560px;margin:0 auto;background:#141a33;border:2px solid #2d3770;border-radius:10px;padding:36px 26px;box-shadow:0 20px 50px rgba(0,0,0,.6)}
+.lockbox h2{color:#ffd27a;margin:10px 0}
+.padlock{width:110px}
+.padlock .shackle{transform-box:view-box;transform-origin:90px 60px;transition:transform .7s cubic-bezier(.3,1.6,.5,1)}
+.padlock.open .shackle{transform:translateY(-16px) rotate(28deg)}
+.codeform{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:18px}
+.codeform input{font-family:'Special Elite',monospace;font-size:24px;letter-spacing:6px;text-transform:uppercase;width:240px;text-align:center;padding:10px;border-radius:6px;border:2px solid #ffd27a;background:#0b1020;color:#ffd27a}
+.lock-msg{min-height:26px;margin-top:12px;color:#ff9a8a;font-family:'Special Elite',monospace}
+.shake{animation:shake .45s}
+@keyframes shake{20%{transform:translateX(-10px)}40%{transform:translateX(10px)}60%{transform:translateX(-6px)}80%{transform:translateX(6px)}}
+body.unlocked .lock-closed{display:none}
+.lock-open{display:none}
+body.unlocked .lock-open{display:block}
+.locked-content{display:none}
+body.unlocked .locked-content{display:block}
+
+/* ---------- Pièce 6 : tableau ---------- */
+.board{position:relative;background:#b88b57;border:16px solid #6b4423;border-radius:6px;padding:26px 22px 30px;
+  background-image:radial-gradient(rgba(80,50,20,.35) 1.2px,transparent 1.8px),radial-gradient(rgba(255,230,190,.25) 1px,transparent 1.5px);background-size:9px 9px,13px 13px;background-position:0 0,4px 6px;box-shadow:inset 0 0 30px rgba(0,0,0,.35),0 18px 40px rgba(0,0,0,.5)}
+.strings{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:6;overflow:visible}
+.strings path{fill:none;stroke:#c1121f;stroke-width:3;stroke-linecap:round;filter:drop-shadow(0 2px 1px rgba(0,0,0,.4))}
+.strings path.fausse{stroke:#3d3d3d;stroke-dasharray:7 6}
+.strings path.draw{animation:drawString .9s ease forwards}
+@keyframes drawString{to{stroke-dashoffset:0}}
+.board-sus{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.pin-target{background:#fff;padding:8px 8px 10px;text-align:center;box-shadow:0 6px 12px rgba(0,0,0,.35);font-family:'Caveat',cursive;font-size:22px;color:var(--ink)}
+.pin-target:nth-child(1){transform:rotate(-3deg)} .pin-target:nth-child(2){transform:rotate(2deg)} .pin-target:nth-child(3){transform:rotate(-1.5deg)} .pin-target:nth-child(4){transform:rotate(3deg)}
+.pin-target .mirror,.pin-target .fake{aspect-ratio:1/1;margin-bottom:4px}
+.pin-target .fake{display:flex;align-items:center;justify-content:center;font-size:52px;background:#e9e3d6}
+.tack{display:block;width:18px;height:18px;border-radius:50%;margin:-16px auto 6px;position:relative;z-index:7;background:radial-gradient(circle at 35% 30%,#ff8a8a,#b3121a 70%);box-shadow:0 3px 3px rgba(0,0,0,.45)}
+.clues{display:grid;grid-template-columns:repeat(3,1fr);gap:26px 20px;margin-top:70px}
+.clue{background:#fffbe8;color:var(--ink);padding:10px 12px 12px;box-shadow:0 6px 12px rgba(0,0,0,.35);font-size:15px;line-height:1.45;transition:transform .2s}
+.clue:nth-child(3n+1){transform:rotate(-1.5deg)} .clue:nth-child(3n+2){transform:rotate(1deg)} .clue:nth-child(3n){transform:rotate(-.5deg)}
+.clue:hover{transform:scale(1.03)}
+.clue h4{margin:0 0 4px;font-family:'Special Elite',monospace;font-weight:400;font-size:16px}
+.clue .ic{font-size:26px;float:right;margin-left:6px}
+.clue .lab{display:block;background:#e7f2ff;border-left:3px solid #3a6ea5;padding:4px 8px;margin:6px 0;font-size:14px}
+.assign{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.assign button{font-size:13px;padding:3px 9px;border-radius:14px;border:1px solid var(--ink2);background:#fff;color:var(--ink)}
+.assign button.on{background:var(--red);border-color:var(--red);color:#fff}
+.assign button.on[data-who="fausse"]{background:#3d3d3d;border-color:#3d3d3d}
+.board-foot{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-top:26px}
+.board-msg{font-family:'Special Elite',monospace;color:#fff;background:rgba(0,0,0,.55);padding:8px 14px;border-radius:4px;min-height:20px}
+.board-msg:empty{display:none}
+
+/* ---------- Pièce 7 : accusation ---------- */
+.q-step{display:none}
+.q-step.active{display:block;animation:pageIn .6s both}
+.q-step h3{font-size:1.5rem;margin:0 0 16px}
+.choices{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.choice{background:#fff;border:3px solid var(--ink);border-radius:6px;padding:12px;text-align:center;color:var(--ink);transition:transform .2s,box-shadow .2s;box-shadow:4px 4px 0 var(--ink)}
+.choice:hover{transform:translateY(-4px) rotate(-1deg);box-shadow:6px 8px 0 var(--ink)}
+.choice .mirror{aspect-ratio:1/1;margin-bottom:8px}
+.choice b{font-family:'Special Elite',monospace;font-weight:400;font-size:18px}
+.choices.text .choice{text-align:left;font-size:16.5px}
+.choice.wrong{border-color:var(--red);opacity:.55;animation:shake .45s}
+.choice.right{border-color:var(--green);box-shadow:4px 4px 0 var(--green);animation:pop .5s both}
+.hint{display:none;margin-top:16px;background:#ffe9e6;border-left:5px solid var(--red);padding:10px 14px;font-style:italic}
+.hint.show{display:block;animation:slideIn .4s both}
+.solved{display:none;text-align:center;position:relative}
+.solved.show{display:block}
+.solved .stamp{position:relative;display:inline-block;font-size:clamp(26px,6vw,46px);--r:-8deg;margin:10px 0 20px}
+.cuffs{width:200px;display:block;margin:0 auto;animation:cuffIn 1s cubic-bezier(.2,1.6,.4,1) both .4s}
+@keyframes cuffIn{from{opacity:0;transform:scale(3) rotate(-90deg)}}
+.solution{background:var(--paper);padding:20px 24px;text-align:left;margin:20px 0;border-left:6px solid var(--green)}
+.final-mission{background:var(--ink);color:#fff8e6;padding:20px 24px;text-align:left;border-radius:6px}
+.final-mission h3{color:#ffd27a;margin:0 0 8px}
+.medal{display:flex;align-items:center;gap:20px;justify-content:center;margin-top:26px;flex-wrap:wrap}
+.medal .mirror{width:120px;height:120px;border-radius:50%;border:6px solid var(--gold);box-shadow:0 0 0 4px #fff,0 8px 20px rgba(0,0,0,.4)}
+.medal .ribbon{font-size:60px;animation:swing 2s ease-in-out infinite;transform-origin:top center}
+@keyframes swing{50%{transform:rotate(12deg)}}
+.confetti span{position:fixed;top:-60px;z-index:100;pointer-events:none;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(115vh) rotate(600deg)}}
+
+/* ---------- Barre images ---------- */
+.imgbar{position:fixed;right:14px;bottom:14px;z-index:60;display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+.imgbar .toggle{background:#141a33;color:#ffd27a;border:2px solid #ffd27a;border-radius:30px;padding:9px 16px;font-family:'Special Elite',monospace;font-size:14px;box-shadow:0 6px 16px rgba(0,0,0,.5)}
+.imgbar .panel{display:none;background:#141a33;border:1px solid #2d3770;border-radius:10px;padding:14px;max-width:310px;font-size:14px;line-height:1.45;color:#e8e0cc;box-shadow:0 10px 30px rgba(0,0,0,.6)}
+body.edit-images .imgbar .panel{display:block;animation:slideIn .3s both}
+.imgbar .panel button{display:block;width:100%;margin:6px 0;background:#232b55;color:#fff;border:1px solid #3c4890;border-radius:6px;padding:8px;text-align:left;font-size:14px}
+.imgbar .panel button:hover{background:var(--pumpkin);color:#1a1209}
+.imgbar .panel p{margin:0 0 8px}
+
+@media (max-width:820px){
+  .suspects{grid-template-columns:1fr}
+  .card{height:540px;max-width:420px;margin:0 auto;width:100%}
+  .witness{grid-template-columns:1fr}
+  .witness .polaroid{max-width:320px;margin:0 auto}
+  .notes{grid-template-columns:1fr}
+  .phrases{grid-template-columns:1fr}
+  .clues{grid-template-columns:repeat(2,1fr)}
+  .choices{grid-template-columns:1fr}
+}
+@media (max-width:560px){
+  body{font-size:17px}
+  .sheet{padding:30px 18px}
+  .folder-inside{padding:28px 20px}
+  .page{padding:22px 16px 26px 52px}
+  .board{border-width:10px;padding:20px 10px}
+  .board-sus{grid-template-columns:repeat(2,1fr);gap:22px 12px}
+  .clues{grid-template-columns:1fr}
+  .moon{width:70px;height:70px;top:60px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+  .bat{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ====== Décor ====== -->
+<div class="sky"><div class="stars" id="stars"></div><div class="moon"></div></div>
+<div class="fog"></div><div class="fog f2"></div>
+<div class="bat" style="top:18%;animation-duration:19s;animation-delay:2s"><svg viewBox="0 0 64 32"><path d="M32 18 C28 10 20 6 2 8 C10 12 12 18 8 24 C16 20 22 22 26 26 C28 22 30 20 32 20 C34 20 36 22 38 26 C42 22 48 20 56 24 C52 18 54 12 62 8 C44 6 36 10 32 18Z" fill="#04060d"/></svg></div>
+<div class="bat" style="top:42%;width:30px;animation-duration:26s;animation-delay:9s"><svg viewBox="0 0 64 32"><path d="M32 18 C28 10 20 6 2 8 C10 12 12 18 8 24 C16 20 22 22 26 26 C28 22 30 20 32 20 C34 20 36 22 38 26 C42 22 48 20 56 24 C52 18 54 12 62 8 C44 6 36 10 32 18Z" fill="#04060d"/></svg></div>
+<div class="bat" style="top:70%;width:36px;animation-duration:23s;animation-delay:15s"><svg viewBox="0 0 64 32"><path d="M32 18 C28 10 20 6 2 8 C10 12 12 18 8 24 C16 20 22 22 26 26 C28 22 30 20 32 20 C34 20 36 22 38 26 C42 22 48 20 56 24 C52 18 54 12 62 8 C44 6 36 10 32 18Z" fill="#04060d"/></svg></div>
+
+<nav class="topnav">
+  <div class="inner">
+    <a href="#ch1">1 · Dossier</a><a href="#ch2">2 · Rapport</a><a href="#ch3">3 · Témoin</a><a href="#ch4">4 · Suspects</a><a href="#ch5">5 · Carnet</a><a href="#ch6" class="lk">6 · Tableau</a><a href="#ch7" class="lk">7 · Accusation</a>
+  </div>
+  <div class="progress" id="progress"></div>
+</nav>
+
+<main>
+
+<!-- ====== PIÈCE 1 : LE DOSSIER ====== -->
+<section class="chapter" id="ch1">
+  <div class="cover-wrap">
+    <div class="folder" id="folder">
+      <div class="folder-front">
+        <div class="stamp" id="stampTop">CONFIDENTIEL</div>
+        <div class="case-no">AFFAIRE N° 31-10</div>
+        <h1 id="title" class="cursor"></h1>
+        <div class="tag">Le Grand Vol des Bonbons d'Halloween</div>
+        <div class="idcard">
+          <b>Inspectrice :</b><span>Heather</span>
+          <b>Témoin clé :</b><span>Louis les grandes oreilles</span>
+          <b>Lieu :</b><span>Le pier, Oceanside, Californie</span>
+          <b>Commissaire :</b><span>Fabrice</span>
+        </div>
+        <button class="btn orange" id="openFolder">📂 Ouvrir le dossier</button>
+      </div>
+
+      <div class="folder-inside mission">
+        <h3>Inspectrice Heather,</h3>
+        <p>Le 31 octobre au soir, le grand chaudron de bonbons de la fête d'Halloween a disparu près du pier d'Oceanside. Plus de 2 000 bonbons. Des centaines d'enfants déçus. Un quartier sous le choc.</p>
+        <p>La police locale ne trouve rien. Le commissaire a donc fait appel à la meilleure inspectrice de Californie : <b>toi</b>.</p>
+        <div class="steps">
+          <div class="step"><span>🏠</span><div><b>Avant le cours</b><br>Lis les pièces 2 à 5 : inspecte la scène du crime, écoute ton témoin, étudie les trois suspects et prépare tes questions.</div></div>
+          <div class="step later"><span>🎙️</span><div><b>Pendant le cours</b><br>Tu interroges les suspects. Attention : ils seront tous joués par le commissaire Fabrice. Certains mentent. Méfie-toi de tout le monde.</div></div>
+          <div class="step later"><span>🔐</span><div><b>Après les interrogatoires</b><br>Le commissaire te donne le code secret. Tu ouvres le tableau d'enquête, puis tu fais ton accusation finale.</div></div>
+        </div>
+        <a class="btn" href="#ch2">🔦 Commencer l'enquête</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== PIÈCE 2 : RAPPORT + SCÈNE ====== -->
+<section class="chapter" id="ch2">
+  <div class="sheet tl reveal">
+    <div class="piece">PIÈCE N° 2</div>
+    <div class="clip"></div>
+    <h2>Le rapport de police</h2>
+    <p class="sub">Passe la souris (ou le doigt) sur les mots soulignés pour voir la traduction.</p>
+
+    <div class="report">
+      <header><span>COMMISSARIAT D'OCEANSIDE</span><span>RAPPORT D'INCIDENT N° 31-10</span></header>
+      <p>Le 31 octobre, à 21h05, M. Ramirez, président de l'association « Oceanside fête Halloween », a appelé la police. Le grand <span class="vocab" tabindex="0" data-en="cauldron">chaudron</span> de bonbons avait disparu du <span class="vocab" tabindex="0" data-en="booth / kiosk">kiosque</span>, près du pier.</p>
+      <p>Le chaudron pesait 12 kilos et contenait plus de 2 000 bonbons. Il devait être distribué aux enfants du quartier à 21h30.</p>
+      <p>À 20h, les <span class="vocab" tabindex="0" data-en="volunteers">bénévoles</span> avaient fermé le kiosque à clé. Quand ils sont revenus à 21h, la porte était toujours fermée… mais le chaudron n'était plus là. Personne n'avait <span class="vocab" tabindex="0" data-en="to break open">forcé</span> la <span class="vocab" tabindex="0" data-en="lock">serrure</span>.</p>
+      <p>Sur place, les agents ont remarqué plusieurs choses étranges. Malheureusement, il faisait nuit noire et ils avaient oublié leur <span class="vocab" tabindex="0" data-en="flashlight">lampe torche</span>.</p>
+      <p>Heureusement, toi, tu en as une. 🔦</p>
+      <div class="stamp" id="stampReport">URGENT</div>
+    </div>
+
+    <div class="scene-wrap">
+      <h3 class="type" style="margin:0 0 6px;font-size:1.4rem">🔦 Inspecte la scène du crime</h3>
+      <p style="margin:0 0 14px">Promène ta lampe torche sur la photo. Il y a <b>4 indices</b> cachés. Clique dessus quand tu les trouves.</p>
+      <div class="scene" id="scene">
+        <div class="slot" data-slot="scene">
+          <svg viewBox="0 0 800 450" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="scSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#18224d"/><stop offset="1" stop-color="#3b416f"/></linearGradient>
+              <linearGradient id="scSea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22305a"/><stop offset="1" stop-color="#101833"/></linearGradient>
+              <linearGradient id="scSand" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8a7550"/><stop offset="1" stop-color="#55462f"/></linearGradient>
+              <radialGradient id="scGlow"><stop offset="0" stop-color="#ffb347" stop-opacity=".75"/><stop offset="1" stop-color="#ffb347" stop-opacity="0"/></radialGradient>
+            </defs>
+            <rect width="800" height="450" fill="url(#scSky)"/>
+            <g fill="#fff"><circle cx="60" cy="40" r="1.5"/><circle cx="150" cy="80" r="1.2"/><circle cx="260" cy="30" r="1.6"/><circle cx="420" cy="60" r="1.2"/><circle cx="520" cy="25" r="1.5"/><circle cx="590" cy="110" r="1"/><circle cx="760" cy="140" r="1.4"/><circle cx="340" cy="120" r="1"/></g>
+            <circle cx="680" cy="70" r="40" fill="#fff4c9"/>
+            <circle cx="668" cy="60" r="7" fill="#e8d79e"/><circle cx="694" cy="84" r="5" fill="#e8d79e"/>
+            <rect y="190" width="800" height="90" fill="url(#scSea)"/>
+            <rect x="660" y="192" width="40" height="85" fill="#fff4c9" opacity=".14"/>
+            <path d="M0 212 Q50 207 100 212 T200 212 T300 212 T400 212 T500 212 T600 212 T700 212 T800 212" stroke="#5a6a9a" stroke-width="2" fill="none" opacity=".5"/>
+            <path d="M0 240 Q50 235 100 240 T200 240 T300 240 T400 240 T500 240 T600 240 T700 240 T800 240" stroke="#5a6a9a" stroke-width="2" fill="none" opacity=".35"/>
+            <rect x="420" y="172" width="380" height="14" fill="#3b2f2a"/>
+            <rect x="420" y="160" width="380" height="4" fill="#3b2f2a"/>
+            <g fill="#2a211d"><rect x="440" y="186" width="9" height="100"/><rect x="500" y="186" width="9" height="100"/><rect x="560" y="186" width="9" height="100"/><rect x="620" y="186" width="9" height="100"/><rect x="680" y="186" width="9" height="100"/><rect x="740" y="186" width="9" height="100"/></g>
+            <g fill="#2a211d"><rect x="470" y="136" width="4" height="36"/><rect x="590" y="136" width="4" height="36"/><rect x="710" y="136" width="4" height="36"/></g>
+            <circle cx="472" cy="134" r="22" fill="url(#scGlow)"/><circle cx="592" cy="134" r="22" fill="url(#scGlow)"/><circle cx="712" cy="134" r="22" fill="url(#scGlow)"/>
+            <text x="560" y="155" fill="#9fb0d8" font-size="13" font-family="monospace" letter-spacing="2">OCEANSIDE PIER</text>
+            <path d="M0 268 Q200 252 400 262 T800 268 V450 H0Z" fill="url(#scSand)"/>
+            <circle cx="370" cy="270" r="110" fill="url(#scGlow)" opacity=".5"/>
+            <rect x="295" y="215" width="150" height="115" fill="#5a3b2e"/>
+            <path d="M280 220 L370 172 L460 220Z" fill="#f28c28"/>
+            <path d="M310 204 L370 172 L330 220Z M370 172 L410 220 L430 204Z" fill="#1d1d1d" opacity=".55"/>
+            <rect x="318" y="228" width="104" height="24" fill="#151515"/>
+            <text x="370" y="246" font-family="monospace" font-size="15" fill="#f28c28" text-anchor="middle" font-weight="bold">BONBONS</text>
+            <rect x="345" y="262" width="50" height="68" fill="#3a2419"/>
+            <path d="M365 287 v-6 a5 5 0 0 1 10 0 v6" stroke="#c9a227" stroke-width="3" fill="none"/>
+            <rect x="362" y="286" width="16" height="13" rx="2" fill="#d4af37"/>
+            <g transform="translate(298 334)"><ellipse rx="17" ry="13" fill="#e8741a"/><rect x="-2" y="-18" width="4" height="7" fill="#3d5a1e"/><path d="M-8 -3 l4 -5 l4 5z M2 -3 l4 -5 l4 5z" fill="#ffd34d"/><path d="M-8 4 q8 6 16 0" stroke="#ffd34d" stroke-width="2" fill="none"/></g>
+            <g transform="translate(452 338)"><ellipse rx="14" ry="11" fill="#e8741a"/><rect x="-2" y="-15" width="4" height="6" fill="#3d5a1e"/><path d="M-6 -2 l3 -4 l3 4z M2 -2 l3 -4 l3 4z" fill="#ffd34d"/></g>
+            <path d="M372 332 C450 360 560 390 790 420" stroke="#2c2418" stroke-width="2.5" fill="none" stroke-dasharray="7 4"/>
+            <path d="M372 344 C450 372 560 402 790 432" stroke="#2c2418" stroke-width="2.5" fill="none" stroke-dasharray="7 4"/>
+            <g transform="translate(228 350) rotate(-20)"><path d="M0 0 C6 -12 20 -14 30 -3 C20 2 8 4 0 0Z" fill="#f5f5f5"/><path d="M0 0 L30 -3" stroke="#bbb" stroke-width="1"/></g>
+            <g transform="translate(250 362) rotate(15)"><path d="M0 0 C6 -10 17 -12 25 -2 C17 2 7 3 0 0Z" fill="#fafafa"/><path d="M0 0 L25 -2" stroke="#bbb" stroke-width="1"/></g>
+            <g transform="translate(212 366) rotate(40)"><path d="M0 0 C5 -8 13 -9 19 -2 C13 1 6 2 0 0Z" fill="#eee"/></g>
+            <ellipse cx="640" cy="322" rx="28" ry="10" fill="#4a3620"/>
+            <path d="M614 320 l52 -4 M616 326 l48 2 M622 316 l40 8" stroke="#6b5030" stroke-width="2"/>
+            <g transform="translate(588 330)"><path d="M0 0 l-8 -5 v10z M12 0 l8 -5 v10z" fill="#e94b8a"/><rect x="0" y="-4" width="12" height="8" rx="3" fill="#e94b8a"/></g>
+            <g transform="translate(608 343) rotate(20)"><path d="M0 0 l-7 -4 v8z M10 0 l7 -4 v8z" fill="#8e5bd8"/><rect x="0" y="-3.5" width="10" height="7" rx="3" fill="#8e5bd8"/></g>
+            <g transform="translate(570 345) rotate(-15)"><path d="M0 0 l-7 -4 v8z M10 0 l7 -4 v8z" fill="#3bb4c1"/><rect x="0" y="-3.5" width="10" height="7" rx="3" fill="#3bb4c1"/></g>
+          </svg>
+          <img class="custom" alt="Scène du crime">
+          <div class="slot-tools"><button class="slot-change">📷 Changer l'image</button><button class="slot-reset" title="Revenir à l'illustration">↺</button></div>
+        </div>
+        <button class="hot" data-k="serrure" style="left:46%;top:63%" aria-label="Indice"></button>
+        <button class="hot" data-k="plumes" style="left:30%;top:79%" aria-label="Indice"></button>
+        <button class="hot" data-k="traces" style="left:66%;top:85%" aria-label="Indice"></button>
+        <button class="hot" data-k="papiers" style="left:74%;top:74%" aria-label="Indice"></button>
+        <div class="dark"></div>
+        <div class="caption">Kiosque d'Halloween, 31/10, 21h10</div>
+      </div>
+      <div class="scene-bar">
+        <span class="counter" id="counter">Indices trouvés : 0 / 4</span>
+        <button class="btn" id="lightAll" style="display:none">💡 Allumer toute la lumière</button>
+      </div>
+      <ul class="obs" id="obs"></ul>
+    </div>
+  </div>
+</section>
+
+<!-- ====== PIÈCE 3 : LE TÉMOIN ====== -->
+<section class="chapter" id="ch3">
+  <div class="sheet tr reveal">
+    <div class="piece">PIÈCE N° 3</div>
+    <h2>Le témoin clé</h2>
+    <p class="sub">Un seul témoin. Petit. Poilu. Mais avec des oreilles exceptionnelles.</p>
+    <div class="witness">
+      <div class="polaroid" id="louisFrame">
+        <div class="tape"></div>
+        <div class="slot" data-slot="louis">
+          <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+            <rect width="300" height="300" fill="#f6e7c8"/>
+            <circle cx="150" cy="165" r="122" fill="#efd8aa"/>
+            <path d="M80 300 C88 228 212 228 220 300Z" fill="#fff"/>
+            <g class="ear ear-l">
+              <path d="M118 120 C95 72 55 24 14 26 C10 70 44 122 100 144Z" fill="#a8622c"/>
+              <path d="M14 26 C10 70 44 122 100 144" fill="none" stroke="#e7b77f" stroke-width="8" stroke-dasharray="2 7" stroke-linecap="round"/>
+              <path d="M110 124 C92 86 62 52 32 46 C34 80 58 112 98 134Z" fill="#c98a52"/>
+            </g>
+            <g class="ear ear-r"><g transform="translate(300 0) scale(-1 1)">
+              <path d="M118 120 C95 72 55 24 14 26 C10 70 44 122 100 144Z" fill="#a8622c"/>
+              <path d="M14 26 C10 70 44 122 100 144" fill="none" stroke="#e7b77f" stroke-width="8" stroke-dasharray="2 7" stroke-linecap="round"/>
+              <path d="M110 124 C92 86 62 52 32 46 C34 80 58 112 98 134Z" fill="#c98a52"/>
+            </g></g>
+            <ellipse cx="150" cy="170" rx="62" ry="58" fill="#fff"/>
+            <path d="M93 152 C98 116 134 110 145 130 C140 160 116 176 97 171Z" fill="#a8622c"/>
+            <path d="M207 152 C202 116 166 110 155 130 C160 160 184 176 203 171Z" fill="#a8622c"/>
+            <circle cx="125" cy="156" r="10" fill="#24160c"/><circle cx="175" cy="156" r="10" fill="#24160c"/>
+            <circle cx="129" cy="152" r="3.5" fill="#fff"/><circle cx="179" cy="152" r="3.5" fill="#fff"/>
+            <ellipse cx="150" cy="194" rx="25" ry="18" fill="#fbf3ea"/>
+            <path d="M141 184 Q150 177 159 184 Q155 193 150 194 Q145 193 141 184Z" fill="#24160c"/>
+            <path d="M150 194 v6 M150 200 q-8 6 -14 0 M150 200 q8 6 14 0" stroke="#24160c" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <path d="M145 204 q5 13 10 0z" fill="#f08a9a"/>
+            <circle cx="110" cy="188" r="8" fill="#f5b0b0" opacity=".55"/><circle cx="190" cy="188" r="8" fill="#f5b0b0" opacity=".55"/>
+            <path d="M98 234 Q150 254 202 234" stroke="#b3261e" stroke-width="10" fill="none" stroke-linecap="round"/>
+            <circle cx="150" cy="252" r="8" fill="#d4af37"/>
+          </svg>
+          <img class="custom" alt="Louis les grandes oreilles">
+          <div class="slot-tools"><button class="slot-change">📷 Changer</button><button class="slot-reset" title="Revenir à l'illustration">↺</button></div>
+        </div>
+        <div class="cap">Louis, témoin n° 1</div>
+      </div>
+
+      <div>
+        <div class="fiche">
+          <div><b>Nom :</b> Louis les grandes oreilles</div>
+          <div><b>Race :</b> épagneul nain continental, dit « chien papillon »</div>
+          <div><b>Signe particulier :</b> peut entendre un paquet de chips s'ouvrir à trois kilomètres</div>
+          <div><b>Fiabilité :</b> excellente (sauf en présence d'une frite)</div>
+        </div>
+        <p>Ce soir-là, entre 20h et 21h, Northwood promenait Louis sur la promenade du pier. Louis n'a <b>rien vu</b> : il surveillait une frite abandonnée par terre. Mais avec des oreilles pareilles, il a <b>tout entendu</b>.</p>
+        <button class="btn orange" id="listen">👂 Écoute, Louis !</button>
+        <ul class="heard" id="heard">
+          <li><span class="time">20h10</span><div class="bubble"><span class="sound">« Clic… clac. »</span>Une clé qui tourne dans une serrure. Quelqu'un ouvre le kiosque.</div></li>
+          <li><span class="time">20h15</span><div class="bubble"><span class="sound">« Criii… criii… criii… »</span>Un grincement régulier, comme une petite roue qui a besoin d'huile.</div></li>
+          <li><span class="time">20h20</span><div class="bubble"><span class="sound">« ♪ Joyeux Halloween, mes petits chéris… ♪ »</span>Une voix douce qui chantonne.</div></li>
+          <li><span class="time">20h25</span><div class="bubble"><span class="sound">« Kiaaa ! Kiaaa ! Kiaaa ! »</span>Un cri de mouette. Trois fois. Exactement le même. Bizarre…</div></li>
+          <li><span class="time">20h40</span><div class="bubble"><span class="sound">« Trop cool, le requin !!! »</span>Des cris et des applaudissements, au loin, du côté du musée du surf.</div></li>
+        </ul>
+        <p class="after-louis" id="afterLouis">Après 20h40, Louis n'a plus rien entendu. Il avait enfin attrapé la frite. 🍟</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== PIÈCE 4 : SUSPECTS ====== -->
+<section class="chapter" id="ch4">
+  <div class="sheet tl reveal">
+    <div class="piece">PIÈCE N° 4</div>
+    <div class="clip"></div>
+    <h2>Les trois suspects</h2>
+    <p class="sub">Retourne chaque fiche pour lire le profil et l'alibi.</p>
+
+    <div class="suspects">
+      <!-- KAI -->
+      <div class="card">
+        <div class="card-inner">
+          <div class="face front">
+            <div class="mug">
+              <div class="marks"><span>6'</span><span>5'</span><span>4'</span><span>3'</span></div>
+              <div class="slot" data-slot="kai">
+                <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+                  <rect width="300" height="300" fill="#cfe6ee"/>
+                  <path d="M58 300 C68 228 232 228 242 300Z" fill="#2a9d8f"/>
+                  <circle cx="100" cy="276" r="9" fill="#f4a261"/><circle cx="204" cy="270" r="9" fill="#f4a261"/><circle cx="150" cy="292" r="7" fill="#e9c46a"/><circle cx="125" cy="258" r="5" fill="#e9c46a"/>
+                  <rect x="133" y="198" width="34" height="38" fill="#c98b5e"/>
+                  <g fill="#fff"><circle cx="122" cy="236" r="4"/><circle cx="136" cy="240" r="4"/><circle cx="150" cy="242" r="4"/><circle cx="164" cy="240" r="4"/><circle cx="178" cy="236" r="4"/></g>
+                  <circle cx="92" cy="156" r="12" fill="#c98b5e"/><circle cx="208" cy="156" r="12" fill="#c98b5e"/>
+                  <ellipse cx="150" cy="150" rx="58" ry="66" fill="#d9a06f"/>
+                  <path d="M88 136 L95 84 L112 104 L120 68 L138 97 L150 60 L162 95 L180 66 L188 101 L206 80 L212 136 C190 110 110 110 88 136Z" fill="#f2c94c"/>
+                  <rect x="108" y="108" width="36" height="16" rx="7" fill="#222"/><rect x="156" y="108" width="36" height="16" rx="7" fill="#222"/><rect x="144" y="113" width="12" height="4" fill="#222"/>
+                  <path d="M114 138 l27 7 M186 138 l-27 7" stroke="#8a6a2a" stroke-width="5" stroke-linecap="round"/>
+                  <circle cx="130" cy="156" r="6" fill="#2b1a10"/><circle cx="170" cy="156" r="6" fill="#2b1a10"/>
+                  <path d="M120 151 h20 M160 151 h20" stroke="#b07a4e" stroke-width="4"/>
+                  <path d="M150 160 q-7 18 4 20" stroke="#a5704a" stroke-width="3" fill="none"/>
+                  <path d="M130 194 q20 -10 40 0" stroke="#7a3e2a" stroke-width="4" fill="none" stroke-linecap="round"/>
+                </svg>
+                <img class="custom" alt="Kai">
+                <div class="slot-tools"><button class="slot-change">📷 Changer</button><button class="slot-reset" title="Revenir à l'illustration">↺</button></div>
+              </div>
+            </div>
+            <div class="plate">SUSPECT N° 1<small>KAI MOANA</small></div>
+            <button class="flip">↻ Retourner la fiche</button>
+          </div>
+          <div class="face back">
+            <h3>Kai Moana</h3>
+            <dl>
+              <dt>ÂGE / PROFESSION</dt><dd>27 ans, moniteur de surf</dd>
+              <dt>CE QU'ON SAIT</dt>
+              <dd>Il déteste Halloween : pour lui, c'est « une fête inventée par les dentistes ». On l'a vu passer devant le kiosque à 19h55 avec un énorme sac. Il transporte toujours sa planche sur un chariot de plage à grosses roues.</dd>
+              <dt>SON ALIBI</dt>
+              <dd class="alibi">« À 20h, j'<mark class="pqp">étais déjà arrivé</mark> au concours de costumes du musée du surf. J'<mark class="pqp">avais laissé</mark> mon chariot devant l'entrée. Demandez à tout le monde ! »</dd>
+            </dl>
+            <button class="flip">↻ Retourner</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- MME DOUCETTE -->
+      <div class="card">
+        <div class="card-inner">
+          <div class="face front">
+            <div class="mug">
+              <div class="marks"><span>6'</span><span>5'</span><span>4'</span><span>3'</span></div>
+              <div class="slot" data-slot="doucette">
+                <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+                  <rect width="300" height="300" fill="#f7dfe6"/>
+                  <path d="M52 300 C64 226 236 226 248 300Z" fill="#e6a4b4"/>
+                  <path d="M118 232 L150 266 L182 232Z" fill="#fff"/>
+                  <rect x="136" y="198" width="28" height="38" fill="#f2d0b8"/>
+                  <g fill="#fffaf0" stroke="#e0d6c2"><circle cx="124" cy="240" r="5"/><circle cx="136" cy="248" r="5"/><circle cx="150" cy="252" r="5"/><circle cx="164" cy="248" r="5"/><circle cx="176" cy="240" r="5"/></g>
+                  <circle cx="150" cy="74" r="32" fill="#d6d6de"/>
+                  <ellipse cx="150" cy="152" rx="56" ry="62" fill="#f6dcc8"/>
+                  <path d="M92 150 C84 94 120 82 150 84 C180 82 216 94 208 150 C200 120 180 108 150 110 C120 108 100 120 92 150Z" fill="#e4e4ea"/>
+                  <g fill="#e4e4ea"><circle cx="100" cy="112" r="12"/><circle cx="200" cy="112" r="12"/><circle cx="125" cy="94" r="12"/><circle cx="175" cy="94" r="12"/></g>
+                  <circle cx="128" cy="150" r="17" fill="none" stroke="#7a4b8c" stroke-width="4"/><circle cx="172" cy="150" r="17" fill="none" stroke="#7a4b8c" stroke-width="4"/><path d="M145 150 h10" stroke="#7a4b8c" stroke-width="4"/>
+                  <path d="M120 153 q8 -8 16 0 M164 153 q8 -8 16 0" stroke="#3a2a2a" stroke-width="3" fill="none" stroke-linecap="round"/>
+                  <circle cx="112" cy="178" r="9" fill="#f29bb0" opacity=".6"/><circle cx="188" cy="178" r="9" fill="#f29bb0" opacity=".6"/>
+                  <path d="M126 182 q24 26 48 0z" fill="#c45a6e"/><path d="M130 183 q20 8 40 0" fill="#fff"/>
+                  <circle cx="72" cy="268" r="24" fill="#d8a25a"/><g fill="#5b3415"><circle cx="64" cy="262" r="3"/><circle cx="78" cy="272" r="3"/><circle cx="70" cy="278" r="2.5"/><circle cx="82" cy="258" r="2.5"/></g>
+                </svg>
+                <img class="custom" alt="Madame Doucette">
+                <div class="slot-tools"><button class="slot-change">📷 Changer</button><button class="slot-reset" title="Revenir à l'illustration">↺</button></div>
+              </div>
+            </div>
+            <div class="plate">SUSPECT N° 2<small>MADAME DOUCETTE</small></div>
+            <button class="flip">↻ Retourner la fiche</button>
+          </div>
+          <div class="face back">
+            <h3>Madame Doucette</h3>
+            <dl>
+              <dt>ÂGE / PROFESSION</dt><dd>74 ans, retraitée, bénévole à l'association « Oceanside fête Halloween »</dd>
+              <dt>CE QU'ON SAIT</dt>
+              <dd>Tout le quartier l'adore : on dit que c'est la voisine la plus gentille d'Oceanside. Elle fait des cookies à la cannelle pour tout le monde. Elle va partout avec son petit chariot à courses. Ce soir-là, elle portait son déguisement préféré : un ange.</dd>
+              <dt>SON ALIBI</dt>
+              <dd class="alibi">« Je n'<mark class="pqp">étais pas sortie</mark> de chez moi de la soirée, mon petit. J'<mark class="pqp">avais fait</mark> une fournée de cookies et je m'<mark class="pqp">étais endormie</mark> devant un film d'horreur. »</dd>
+            </dl>
+            <button class="flip">↻ Retourner</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- GASTON -->
+      <div class="card">
+        <div class="card-inner">
+          <div class="face front">
+            <div class="mug">
+              <div class="marks"><span>6'</span><span>5'</span><span>4'</span><span>3'</span></div>
+              <div class="slot" data-slot="gaston">
+                <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+                  <rect width="300" height="300" fill="#dce8f0"/>
+                  <ellipse cx="165" cy="240" rx="92" ry="62" fill="#fff"/>
+                  <path d="M122 214 C182 196 252 216 274 258 C222 264 162 258 122 238Z" fill="#9aa5b1"/>
+                  <path d="M240 248 C256 252 266 255 274 258 C258 266 242 264 232 260Z" fill="#1d1d1d"/>
+                  <circle cx="122" cy="142" r="54" fill="#fff"/>
+                  <path d="M72 138 L18 150 L74 160Z" fill="#f2c230"/>
+                  <circle cx="32" cy="152" r="4.5" fill="#d62828"/>
+                  <g transform="rotate(-18 40 142)"><rect x="8" y="136" width="44" height="7" rx="2" fill="#f4c542"/><rect x="14" y="128" width="36" height="6" rx="2" fill="#f0b429"/></g>
+                  <circle cx="114" cy="126" r="11" fill="#fff" stroke="#222" stroke-width="2.5"/>
+                  <circle cx="109" cy="127" r="5" fill="#222"/>
+                  <path d="M94 109 l34 8" stroke="#555" stroke-width="6" stroke-linecap="round"/>
+                  <path d="M150 300 v-14 M180 300 v-14" stroke="#f2a13a" stroke-width="7"/>
+                </svg>
+                <img class="custom" alt="Gaston la mouette">
+                <div class="slot-tools"><button class="slot-change">📷 Changer</button><button class="slot-reset" title="Revenir à l'illustration">↺</button></div>
+              </div>
+            </div>
+            <div class="plate">SUSPECT N° 3<small>GASTON LA MOUETTE</small></div>
+            <button class="flip">↻ Retourner la fiche</button>
+          </div>
+          <div class="face back">
+            <h3>Gaston, la mouette</h3>
+            <dl>
+              <dt>ÂGE / PROFESSION</dt><dd>Âge inconnu, voleur de frites professionnel</dd>
+              <dt>CASIER JUDICIAIRE</dt><dd>47 frites, 12 sandwichs, 1 glace à la vanille. Récidiviste.</dd>
+              <dt>CE QU'ON SAIT</dt>
+              <dd>On l'a vu voler au-dessus du kiosque vers 20h25. Des plumes blanches ont été retrouvées sur la scène du crime. Son nid est à quelques mètres du kiosque.</dd>
+              <dt>SON ALIBI</dt>
+              <dd class="alibi">« Cui ! J'étais au bout du pier avec les pêcheurs. J'<mark class="pqp">avais déjà mangé</mark> trois sardines, je n'avais plus faim ! »</dd>
+            </dl>
+            <button class="flip">↻ Retourner</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="legend">🟧 Les verbes surlignés sont au <b>plus-que-parfait</b>. Pour vérifier un alibi, ce temps est ton meilleur ami (voir le carnet, pièce 5).</p>
+  </div>
+</section>
+
+<!-- ====== PIÈCE 5 : CARNET ====== -->
+<section class="chapter" id="ch5">
+  <div class="sheet tr reveal">
+    <div class="piece">PIÈCE N° 5</div>
+    <h2>Le carnet de l'inspectrice</h2>
+    <p class="sub">Tes outils pour l'interrogatoire. Feuillette les pages.</p>
+
+    <div class="notebook">
+      <div class="tabs">
+        <button class="tab active" data-page="p1">❓ Questions</button>
+        <button class="tab" data-page="p2">⏪ Plus-que-parfait</button>
+        <button class="tab" data-page="p3">🕵️ Phrases d'inspectrice</button>
+      </div>
+
+      <div class="page active" id="p1">
+        <h3>Poser des questions comme une pro</h3>
+        <p><b>Style élégant (inversion)</b>, parfait pour impressionner un suspect :</p>
+        <ul>
+          <li class="q">Où étiez-vous entre 20h et 21h ?</li>
+          <li class="q">Aviez-vous une clé du kiosque ?</li>
+          <li class="q">Que transportiez-vous dans ce sac ?</li>
+          <li class="q">Pourquoi êtes-vous passé(e) devant le kiosque ?</li>
+        </ul>
+        <p><b>Style direct (est-ce que)</b> :</p>
+        <ul>
+          <li class="q">Est-ce que quelqu'un peut confirmer votre alibi ?</li>
+          <li class="q">Qu'est-ce que vous aviez fait avant 20h ?</li>
+        </ul>
+        <p><b>Pour piéger un menteur</b> :</p>
+        <ul>
+          <li class="q">Comment savez-vous que… ? Vous n'étiez pas là !</li>
+          <li class="q">Vous êtes sûr(e) que… ?</li>
+          <li class="q">Alors expliquez-moi pourquoi…</li>
+        </ul>
+      </div>
+
+      <div class="page" id="p2">
+        <h3>Le plus-que-parfait : l'action AVANT l'action</h3>
+        <p>On l'utilise pour dire ce qui s'était passé <b>avant</b> un autre moment du passé. Exactement ce dont on a besoin pour vérifier un alibi !</p>
+        <div class="tline"><span class="dot"></span><span>Kai <b>était arrivé</b> au musée</span><span class="bar"></span><span class="dot b"></span><span>20h : le chaudron disparaît</span></div>
+        <p><b>Formation :</b> <i>avoir</i> ou <i>être</i> à l'imparfait + participe passé<br>
+        → j'<b>avais mangé</b> · elle <b>avait préparé</b> · nous <b>étions partis</b> · ils <b>s'étaient endormis</b></p>
+        <p style="margin-top:20px"><b>✍️ À toi !</b> Écris le verbe au plus-que-parfait.</p>
+        <div id="exercise">
+          <div class="ex-row" data-a="était arrivé|était déjà arrivé">1. Avant 20h, Kai <input aria-label="réponse 1"> au musée du surf. <i>(arriver)</i></div>
+          <div class="ex-row" data-a="avait préparé">2. Mme Doucette dit qu'elle <input aria-label="réponse 2"> des cookies. <i>(préparer)</i></div>
+          <div class="ex-row" data-a="avait mangé|avait déjà mangé">3. Gaston <input aria-label="réponse 3"> trois sardines avant le vol. <i>(manger)</i></div>
+          <div class="ex-row" data-a="avaient fermé">4. Les bénévoles <input aria-label="réponse 4"> le kiosque à clé. <i>(fermer)</i></div>
+          <div class="ex-row" data-a="étaient sortis">5. Northwood et Louis <input aria-label="réponse 5"> se promener vers 20h. <i>(sortir)</i></div>
+          <div class="ex-row" data-a="avais oublié">6. Zut ! J' <input aria-label="réponse 6"> ma lampe torche dans la voiture ! <i>(oublier)</i></div>
+        </div>
+        <button class="btn" id="checkEx" style="margin-top:10px">Vérifier</button><span class="ex-score" id="exScore"></span>
+      </div>
+
+      <div class="page" id="p3">
+        <h3>Les phrases qui font trembler les suspects</h3>
+        <div class="phrases">
+          <div class="phrase"><b>Votre alibi ne tient pas debout !</b><small>Your alibi doesn't hold up!</small></div>
+          <div class="phrase"><b>Ça ne colle pas.</b><small>That doesn't add up.</small></div>
+          <div class="phrase"><b>Vous mentez, et je peux le prouver.</b><small>You're lying, and I can prove it.</small></div>
+          <div class="phrase"><b>Vous vous êtes trahi(e) !</b><small>You gave yourself away!</small></div>
+          <div class="phrase"><b>Je vous ai à l'œil.</b><small>I've got my eye on you.</small></div>
+          <div class="phrase"><b>Passez aux aveux !</b><small>Confess!</small></div>
+          <div class="phrase"><b>Ne quittez pas la ville.</b><small>Don't leave town.</small></div>
+          <div class="phrase"><b>Je vous arrête pour vol de bonbons !</b><small>You're under arrest for candy theft!</small></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mission-box">
+      <h3>🎯 Ta mission avant le cours</h3>
+      <p>Prépare au moins <b>3 questions pour chaque suspect</b>. Utilise l'inversion au moins une fois, et le plus-que-parfait au moins une fois.</p>
+      <div class="notes">
+        <div><label>🏄 Kai</label><textarea data-save="notes-kai" placeholder="Où étiez-vous…"></textarea></div>
+        <div><label>👵 Mme Doucette</label><textarea data-save="notes-doucette" placeholder="Aviez-vous…"></textarea></div>
+        <div><label>🐦 Gaston</label><textarea data-save="notes-gaston" placeholder="Qu'est-ce que…"></textarea></div>
+      </div>
+      <div class="notes-wide"><label class="type">🤔 Mon premier soupçon : qui, et pourquoi ?</label><textarea data-save="notes-soupcon" placeholder="Je pense que… parce que…"></textarea></div>
+      <p class="saved">Tes notes sont enregistrées automatiquement dans ce navigateur.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ====== VERROU ====== -->
+<section class="chapter" id="lock">
+  <div class="lockbox reveal" id="lockbox">
+    <svg class="padlock" id="padlock" viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg">
+      <path class="shackle" d="M32 62 V40 a28 28 0 0 1 56 0 V62" stroke="#c9a227" stroke-width="12" fill="none"/>
+      <rect x="14" y="58" width="92" height="72" rx="10" fill="#d4af37"/>
+      <rect x="14" y="58" width="92" height="14" rx="6" fill="#e6c55a"/>
+      <circle cx="60" cy="90" r="9" fill="#5a4310"/><rect x="56" y="94" width="8" height="18" rx="2" fill="#5a4310"/>
+    </svg>
+    <div class="lock-closed">
+      <h2>Pièces 6 et 7 : classées secret</h2>
+      <p>Le commissaire te donnera le code après les interrogatoires.</p>
+      <form class="codeform" id="codeForm" autocomplete="off">
+        <input id="code" placeholder="CODE" maxlength="16" aria-label="Code secret">
+        <button class="btn orange" type="submit">🔓 Déverrouiller</button>
+      </form>
+      <div class="lock-msg" id="lockMsg"></div>
+    </div>
+    <div class="lock-open">
+      <h2>Accès autorisé ✅</h2>
+      <p>Bienvenue dans la salle d'enquête, inspectrice.</p>
+      <a class="btn orange" href="#ch6">Voir le tableau ↓</a>
+    </div>
+  </div>
+</section>
+
+<div class="locked-content">
+
+<!-- ====== PIÈCE 6 : TABLEAU ====== -->
+<section class="chapter" id="ch6">
+  <div class="sheet tl">
+    <div class="piece">PIÈCE N° 6</div>
+    <h2>Le tableau d'enquête</h2>
+    <p class="sub">Les résultats du labo sont arrivés ! Pour chaque indice, décide : qui est-ce que ça accuse ? Ou est-ce une fausse piste ?</p>
+
+    <div class="board" id="board">
+      <svg class="strings" id="strings"></svg>
+      <div class="board-sus">
+        <div class="pin-target" data-who="kai"><span class="tack"></span><div class="mirror" data-mirror="kai"></div>Kai</div>
+        <div class="pin-target" data-who="doucette"><span class="tack"></span><div class="mirror" data-mirror="doucette"></div>Mme Doucette</div>
+        <div class="pin-target" data-who="gaston"><span class="tack"></span><div class="mirror" data-mirror="gaston"></div>Gaston</div>
+        <div class="pin-target" data-who="fausse"><span class="tack"></span><div class="fake">🌀</div>Fausse piste</div>
+      </div>
+
+      <div class="clues" id="clues">
+        <div class="clue" data-id="1"><span class="tack"></span><span class="ic">🪶</span><h4>Les plumes blanches</h4>Retrouvées devant le kiosque.<span class="lab">🧪 Labo : ce ne sont pas de vraies plumes. Elles sont synthétiques, comme sur un costume.</span></div>
+        <div class="clue" data-id="2"><span class="tack"></span><span class="ic">🔒</span><h4>Le cadenas</h4>Intact. Personne ne l'avait forcé. Le voleur avait donc une clé.</div>
+        <div class="clue" data-id="3"><span class="tack"></span><span class="ic">〰️</span><h4>Les traces dans le sable</h4>Deux lignes fines et parallèles.<span class="lab">🧪 Labo : des roues de 2 cm de large. Le chariot de plage de Kai a des roues de 15 cm.</span></div>
+        <div class="clue" data-id="4"><span class="tack"></span><span class="ic">🍬</span><h4>Les papiers de bonbons</h4>Retrouvés près du nid de Gaston… tous pliés en quatre, très proprement.</div>
+        <div class="clue" data-id="5"><span class="tack"></span><span class="ic">🔊</span><h4>Le cri de mouette</h4>Louis l'a entendu trois fois, exactement identique. Comme un enregistrement.</div>
+        <div class="clue" data-id="6"><span class="tack"></span><span class="ic">🎒</span><h4>Le gros sac de Kai</h4>Le musée du surf confirme : il contenait un costume de requin géant.</div>
+        <div class="clue" data-id="7"><span class="tack"></span><span class="ic">🍫</span><h4>Les doigts de Kai</h4>À 21h, Kai avait du chocolat sur les doigts. Il avait gagné une boîte de chocolats au concours.</div>
+        <div class="clue" data-id="8"><span class="tack"></span><span class="ic">🐦</span><h4>Gaston au-dessus du kiosque</h4>Vu à 20h25. Mais à Oceanside, il y a des mouettes partout, tout le temps.</div>
+        <div class="clue" data-id="9"><span class="tack"></span><span class="ic">🍪</span><h4>L'odeur de cannelle</h4>Dans le kiosque, une forte odeur de cannelle… et quelques miettes de cookie.</div>
+      </div>
+
+      <div class="board-foot">
+        <button class="btn orange" id="checkBoard">🔍 Vérifier mes liens</button>
+        <button class="btn" id="clearBoard">Tout décrocher</button>
+        <span class="board-msg" id="boardMsg"></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== PIÈCE 7 : ACCUSATION ====== -->
+<section class="chapter" id="ch7">
+  <div class="sheet tr">
+    <div class="piece">PIÈCE N° 7</div>
+    <div class="clip"></div>
+    <h2>L'accusation finale</h2>
+    <p class="sub">Trois questions. Pour résoudre l'affaire, il faut répondre juste aux trois.</p>
+
+    <div id="accuse">
+      <div class="q-step active" data-step="1">
+        <h3>1. Qui a volé le chaudron ?</h3>
+        <div class="choices">
+          <button class="choice" data-ok="0" data-hint="Mauvaise piste ! Le musée du surf a une photo de Kai déguisé en requin à 20h05. Et les roues de son chariot sont beaucoup trop larges."><div class="mirror" data-mirror="kai"></div><b>Kai</b></button>
+          <button class="choice" data-ok="1"><div class="mirror" data-mirror="doucette"></div><b>Mme Doucette</b></button>
+          <button class="choice" data-ok="0" data-hint="Mauvaise piste ! Gaston pèse 800 grammes. Le chaudron pèse 12 kilos. Même avec beaucoup de motivation…"><div class="mirror" data-mirror="gaston"></div><b>Gaston</b></button>
+        </div>
+        <div class="hint"></div>
+      </div>
+
+      <div class="q-step" data-step="2">
+        <h3>2. Pourquoi a-t-elle fait ça ?</h3>
+        <div class="choices text">
+          <button class="choice" data-ok="0" data-hint="Non : Mme Doucette n'a jamais rien vendu de sa vie. Elle donne tout ! Relis tes notes d'interrogatoire.">💰 Elle voulait revendre les bonbons sur Internet.</button>
+          <button class="choice" data-ok="1">🍪 Elle était blessée : cette année, l'association avait remplacé ses cookies par des bonbons du supermarché.</button>
+          <button class="choice" data-ok="0" data-hint="Non : elle fait 200 cookies par semaine. La faim n'est pas son problème.">😋 Elle avait faim et elle adore les bonbons.</button>
+        </div>
+        <div class="hint"></div>
+      </div>
+
+      <div class="q-step" data-step="3">
+        <h3>3. Et les plumes, les papiers de bonbons près du nid, le cri de mouette… ?</h3>
+        <div class="choices text">
+          <button class="choice" data-ok="0" data-hint="Non : Gaston n'aide personne. Gaston ne pense qu'aux frites.">🤝 Gaston était son complice, en échange de frites.</button>
+          <button class="choice" data-ok="0" data-hint="Une coïncidence ? Des papiers pliés en quatre ? Une mouette n'a pas de doigts, inspectrice !">🎲 C'était une coïncidence.</button>
+          <button class="choice" data-ok="1">🎭 Elle avait voulu faire accuser Gaston.</button>
+        </div>
+        <div class="hint"></div>
+      </div>
+    </div>
+
+    <div class="solved" id="solved">
+      <div class="stamp" id="stampSolved">AFFAIRE RÉSOLUE</div>
+      <svg class="cuffs" viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="45" cy="55" r="32" stroke="#c0c6cf" stroke-width="11" fill="none"/>
+        <circle cx="155" cy="55" r="32" stroke="#c0c6cf" stroke-width="11" fill="none"/>
+        <circle cx="45" cy="55" r="32" stroke="#fff" stroke-width="3" fill="none" opacity=".4"/>
+        <circle cx="155" cy="55" r="32" stroke="#fff" stroke-width="3" fill="none" opacity=".4"/>
+        <ellipse cx="88" cy="40" rx="10" ry="6" stroke="#9aa1ab" stroke-width="5" fill="none"/>
+        <ellipse cx="100" cy="40" rx="10" ry="6" stroke="#9aa1ab" stroke-width="5" fill="none"/>
+        <ellipse cx="112" cy="40" rx="10" ry="6" stroke="#9aa1ab" stroke-width="5" fill="none"/>
+      </svg>
+      <div class="solution">
+        <p><b>Ce qui s'est vraiment passé :</b> Mme Doucette avait gardé une clé du kiosque. À 20h10, déguisée en ange, elle est venue avec son petit chariot à courses et elle a emporté le chaudron. Avant de partir, elle avait déposé de fausses plumes et des papiers de bonbons près du nid de Gaston, et elle avait joué un cri de mouette sur son téléphone pour faire accuser le pauvre oiseau.</p>
+        <p>Pourquoi ? Depuis trente ans, elle faisait les cookies d'Halloween du quartier. Cette année, l'association avait choisi des bonbons du supermarché. Elle voulait distribuer les bonbons chez elle, avec ses cookies, pour que les enfants reviennent la voir.</p>
+        <p>Les bonbons ont été retrouvés dans son garage. Tous. (Enfin, presque tous.)</p>
+      </div>
+      <div class="final-mission">
+        <h3>🎙️ Dernière mission, à l'oral</h3>
+        <p>Explique au commissaire comment tu as résolu l'affaire, en 6 phrases minimum. Utilise au moins <b>3 verbes au plus-que-parfait</b> et <b>2 phrases d'inspectrice</b> de ton carnet.</p>
+      </div>
+      <div class="medal">
+        <div class="mirror" data-mirror="louis"></div>
+        <div class="ribbon">🏅</div>
+        <div style="text-align:left;max-width:300px"><b class="type" style="font-size:1.2rem">Médaille du meilleur témoin d'Oceanside</b><br>Décernée à Louis les grandes oreilles, pour ses oreilles exceptionnelles.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</div>
+</main>
+
+<!-- ====== Barre images ====== -->
+<div class="imgbar">
+  <div class="panel">
+    <p><b>Mode images activé.</b> Clique sur « 📷 Changer » sur n'importe quelle image pour la remplacer, ou sur ↺ pour revenir à l'illustration.</p>
+    <p>Tes images restent dans ce navigateur. Pour que Heather les voie, clique sur <b>Exporter</b> : tu obtiens un nouveau fichier avec les images intégrées dedans. C'est ce fichier-là qu'il faut partager.</p>
+    <button id="exportBtn">💾 Exporter la version finale</button>
+    <button id="undoImgs">↩️ Annuler mes changements d'images</button>
+    <button id="relock">🔒 Reverrouiller les pièces 6 et 7</button>
+    <button id="wipe">🧽 Effacer les réponses et les notes</button>
+  </div>
+  <button class="toggle" id="imgToggle">🖼️ Images</button>
+</div>
+<input type="file" id="picker" accept="image/*" hidden>
+
+<script id="embedded-images" type="application/json">{}</script>
+<script>
+(function(){
+var ORIGINAL_HTML = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+var $ = function(s,r){return (r||document).querySelector(s)};
+var $$ = function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+var P = 'affaire3110-';
+var store = {
+  get:function(k){try{return localStorage.getItem(P+k)}catch(e){return null}},
+  set:function(k,v){try{localStorage.setItem(P+k,v);return true}catch(e){return false}},
+  del:function(k){try{localStorage.removeItem(P+k)}catch(e){}}
+};
+var norm = function(s){return (s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[’']/g,"'").replace(/\s+/g,' ').trim()};
+function restart(el,cls){el.classList.remove(cls);void el.offsetWidth;el.classList.add(cls)}
+
+/* ---------- Étoiles ---------- */
+var stars = $('#stars');
+for (var i=0;i<70;i++){var s=document.createElement('i');s.style.left=Math.random()*100+'%';s.style.top=Math.random()*70+'%';s.style.animationDelay=(Math.random()*3)+'s';if(Math.random()<.2){s.style.width=s.style.height='3px'}stars.appendChild(s)}
+
+/* ---------- Images ---------- */
+var EMB = {};
+try{EMB = JSON.parse($('#embedded-images').textContent||'{}')}catch(e){}
+var DEFAULTS = {};
+$$('.slot[data-slot]').forEach(function(sl){var k=sl.dataset.slot;if(!DEFAULTS[k]){var svg=sl.querySelector('svg');DEFAULTS[k]=svg?svg.outerHTML:''}});
+var SLOTS = Object.keys(DEFAULTS);
+function srcFor(k){var l=store.get('img-'+k);if(l==='__none__')return null;return l||EMB[k]||null}
+function renderSlots(){
+  $$('.slot[data-slot]').forEach(function(sl){var src=srcFor(sl.dataset.slot);var img=sl.querySelector('img.custom');if(src){img.src=src;sl.classList.add('has-custom')}else{img.removeAttribute('src');sl.classList.remove('has-custom')}});
+  $$('.mirror[data-mirror]').forEach(function(m){var k=m.dataset.mirror;var src=srcFor(k);m.innerHTML=src?'<img alt="" src="'+src+'">':(DEFAULTS[k]||'')});
+}
+renderSlots();
+
+function resizeImage(file,max){
+  return new Promise(function(res,rej){
+    var fr=new FileReader();
+    fr.onload=function(){var im=new Image();im.onload=function(){var sc=Math.min(1,max/Math.max(im.width,im.height));var c=document.createElement('canvas');c.width=Math.round(im.width*sc);c.height=Math.round(im.height*sc);var ctx=c.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,c.width,c.height);ctx.drawImage(im,0,0,c.width,c.height);res(c.toDataURL('image/jpeg',.85))};im.onerror=rej;im.src=fr.result};
+    fr.onerror=rej;fr.readAsDataURL(file);
+  });
+}
+var picker=$('#picker'), currentSlot=null;
+document.addEventListener('click',function(e){
+  var ch=e.target.closest('.slot-change');
+  if(ch){e.stopPropagation();currentSlot=ch.closest('.slot').dataset.slot;picker.value='';picker.click();return}
+  var rs=e.target.closest('.slot-reset');
+  if(rs){e.stopPropagation();store.set('img-'+rs.closest('.slot').dataset.slot,'__none__');renderSlots();setTimeout(drawStrings,50)}
+},true);
+picker.addEventListener('change',function(){
+  var f=picker.files&&picker.files[0];if(!f||!currentSlot)return;
+  resizeImage(f,1000).then(function(data){
+    if(!store.set('img-'+currentSlot,data)){EMB[currentSlot]=data;alert("Le navigateur n'a pas pu enregistrer l'image : elle sera perdue si tu recharges la page. Pense à exporter tout de suite.")}
+    renderSlots();setTimeout(drawStrings,50);
+  }).catch(function(){alert("Impossible de lire cette image.")});
+});
+$('#imgToggle').addEventListener('click',function(){document.body.classList.toggle('edit-images')});
+$('#exportBtn').addEventListener('click',function(){
+  var imgs={};SLOTS.forEach(function(k){var s=srcFor(k);if(s)imgs[k]=s});
+  var json=JSON.stringify(imgs).replace(/</g,'\\u003c');
+  var out=ORIGINAL_HTML.replace(/(<script id="embedded-images" type="application\/json">)[\s\S]*?(<\/script>)/,function(m,a,b){return a+json+b});
+  var blob=new Blob([out],{type:'text/html'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='affaire-pier-oceanside.html';document.body.appendChild(a);a.click();
+  setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},1500);
+});
+$('#undoImgs').addEventListener('click',function(){if(!confirm('Annuler tous les changements d\'images faits dans ce navigateur ?'))return;SLOTS.forEach(function(k){store.del('img-'+k)});renderSlots();setTimeout(drawStrings,50)});
+
+/* ---------- Navigation + révélations ---------- */
+var prog=$('#progress');
+window.addEventListener('scroll',function(){var h=document.documentElement;prog.style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%'},{passive:true});
+var io=('IntersectionObserver' in window)?new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting){en.target.classList.add('in');io.unobserve(en.target)}})},{threshold:.12}):null;
+$$('.reveal').forEach(function(el){io?io.observe(el):el.classList.add('in')});
+var stampObs=('IntersectionObserver' in window)?new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting){setTimeout(function(){en.target.classList.add('slam')},500);stampObs.unobserve(en.target)}})},{threshold:.5}):null;
+['#stampReport'].forEach(function(s){var el=$(s);stampObs?stampObs.observe(el):el.classList.add('slam')});
+
+/* ---------- Pièce 1 ---------- */
+var title=$('#title'), txt="L'Affaire du Pier d'Oceanside", ti=0;
+setTimeout(function(){$('#stampTop').classList.add('slam')},2600);
+(function type(){if(ti<=txt.length){title.textContent=txt.slice(0,ti++);setTimeout(type,ti<3?300:70)}else{title.classList.remove('cursor')}})();
+$('#openFolder').addEventListener('click',function(){$('#folder').classList.add('open')});
+
+/* ---------- Pièce 2 : lampe torche ---------- */
+var scene=$('#scene');
+function light(e){var r=scene.getBoundingClientRect();scene.style.setProperty('--x',(e.clientX-r.left)+'px');scene.style.setProperty('--y',(e.clientY-r.top)+'px')}
+scene.addEventListener('pointermove',light);scene.addEventListener('pointerdown',light);
+var OBS={
+  serrure:['🔒 <b>Le cadenas</b> : intact. Pas une seule égratignure.','un cadenas = a padlock · une égratignure = a scratch'],
+  plumes:['🪶 <b>Des plumes blanches</b>, juste devant le kiosque. Une mouette serait-elle passée par là ?','une plume = a feather'],
+  traces:['〰️ <b>Deux traces fines et parallèles</b> dans le sable. Elles partent de la porte du kiosque vers la rue.','une trace = a track · le sable = the sand'],
+  papiers:['🍬 <b>Des papiers de bonbons</b>… à côté d\'un nid de mouette.','un nid = a nest · un papier de bonbon = a candy wrapper']
+};
+var found=0;
+$$('.hot').forEach(function(h){h.addEventListener('click',function(e){
+  light(e);if(h.classList.contains('found'))return;h.classList.add('found');found++;
+  var o=OBS[h.dataset.k];var li=document.createElement('li');li.innerHTML=o[0]+'<small>'+o[1]+'</small>';$('#obs').appendChild(li);
+  $('#counter').textContent='Indices trouvés : '+found+' / 4';
+  if(found===4){$('#counter').textContent='Bravo ! 4 / 4 🎉';$('#lightAll').style.display='inline-flex';confetti(25)}
+})});
+$('#lightAll').addEventListener('click',function(){scene.classList.toggle('lit');this.textContent=scene.classList.contains('lit')?'🔦 Reprendre la lampe torche':'💡 Allumer toute la lumière'});
+
+/* ---------- Pièce 3 : Louis ---------- */
+var heard=$$('#heard li'), hi=0, frame=$('#louisFrame');
+function wig(){restart(frame,'wiggle')}
+frame.addEventListener('click',function(e){if(!e.target.closest('.slot-tools'))wig()});
+$('#listen').addEventListener('click',function(){
+  wig();
+  if(hi<heard.length){heard[hi++].classList.add('show')}
+  if(hi>=heard.length){this.disabled=true;this.textContent='👂 Louis a tout dit !';$('#afterLouis').classList.add('show')}
+});
+
+/* ---------- Pièce 4 : fiches ---------- */
+$$('.flip').forEach(function(b){b.addEventListener('click',function(){b.closest('.card').classList.toggle('flipped')})});
+
+/* ---------- Pièce 5 : carnet ---------- */
+$$('.tab').forEach(function(t){t.addEventListener('click',function(){
+  $$('.tab').forEach(function(x){x.classList.toggle('active',x===t)});
+  $$('.page').forEach(function(p){p.classList.toggle('active',p.id===t.dataset.page)});
+})});
+$('#checkEx').addEventListener('click',function(){
+  var ok=0,rows=$$('.ex-row');
+  rows.forEach(function(r){var v=r.querySelector('input').value;var good=r.dataset.a.split('|').some(function(a){return norm(a)===norm(v)});
+    r.classList.remove('good','bad');void r.offsetWidth;if(good){r.classList.add('good');ok++}else if(v.trim()){r.classList.add('bad')}});
+  $('#exScore').textContent=ok+' / '+rows.length+(ok===rows.length?' · Parfait, inspectrice ! 🎉':'');
+  if(ok===rows.length)confetti(30);
+});
+$$('[data-save]').forEach(function(t){var v=store.get(t.dataset.save);if(v)t.value=v;t.addEventListener('input',function(){store.set(t.dataset.save,t.value)})});
+
+/* ---------- Verrou ---------- */
+function unlock(){document.body.classList.add('unlocked');store.set('unlocked','1');setTimeout(drawStrings,60)}
+if(store.get('unlocked')==='1'){unlock();$('#padlock').classList.add('open')}
+$('#codeForm').addEventListener('submit',function(e){
+  e.preventDefault();var v=norm($('#code').value).toUpperCase();
+  var good=false;try{good=btoa(v)==='Q0hBVURST04='}catch(err){}
+  if(good){$('#padlock').classList.add('open');$('#lockMsg').textContent='';setTimeout(function(){unlock();confetti(30);$('#ch6').scrollIntoView({behavior:'smooth'})},900)}
+  else{restart($('#lockbox'),'shake');$('#lockMsg').textContent='Code incorrect. Accès refusé.'}
+});
+$('#relock').addEventListener('click',function(){document.body.classList.remove('unlocked');store.del('unlocked');$('#padlock').classList.remove('open');$('#code').value=''});
+
+/* ---------- Pièce 6 : tableau ---------- */
+var WHO=[['kai','Kai'],['doucette','Mme D.'],['gaston','Gaston'],['fausse','Fausse piste']];
+var KEY={1:'doucette',2:'doucette',3:'doucette',4:'doucette',5:'doucette',6:'fausse',7:'fausse',8:'fausse',9:'doucette'};
+var assign={};try{assign=JSON.parse(store.get('board')||'{}')}catch(e){}
+var board=$('#board'), svgS=$('#strings'), lastDrawn=null;
+$$('.clue').forEach(function(c){
+  var box=document.createElement('div');box.className='assign';
+  WHO.forEach(function(w){var b=document.createElement('button');b.dataset.who=w[0];b.textContent=w[1];
+    b.addEventListener('click',function(){var id=c.dataset.id;if(assign[id]===w[0]){delete assign[id]}else{assign[id]=w[0];lastDrawn=id}store.set('board',JSON.stringify(assign));paintAssign();drawStrings();$('#boardMsg').textContent=''});
+    box.appendChild(b)});
+  c.appendChild(box);
+});
+function paintAssign(){$$('.clue').forEach(function(c){$$('.assign button',c).forEach(function(b){b.classList.toggle('on',assign[c.dataset.id]===b.dataset.who)})})}
+function center(el,br){var r=el.getBoundingClientRect();return{x:r.left-br.left+r.width/2,y:r.top-br.top+r.height/2}}
+function drawStrings(){
+  if(!board||!board.offsetParent)return;
+  var br=board.getBoundingClientRect();svgS.setAttribute('viewBox','0 0 '+br.width+' '+br.height);svgS.innerHTML='';
+  $$('.clue').forEach(function(c){
+    var w=assign[c.dataset.id];if(!w)return;
+    var a=center(c.querySelector('.tack'),br), b=center(board.querySelector('.pin-target[data-who="'+w+'"] .tack'),br);
+    var p=document.createElementNS('http://www.w3.org/2000/svg','path');
+    p.setAttribute('d','M'+a.x+' '+a.y+' Q '+((a.x+b.x)/2)+' '+((a.y+b.y)/2+45)+' '+b.x+' '+b.y);
+    if(w==='fausse')p.setAttribute('class','fausse');
+    svgS.appendChild(p);
+    if(lastDrawn===c.dataset.id&&w!=='fausse'){var L=p.getTotalLength();p.style.strokeDasharray=L;p.style.strokeDashoffset=L;p.classList.add('draw')}
+  });
+  lastDrawn=null;
+}
+paintAssign();
+window.addEventListener('resize',function(){clearTimeout(window.__rs);window.__rs=setTimeout(drawStrings,120)});
+$('#checkBoard').addEventListener('click',function(){
+  var n=Object.keys(KEY).length,done=Object.keys(assign).length,ok=0;
+  Object.keys(KEY).forEach(function(k){if(assign[k]===KEY[k])ok++});
+  var m=$('#boardMsg');
+  if(done<n){m.textContent='Il te reste '+(n-done)+' indice(s) à épingler.';return}
+  if(ok===n){m.textContent='9 / 9 ! Tout est clair, inspectrice. Passe à l\'accusation. 🎯';confetti(40)}
+  else if(ok>=7){m.textContent=ok+' / 9 liens corrects. Presque ! Un ou deux indices te trompent encore.'}
+  else{m.textContent=ok+' / 9 liens corrects. Relis tes notes d\'interrogatoire…'}
+  restart(m,'shake');
+});
+$('#clearBoard').addEventListener('click',function(){assign={};store.set('board','{}');paintAssign();drawStrings();$('#boardMsg').textContent=''});
+
+/* ---------- Pièce 7 : accusation ---------- */
+$$('.q-step').forEach(function(step){
+  var hint=step.querySelector('.hint');
+  $$('.choice',step).forEach(function(ch){ch.addEventListener('click',function(){
+    if(step.dataset.done)return;
+    if(ch.dataset.ok==='1'){
+      step.dataset.done='1';ch.classList.add('right');hint.classList.remove('show');
+      var next=step.nextElementSibling;
+      setTimeout(function(){
+        if(next&&next.classList.contains('q-step')){step.classList.remove('active');next.classList.add('active')}
+        else{solve()}
+      },1000);
+    }else{
+      ch.classList.remove('wrong');void ch.offsetWidth;ch.classList.add('wrong');
+      hint.textContent=ch.dataset.hint;hint.classList.remove('show');void hint.offsetWidth;hint.classList.add('show');
+    }
+  })});
+});
+function solve(){
+  $('#accuse').style.display='none';
+  var s=$('#solved');s.classList.add('show');
+  setTimeout(function(){$('#stampSolved').classList.add('slam')},150);
+  confetti(90);setTimeout(function(){confetti(50)},1600);
+  s.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+$('#wipe').addEventListener('click',function(){
+  if(!confirm('Effacer les notes, l\'exercice, le tableau et l\'accusation ?'))return;
+  $$('[data-save]').forEach(function(t){store.del(t.dataset.save);t.value=''});
+  store.set('board','{}');assign={};paintAssign();drawStrings();
+  $$('.ex-row').forEach(function(r){r.classList.remove('good','bad');r.querySelector('input').value=''});$('#exScore').textContent='';
+  $$('.q-step').forEach(function(st,i){delete st.dataset.done;st.classList.toggle('active',i===0);$$('.choice',st).forEach(function(c){c.classList.remove('right','wrong')});st.querySelector('.hint').classList.remove('show')});
+  $('#accuse').style.display='';$('#solved').classList.remove('show');$('#stampSolved').classList.remove('slam');
+});
+
+/* ---------- Confettis ---------- */
+function confetti(n){
+  var box=document.createElement('div');box.className='confetti';document.body.appendChild(box);
+  var em=['🎃','🍬','🍭','🦇','🍫','⭐','👻'];
+  for(var i=0;i<n;i++){var s=document.createElement('span');s.textContent=em[i%em.length];s.style.left=(Math.random()*100)+'vw';s.style.animationDelay=(Math.random()*1.2)+'s';s.style.animationDuration=(2.6+Math.random()*2.2)+'s';s.style.fontSize=(18+Math.random()*24)+'px';box.appendChild(s)}
+  setTimeout(function(){box.remove()},6500);
+}
+})();
+</script>
+</body>
+</html>
